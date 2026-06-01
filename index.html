@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta id="seo-description" name="description" content="">
+<meta id="seo-keywords" name="keywords" content="">
+<title>LearnHub — Nền tảng học tập</title>
+<link id="site-favicon" rel="icon" href="">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { font-family: var(--font-body, 'Inter', sans-serif); box-sizing: border-box; }
+  body { background: #f0f2f5; margin: 0; }
+  :root { --sw: 240px; --primary: #0ea5e9; --secondary: #6366f1; --font-body: 'Inter', sans-serif; --font-heading: 'Inter', sans-serif; }
+  body { font-family: var(--font-body); }
+  h1, h2, h3, h4, .course-name, .tree-title, .stat-value { font-family: var(--font-heading); }
+
+  /* Auth */
+  #auth-page { min-height: 100vh; background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); display: flex; align-items: center; justify-content: center; }
+  .auth-card { background: white; border-radius: 20px; padding: 40px; width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .auth-tab { cursor: pointer; padding: 10px 24px; border-radius: 10px; font-weight: 500; transition: all 0.2s; color: #94a3b8; }
+  .auth-tab.active { background: #0ea5e9; color: white; }
+  .form-input { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; transition: border 0.2s; }
+  .form-input:focus { border-color: #0ea5e9; }
+  .btn-primary { width: 100%; padding: 13px; background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.9; }
+
+  /* App Layout */
+  #app { display: none; min-height: 100vh; width: 100%; }
+  #sidebar { width: var(--sw); min-height: 100vh; background: white; position: fixed; left: 0; top: 0; bottom: 0; border-right: 1px solid #e8edf2; display: flex; flex-direction: column; padding: 24px 0; z-index: 50; }
+  .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid #f1f5f9; }
+  .sidebar-logo h1 { font-size: 20px; font-weight: 700; background: linear-gradient(90deg, #0ea5e9, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sidebar-logo p { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+  .brand-logo-img { display: none; max-width: 168px; max-height: 52px; object-fit: contain; margin-bottom: 8px; }
+  .auth-logo-img { display: none; max-width: 190px; max-height: 68px; object-fit: contain; margin: 0 auto 10px; }
+  .nav-section { padding: 16px 12px 8px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #64748b; font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .nav-item:hover { background: #f8fafc; color: #0f172a; }
+  .nav-item.active { background: linear-gradient(90deg, #e0f2fe, #ede9fe); color: #0ea5e9; }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .sidebar-bottom { margin-top: auto; padding: 16px 12px 0; border-top: 1px solid #f1f5f9; }
+  .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #0ea5e9, #6366f1); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+
+  /* Main content */
+  #main { margin-left: var(--sw); width: calc(100vw - var(--sw)); max-width: calc(100vw - var(--sw)); min-height: 100vh; flex: 1 1 auto; }
+  .vwrap { max-width: 1440px; width: 100%; margin: 0 auto; padding: 28px 36px; }
+  .page-header { margin-bottom: 28px; }
+  .page-header h2 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  .page-header p { color: #64748b; font-size: 14px; margin-top: 4px; }
+
+  /* Dashboard stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 28px; }
+  .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: #0f172a; }
+  .stat-label { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  .stat-change { font-size: 12px; margin-top: 8px; font-weight: 500; }
+
+  /* Course cards */
+  .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; align-items: stretch; }
+  .course-card { background: white; border-radius: 16px; padding: 22px; min-height: 232px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; transition: all 0.2s; border: 2px solid transparent; display: flex; flex-direction: column; }
+  .course-card:hover { border-color: #0ea5e9; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14,165,233,0.12); }
+  #lib-courses .course-card { min-height: 250px; }
+  #lib-courses .course-card > div:last-child { margin-top: auto; }
+  .course-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; }
+  .course-name { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .course-meta { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+  .progress-bar-wrap { background: #f1f5f9; border-radius: 100px; height: 6px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #0ea5e9, #6366f1); transition: width 0.5s; }
+  .progress-text { display: flex; justify-content: space-between; margin-top: 6px; }
+  .progress-text span { font-size: 11px; color: #94a3b8; }
+  .progress-text strong { font-size: 11px; color: #0ea5e9; font-weight: 600; }
+  .member-avatars { display: flex; margin-top: 14px; }
+  .member-avatars .av { width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; margin-right: -8px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; }
+
+  /* Filter tabs */
+  .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .ftab { padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #64748b; background: white; border: 1px solid #e2e8f0; }
+  .ftab.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+  .ftab-count { display: inline-block; background: rgba(255,255,255,0.3); border-radius: 20px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+  .ftab:not(.active) .ftab-count { background: #f1f5f9; color: #94a3b8; }
+
+  /* Category sidebar in library */
+  #view-library { display: none; }
+  .lib-layout { display: block; }
+  .cat-sidebar { background: white; border-radius: 16px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); height: fit-content; }
+  .cat-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; }
+  .cat-item:hover { background: #f8fafc; }
+  .cat-item.active { background: linear-gradient(90deg, #e0f2fe, #ede9fe); }
+  .cat-dot { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .cat-name { font-size: 13px; font-weight: 500; color: #374151; }
+  .cat-count { font-size: 11px; color: #94a3b8; }
+
+  /* Course detail view */
+  #view-course { display: none; }
+  .back-btn { display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 14px; cursor: pointer; margin-bottom: 20px; transition: color 0.2s; }
+  .back-btn:hover { color: #0ea5e9; }
+  .course-detail-header { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; display: flex; gap: 20px; align-items: flex-start; }
+  .course-detail-icon { width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; }
+  .course-detail-info h2 { font-size: 22px; font-weight: 700; color: #0f172a; }
+  .course-detail-info p { color: #64748b; font-size: 14px; margin-top: 6px; line-height: 1.6; }
+  .course-stats { display: flex; gap: 20px; margin-top: 14px; }
+  .cstat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; }
+
+  /* Chapter accordion */
+  .chapters-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .chapter-block { background: white; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+  .chapter-header { display: flex; align-items: center; gap: 14px; padding: 18px 20px; cursor: pointer; transition: background 0.2s; }
+  .chapter-header:hover { background: #fafbfc; }
+  .chapter-num { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+  .chapter-title { flex: 1; }
+  .chapter-title h4 { font-size: 15px; font-weight: 600; color: #0f172a; }
+  .chapter-title p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .chapter-chevron { transition: transform 0.3s; color: #94a3b8; flex-shrink: 0; }
+  .chapter-chevron.open { transform: rotate(180deg); }
+  .chapter-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .chapter-body.open { max-height: 2000px; }
+
+  /* Lesson items (level 3) */
+  .lessons-wrap { padding: 0 20px 16px; }
+  .lesson-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; cursor: pointer; transition: background 0.2s; margin-bottom: 4px; }
+  .lesson-item:hover { background: #f8fafc; }
+  .lesson-item.has-sub { border-left: none; }
+  .lesson-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .lesson-check.done { background: #10b981; border-color: #10b981; color: white; }
+  .lesson-check.active { border-color: #0ea5e9; }
+  .lesson-title { flex: 1; font-size: 14px; color: #374151; font-weight: 500; }
+  .lesson-duration { font-size: 12px; color: #94a3b8; flex-shrink: 0; }
+  .lesson-expand-btn { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .lesson-expand-btn:hover { background: #e0f2fe; color: #0ea5e9; }
+  .lesson-expand-btn.open svg { transform: rotate(180deg); }
+
+  /* Sub-lessons (level 4) */
+  .sub-lessons { margin-left: 36px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .sub-lessons.open { max-height: 500px; }
+  .sub-lesson-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-bottom: 2px; border-left: 2px solid #e2e8f0; padding-left: 16px; }
+  .sub-lesson-item:hover { background: #f8fafc; border-left-color: #0ea5e9; }
+  .sub-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #e2e8f0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .sub-check.done { background: #10b981; border-color: #10b981; }
+  .sub-title { flex: 1; font-size: 13px; color: #64748b; }
+  .sub-duration { font-size: 11px; color: #94a3b8; }
+
+  /* Dashboard activity */
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 24px; margin-top: 24px; }
+  .panel { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .panel h3 { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 16px; }
+  .activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .activity-item:last-child { border-bottom: none; }
+  .act-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .act-info p { font-size: 13px; color: #374151; font-weight: 500; }
+  .act-info span { font-size: 11px; color: #94a3b8; }
+
+  /* Topbar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; max-width: 1440px; width: 100%; margin: 0 auto; padding: 28px 36px 0; }
+  .search-box { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 14px; width: 280px; }
+  .search-box input { border: none; outline: none; font-size: 14px; color: #374151; width: 100%; background: transparent; }
+  .search-box svg { color: #94a3b8; flex-shrink: 0; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .notif-btn { width: 38px; height: 38px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+  .notif-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 2px solid white; }
+
+  /* Loading */
+  .loader { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast { position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 9999; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transform: translateY(-80px); opacity: 0; transition: all 0.3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { background: #ef4444; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+
+  /* Continue learning */
+  .continue-card { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%); border-radius: 16px; padding: 24px; color: white; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .continue-info h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .continue-info p { font-size: 13px; opacity: 0.85; }
+  .continue-progress { margin-top: 14px; }
+  .continue-progress-bar { background: rgba(255,255,255,0.25); border-radius: 100px; height: 6px; width: 280px; overflow: hidden; }
+  .continue-progress-bar-fill { height: 100%; background: white; border-radius: 100px; }
+  .continue-progress p { font-size: 12px; opacity: 0.8; margin-top: 6px; }
+  .continue-btn { background: white; color: #0ea5e9; font-weight: 600; font-size: 14px; padding: 10px 22px; border-radius: 10px; border: none; cursor: pointer; flex-shrink: 0; }
+
+  .site-announcement { max-width: 1440px; width: calc(100% - 72px); margin: 18px auto 0; border-radius: 12px; padding: 11px 16px; color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 8px 24px rgba(15,23,42,0.08); }
+  .site-announcement a { color: white; text-decoration: underline; text-underline-offset: 3px; }
+  .promo-card { width: min(620px, 94vw); text-align: left; padding: 0; overflow: hidden; }
+  .promo-content { padding: 22px; }
+  .promo-image { display: none; width: 100%; aspect-ratio: 16 / 7; object-fit: cover; background: #f1f5f9; }
+  .promo-kicker { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 8px; }
+  .promo-title { font-size: 22px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+  .promo-text { font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 18px; }
+  .settings-section { border-top: 1px solid #eef2f7; padding-top: 18px; margin-top: 18px; }
+  .settings-section:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+  .settings-section h4 { font-size: 15px; font-weight: 900; color: #0f172a; margin-bottom: 12px; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: #f8fafc; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .toggle-row span { font-size: 13px; color: #334155; font-weight: 700; }
+
+  body.theme-dark { background: #0f172a; color: #e2e8f0; }
+  body.theme-dark #sidebar, body.theme-dark .panel, body.theme-dark .stat-card, body.theme-dark .course-card, body.theme-dark .admin-form, body.theme-dark .admin-tree, body.theme-dark .admin-table-wrap, body.theme-dark .edwrap, body.theme-dark .modal-card, body.theme-dark .auth-card { background: #111827; color: #e2e8f0; border-color: #1f2937; }
+  body.theme-dark .page-header h2, body.theme-dark .course-name, body.theme-dark .stat-value, body.theme-dark .panel h3, body.theme-dark .tree-title, body.theme-dark .promo-title, body.theme-dark .settings-section h4 { color: #f8fafc; }
+  body.theme-dark .page-header p, body.theme-dark .stat-label, body.theme-dark .tree-sub, body.theme-dark .course-meta, body.theme-dark .act-info span, body.theme-dark .promo-text { color: #94a3b8; }
+  body.theme-dark .topbar .search-box, body.theme-dark .notif-btn, body.theme-dark .fi, body.theme-dark .form-input, body.theme-dark .tree-search, body.theme-dark .toggle-row, body.theme-dark .mini-item, body.theme-dark .link-admin-item { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+  body.theme-dark .nav-item:hover, body.theme-dark .tree-row:hover { background: #1e293b; }
+  body.theme-dark .sidebar-logo, body.theme-dark .sidebar-bottom, body.theme-dark .tree-head, body.theme-dark .edtb, body.theme-dark .edfooter { border-color: #1f2937; background: #111827; }
+
+  #auth-page, .continue-card, .avatar { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+  .btn-primary, .bblue { background: var(--primary); }
+  .progress-bar, .course-progress-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+  .nav-item.active, .ni.active, .cat-item.active { color: var(--primary); }
+  .course-card:hover, .fi:focus, .form-input:focus { border-color: var(--primary); }
+  .tree-row.active { box-shadow: inset 3px 0 0 var(--primary); }
+
+
+
+  /* Admin shared UI */
+  .nsec { padding: 16px 12px 8px; }
+  .nlabel { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 6px; }
+  .ni { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #64748b; font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .ni:hover { background: #f8fafc; color: #0f172a; }
+  .ni.active { background: linear-gradient(90deg, #e0f2fe, #ede9fe); color: #0ea5e9; }
+  #view-admin-dash, #view-admin-content, #view-admin-editor, #view-admin-members, #view-admin-settings { display: none; }
+  .admin-split { display: grid; grid-template-columns: 340px minmax(0,1fr); gap: 20px; align-items: start; }
+  .admin-tree, .admin-form, .admin-table-wrap { background: white; border-radius: 16px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .admin-tree { padding: 0; overflow: hidden; position: sticky; top: 18px; max-height: calc(100vh - 150px); display: flex; flex-direction: column; }
+  .admin-table-wrap { overflow-x: auto; }
+  .tree-head { padding: 14px; border-bottom: 1px solid #eef2f7; background: #fff; }
+  .tree-head-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .tree-head-title { font-size: 13px; font-weight: 800; color: #0f172a; }
+  .tree-add { border: 0; background: #e0f2fe; color: #0284c7; border-radius: 8px; width: 30px; height: 30px; font-size: 18px; cursor: pointer; }
+  .tree-search { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 10px; }
+  .tree-search input { border: 0; outline: 0; background: transparent; width: 100%; font-size: 13px; color: #334155; }
+  .tree-body { padding: 10px; overflow: auto; }
+  .tree-empty { padding: 24px 12px; color: #94a3b8; font-size: 13px; text-align: center; }
+  .tree-node { margin: 2px 0; }
+  .tree-children { margin-left: 18px; padding-left: 10px; border-left: 1px solid #e8eef5; }
+  .tree-row { display: grid; grid-template-columns: 18px 30px minmax(0,1fr) auto; align-items: center; gap: 8px; min-height: 38px; border-radius: 10px; padding: 6px 8px; cursor: pointer; color: #334155; transition: background 0.15s, color 0.15s; }
+  .tree-row:hover, .tree-row.active { background: #f1f8ff; color: #0284c7; }
+  .tree-row.active { box-shadow: inset 3px 0 0 #0ea5e9; }
+  .tree-chevron { border: 0; background: transparent; color: #64748b; width: 18px; height: 24px; cursor: pointer; font-size: 12px; }
+  .tree-chevron.empty { opacity: 0.2; cursor: default; }
+  .tree-ico { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: #f8fafc; font-size: 15px; flex-shrink: 0; }
+  .tree-main { min-width: 0; }
+  .tree-title { display: block; font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tree-row.active .tree-title, .tree-row:hover .tree-title { color: #0284c7; }
+  .tree-sub { display: block; font-size: 11px; color: #94a3b8; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tree-actions { display: flex; align-items: center; gap: 4px; opacity: 0.28; transition: opacity 0.15s; }
+  .tree-row:hover .tree-actions, .tree-row.active .tree-actions { opacity: 1; }
+  .tree-btn { border: 0; background: #f1f5f9; color: #64748b; border-radius: 7px; min-width: 26px; height: 26px; padding: 0 7px; font-size: 12px; cursor: pointer; }
+  .tree-btn:hover { background: #e0f2fe; color: #0ea5e9; }
+  .tree-row[draggable="true"] { cursor: grab; }
+  .tree-row.dragging { opacity: 0.45; cursor: grabbing; }
+  .tree-row.drop-before { box-shadow: inset 0 3px 0 #0ea5e9; background: #f0f9ff; }
+  .tree-row.drop-after { box-shadow: inset 0 -3px 0 #0ea5e9; background: #f0f9ff; }
+  .tree-drag-handle { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 26px; border-radius: 7px; color: #94a3b8; font-size: 12px; font-weight: 800; user-select: none; }
+  .tree-row:hover .tree-drag-handle { background: #f1f5f9; color: #0284c7; }
+  .fi { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; font-size: 14px; color: #0f172a; outline: none; background: white; }
+  .fi:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.10); }
+  textarea.fi { min-height: 96px; resize: vertical; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+  .form-row { margin-bottom: 14px; }
+  .form-row label { display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+  .btn { border: 0; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+  .bblue { background: #0ea5e9; color: white; }
+  .bgreen { background: #10b981; color: white; }
+  .bgray { background: #f1f5f9; color: #334155; }
+  .bred { background: #fee2e2; color: #dc2626; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { color: #64748b; background: #f8fafc; font-size: 12px; text-align: left; padding: 11px 12px; border-bottom: 1px solid #e2e8f0; }
+  .table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+  .role-pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .role-admin { background: #ede9fe; color: #7c3aed; }
+  .role-member { background: #e0f2fe; color: #0284c7; }
+  .admin-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .admin-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 5000; align-items: center; justify-content: center; padding: 24px; }
+  .modal-card { width: min(760px, 96vw); max-height: 90vh; overflow: auto; background: white; border-radius: 18px; padding: 22px; box-shadow: 0 24px 80px rgba(15,23,42,0.25); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-head h3 { font-size: 18px; font-weight: 800; color: #0f172a; }
+  .close-x { border: 0; background: #f1f5f9; color: #64748b; border-radius: 9px; width: 34px; height: 34px; cursor: pointer; }
+  .dropzone { border: 1.5px dashed #cbd5e1; border-radius: 14px; padding: 24px; text-align: center; color: #64748b; background: #f8fafc; cursor: pointer; }
+  .dropzone.drag { border-color: #0ea5e9; background: #e0f2fe; }
+  .mini-list { display: grid; gap: 8px; margin-top: 12px; }
+  .mini-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #f8fafc; border-radius: 10px; padding: 10px 12px; color: #334155; font-size: 13px; }
+  .settings-layout { display: grid; grid-template-columns: minmax(0,420px) minmax(0,1fr); gap: 20px; align-items: start; }
+  .link-admin-list { display: grid; gap: 10px; }
+  .link-admin-item { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #eef2f7; border-radius: 12px; padding: 10px 12px; }
+  .link-admin-icon { width: 40px; height: 40px; border-radius: 10px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .link-admin-title { font-size: 13px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-admin-url { font-size: 11px; color: #94a3b8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-admin-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .editor-shell { display: grid; grid-template-columns: 340px minmax(0,1fr); gap: 20px; align-items: start; }
+  .editor-main { min-width: 0; }
+  .edwrap { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+  .editor-meta { display: grid; grid-template-columns: 1fr 180px 140px auto; gap: 12px; margin-bottom: 16px; }
+  .edtb { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; position: sticky; top: 0; z-index: 5; }
+  .edgrp { display: flex; align-items: center; gap: 4px; padding-right: 8px; border-right: 1px solid #e2e8f0; }
+  .edgrp:last-child { border-right: 0; }
+  .edtb button { min-width: 34px; height: 34px; border: 1px solid #e2e8f0; background: white; border-radius: 8px; cursor: pointer; font-weight: 700; color: #334155; line-height: 1; padding: 0 8px; }
+  .edtb button:hover { background: #e0f2fe; border-color: #bae6fd; color: #0284c7; }
+  .edtb select, .edtb input[type="color"] { height: 34px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; color: #334155; }
+  #edcontent { min-height: 520px; padding: 28px; outline: none; color: #0f172a; line-height: 1.7; font-size: 15px; overflow-x: auto; }
+  #edcontent p { margin: 0 0 12px; }
+  #edcontent h1 { font-size: 32px; line-height: 1.25; font-weight: 800; margin: 16px 0 10px; }
+  #edcontent h2 { font-size: 25px; line-height: 1.3; font-weight: 800; margin: 14px 0 8px; }
+  #edcontent h3 { font-size: 20px; line-height: 1.35; font-weight: 700; margin: 12px 0 8px; }
+  #edcontent ul, .preview-body ul { list-style: disc; padding-left: 28px; margin: 8px 0 14px; }
+  #edcontent ol, .preview-body ol { list-style: decimal; padding-left: 28px; margin: 8px 0 14px; }
+  #edcontent li, .preview-body li { margin: 5px 0; padding-left: 4px; }
+  #edcontent blockquote { border-left: 4px solid #0ea5e9; background: #f0f9ff; padding: 12px 14px; margin: 12px 0; color: #334155; }
+  #edcontent pre, .ed-html { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px; overflow: auto; font-family: 'Fira Code', monospace; white-space: pre-wrap; }
+  .ed-callout { border: 1px solid #dbeafe; border-left: 4px solid #0ea5e9; background: #f0f9ff; border-radius: 12px; padding: 14px 16px; margin: 12px 0; color: #334155; }
+  .ed-callout strong { display: block; color: #0f172a; margin-bottom: 6px; }
+  .ed-callout p { margin: 0; }
+  .ed-callout.tip { border-color: #bbf7d0; border-left-color: #10b981; background: #f0fdf4; }
+  .ed-callout.warn { border-color: #fed7aa; border-left-color: #f97316; background: #fff7ed; }
+  .ed-textbox { border: 1px dashed #94a3b8; border-radius: 14px; padding: 16px; margin: 12px 0; background: #ffffff; box-shadow: inset 0 0 0 1px rgba(148,163,184,0.16); }
+  .ed-textbox-title { font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+  #edcontent table, .preview-body table { width: 100% !important; max-width: 100%; border-collapse: collapse; table-layout: auto !important; margin: 14px 0; display: block; overflow-x: auto; }
+  #edcontent th, #edcontent td, .preview-body th, .preview-body td { border: 1px solid #dbe3ee; padding: 10px 12px; min-width: 120px; vertical-align: top; text-align: left; white-space: normal !important; word-break: normal !important; overflow-wrap: break-word; writing-mode: horizontal-tb !important; transform: none !important; }
+  #edcontent th, .preview-body th { background: #f8fafc; font-weight: 800; color: #0f172a; }
+  #edcontent [style*="writing-mode"], #edcontent [style*="rotate"], #edcontent [style*="transform"] { writing-mode: horizontal-tb !important; transform: none !important; }
+  #edcontent img, .preview-body img { max-width: 100%; height: auto; border-radius: 8px; }
+  .edfooter { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+  .ed-toggle { border: 1px solid #e2e8f0; border-radius: 10px; margin: 10px 0; overflow: hidden; background: #fff; }
+  .ed-toggle-head { display: flex; align-items: center; gap: 8px; padding: 12px; background: #f8fafc; cursor: pointer; }
+  .ed-toggle-arrow { transition: transform 0.2s; color: #64748b; }
+  .ed-toggle.open .ed-toggle-arrow { transform: rotate(90deg); }
+  .ed-toggle-body { display: none; padding: 12px; border-top: 1px solid #e2e8f0; }
+  .ed-toggle.open .ed-toggle-body { display: block; }
+  .ed-video { position: relative; width: 100%; aspect-ratio: 16 / 9; margin: 12px 0; background: #0f172a; border-radius: 12px; overflow: hidden; }
+  .ed-video iframe { width: 100%; height: 100%; border: 0; }
+  .emoji-pop { position: fixed; background: white; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 12px 36px rgba(15,23,42,0.16); padding: 10px; display: none; grid-template-columns: repeat(9, 32px); gap: 4px; z-index: 6000; }
+  .emoji-pop button { width: 32px; height: 32px; border: 0; background: #f8fafc; border-radius: 8px; cursor: pointer; font-size: 18px; }
+  .preview-modal .modal-card { width: min(1100px, 96vw); height: 90vh; }
+  .preview-body { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px; min-height: calc(90vh - 120px); overflow: auto; }
+  .reader-modal .modal-card { width: min(980px, 96vw); height: 90vh; display: flex; flex-direction: column; }
+  .reader-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+  .reader-kicker { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .reader-title { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.25; }
+  .reader-body { flex: 1; min-height: 0; overflow: auto; line-height: 1.75; color: #334155; }
+  .reader-body h1, .reader-body h2, .reader-body h3 { color: #0f172a; font-weight: 800; line-height: 1.3; margin: 20px 0 10px; }
+  .reader-body h1 { font-size: 30px; }
+  .reader-body h2 { font-size: 23px; }
+  .reader-body h3 { font-size: 18px; }
+  .reader-body p { margin: 0 0 14px; }
+  .reader-body ul, .reader-body ol { padding-left: 24px; margin: 10px 0 16px; }
+  .reader-body li { margin: 6px 0; }
+  .reader-body blockquote { border-left: 4px solid #0ea5e9; background: #f0f9ff; padding: 12px 14px; border-radius: 0 10px 10px 0; margin: 14px 0; }
+  .reader-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 14px; }
+  @media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .two-col, .admin-split, .editor-shell, .settings-layout { grid-template-columns: 1fr; } .lib-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { #sidebar { position: static; width: 100%; min-height: auto; } #app { display: block; } #main { margin-left: 0; width: 100%; max-width: 100%; } .topbar, .vwrap { padding-left: 18px; padding-right: 18px; } .stats-grid, .form-grid, .editor-meta { grid-template-columns: 1fr; } .continue-card { flex-direction: column; align-items: flex-start; gap: 16px; } .continue-progress-bar { width: 100%; } }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== AUTH PAGE ===== -->
+<div id="auth-page">
+  <div class="auth-card">
+    <div style="text-align:center; margin-bottom:28px;">
+      <img id="auth-logo-img" class="auth-logo-img" alt="Logo">
+      <div id="auth-brand" style="font-size:32px; font-weight:800; background:linear-gradient(90deg,#0ea5e9,#6366f1); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">LearnHub</div>
+      <div id="auth-tagline" style="color:#94a3b8; font-size:13px; margin-top:4px;">Nền tảng học tập trực tuyến</div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex; background:#f8fafc; border-radius:12px; padding:4px; margin-bottom:28px;">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')" style="flex:1; text-align:center;">Đăng nhập</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')" style="flex:1; text-align:center;">Tạo tài khoản</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="form-login">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px; font-weight:500; color:#374151; display:block; margin-bottom:6px;">Email</label>
+        <input id="login-email" type="email" class="form-input" placeholder="email@example.com">
+      </div>
+      <div style="margin-bottom:24px;">
+        <label style="font-size:13px; font-weight:500; color:#374151; display:block; margin-bottom:6px;">Mật khẩu</label>
+        <input id="login-pass" type="password" class="form-input" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Đăng nhập</button>
+      <p style="text-align:center; margin-top:16px; font-size:13px; color:#94a3b8;">Demo: dùng email bất kỳ + mật khẩu 123456</p>
+    </div>
+
+    <!-- Register form -->
+    <div id="form-register" class="hidden">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px; font-weight:500; color:#374151; display:block; margin-bottom:6px;">Họ và tên</label>
+        <input id="reg-name" type="text" class="form-input" placeholder="Nguyễn Văn A">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px; font-weight:500; color:#374151; display:block; margin-bottom:6px;">Email</label>
+        <input id="reg-email" type="email" class="form-input" placeholder="email@example.com">
+      </div>
+      <div style="margin-bottom:24px;">
+        <label style="font-size:13px; font-weight:500; color:#374151; display:block; margin-bottom:6px;">Mật khẩu</label>
+        <input id="reg-pass" type="password" class="form-input" placeholder="Tối thiểu 6 ký tự">
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Tạo tài khoản</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <img id="sidebar-logo-img" class="brand-logo-img" alt="Logo">
+      <h1 id="sidebar-brand">LearnHub</h1>
+      <p id="sidebar-tagline">Nền tảng học tập</p>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tổng quan</div>
+      <div class="nav-item active" onclick="showView('dashboard')" id="nav-dashboard">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h7v7H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 18h7v3H3z"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="openLibrary()" id="nav-library">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Thư viện kiến thức
+      </div>
+      <div id="overview-links"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Danh mục</div>
+      <div id="nav-categories"></div>
+    </div>
+    <div class="nsec" id="admin-nav" style="display:none">
+      <div class="nlabel">Qu&#7843;n tr&#7883;</div>
+      <div class="ni" onclick="showView('admin-dash')" id="nav-admin-dash">&#128202; T&#7893;ng quan Admin</div>
+      <div class="ni" onclick="showView('admin-content')" id="nav-admin-content">&#128218; Qu&#7843;n l&#253; n&#7897;i dung</div>
+      <div class="ni" onclick="showView('admin-editor')" id="nav-admin-editor">&#9999; Vi&#7871;t b&#224;i m&#7899;i</div>
+      <div class="ni" onclick="showView('admin-members')" id="nav-admin-members">&#128101; Qu&#7843;n l&#253; th&#224;nh vi&#234;n</div>
+      <div class="ni" onclick="showView('admin-settings')" id="nav-admin-settings">&#9881; C&#224;i &#273;&#7863;t giao di&#7879;n</div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="user-card">
+        <div class="avatar" id="sidebar-avatar">U</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:13px; font-weight:600; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="sidebar-name">User</div>
+          <div style="font-size:11px; color:#94a3b8;" id="sidebar-role">Học viên</div>
+        </div>
+        <div onclick="doLogout()" style="cursor:pointer; color:#94a3b8;" title="Đăng xuất">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <div id="site-announcement" class="site-announcement" style="display:none"></div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="search-box">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input placeholder="Tìm kiếm kiến thức...">
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; background:white; border:1px solid #e2e8f0; border-radius:10px; padding:6px 12px;">
+          <div class="avatar" id="topbar-avatar" style="width:28px; height:28px; font-size:12px;">U</div>
+          <span style="font-size:13px; font-weight:500; color:#374151;" id="topbar-name">User</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD VIEW ===== -->
+    <div id="view-dashboard">
+      <div class="vwrap">
+      <div class="page-header">
+        <h2 id="dash-greeting">Chào buổi sáng! 👋</h2>
+        <p>Tiếp tục hành trình học tập của bạn hôm nay.</p>
+      </div>
+
+      <!-- Continue learning banner -->
+      <div class="continue-card">
+        <div class="continue-info">
+          <h3>Tiếp tục học: Digital Marketing A-Z</h3>
+          <p>Chương 2 — Bài 2.3: Chiến lược Content Marketing</p>
+          <div class="continue-progress">
+            <div class="continue-progress-bar"><div class="continue-progress-bar-fill" style="width:42%"></div></div>
+            <p>42% hoàn thành · Còn 5 bài nữa trong chương này</p>
+          </div>
+        </div>
+        <button class="continue-btn" onclick="openCourse('mkt','dm-az')">Tiếp tục →</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e0f2fe;">📚</div>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Kiến thức đang học</div>
+          <div class="stat-change" style="color:#0ea5e9;">↑ 2 nhóm mới tháng này</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;">✅</div>
+          <div class="stat-value">47</div>
+          <div class="stat-label">Bài học hoàn thành</div>
+          <div class="stat-change" style="color:#10b981;">↑ 12 bài tuần này</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;">⏱</div>
+          <div class="stat-value">24h</div>
+          <div class="stat-label">Thời gian học tổng</div>
+          <div class="stat-change" style="color:#f59e0b;">3.2h trung bình/tuần</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f3e8ff;">⭐</div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Nhóm nội dung đã lưu</div>
+          <div class="stat-change" style="color:#7c3aed;">1 nhóm sắp hoàn thành</div>
+        </div>
+      </div>
+
+      <!-- Two column -->
+      <div class="two-col">
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <h3 style="font-size:16px; font-weight:600; color:#0f172a;">Kiến thức đang học</h3>
+            <span style="font-size:13px; color:#0ea5e9; cursor:pointer;" onclick="openLibrary()">Xem tất cả →</span>
+          </div>
+          <div class="courses-grid" style="grid-template-columns:repeat(2,minmax(280px,1fr));" id="recent-courses"></div>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Hoạt động gần đây</h3>
+            <div id="activity-list"></div>
+          </div>
+        </div>
+      </div>
+    
+      </div></div>
+
+    <!-- ===== LIBRARY VIEW ===== -->
+    <div id="view-library">
+      <div class="vwrap">
+      <div class="page-header">
+        <h2 id="lib-title">Thư viện kiến thức</h2>
+        <p id="lib-subtitle">Khám phá toàn bộ nội dung học tập</p>
+      </div>
+      <div class="lib-layout">
+        <div class="filter-tabs" id="lib-filter-tabs">
+          <div class="ftab active" onclick="filterLib(this,'all')">Tất cả <span class="ftab-count" id="fc-all">0</span></div>
+          <div class="ftab" onclick="filterLib(this,'inprogress')">Đang học <span class="ftab-count" id="fc-ip">0</span></div>
+          <div class="ftab" onclick="filterLib(this,'done')">Hoàn thành <span class="ftab-count" id="fc-done">0</span></div>
+        </div>
+        <div class="courses-grid" id="lib-courses"></div>
+      </div>
+    
+      </div></div>
+
+    <!-- ===== COURSE DETAIL VIEW ===== -->
+    <div id="view-course">
+      <div class="vwrap">
+      <div class="back-btn" onclick="goBack()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Quay lại
+      </div>
+      <div class="course-detail-header" id="course-header"></div>
+      <div style="display:grid; grid-template-columns:1fr 300px; gap:20px;">
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <h3 style="font-size:16px; font-weight:600; color:#0f172a;">Nội dung</h3>
+            <span style="font-size:12px; color:#94a3b8;" id="course-lesson-count"></span>
+          </div>
+          <div class="chapters-wrap" id="chapters-list"></div>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Tiến độ học</h3>
+            <div id="course-progress-detail"></div>
+          </div>
+          <div class="panel" style="margin-top:16px;">
+            <h3>Thông tin khóa học</h3>
+            <div id="course-info-panel"></div>
+          </div>
+        </div>
+      </div>
+    
+      </div></div>
+
+    <!-- ===== ADMIN DASH VIEW ===== -->
+    <div id="view-admin-dash" style="display:none">
+      <div class="vwrap">
+        <div class="page-header"><h2>T&#7893;ng quan Admin</h2><p>Theo d&#245;i nhanh n&#7897;i dung, b&#224;i h&#7885;c v&#224; th&#224;nh vi&#234;n.</p></div>
+        <div class="stats-grid" id="admin-stats"></div>
+        <div class="two-col"><div class="panel"><h3>Th&#224;nh vi&#234;n m&#7899;i nh&#7845;t</h3><div id="admin-recent-members"></div></div><div class="panel"><h3>Kh&#243;a h&#7885;c ph&#7893; bi&#7871;n</h3><div id="admin-popular-courses"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN CONTENT VIEW ===== -->
+    <div id="view-admin-content" style="display:none">
+      <div class="vwrap">
+        <div class="admin-topbar"><div class="page-header" style="margin-bottom:0;"><h2>Qu&#7843;n l&#253; n&#7897;i dung</h2><p>S&#7917;a c&#226;y Topic &rarr; Kh&#243;a h&#7885;c &rarr; Ch&#432;&#417;ng &rarr; B&#224;i h&#7885;c.</p></div><div class="admin-actions"><button class="btn bblue" onclick="promptAddTopic()">+ Th&#234;m topic m&#7899;i</button><button class="btn bgray" onclick="openLessonImportModal()">&#128229; Import b&#224;i h&#7885;c t&#7915; file</button></div></div>
+        <div class="admin-split"><div class="admin-tree" id="admin-content-tree"></div><div class="admin-form" id="admin-content-form"></div></div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN EDITOR VIEW ===== -->
+    <div id="view-admin-editor" style="display:none">
+      <div class="vwrap">
+        <div class="editor-shell">
+          <div class="admin-tree" id="admin-editor-tree"></div>
+          <div class="editor-main">
+            <div id="ed-breadcrumb" style="font-size:13px;color:#64748b;margin-bottom:12px;">Ch&#7885;n b&#224;i h&#7885;c &#273;&#7875; ch&#7881;nh s&#7917;a</div>
+            <div class="editor-meta"><input id="ed-title" placeholder="Ti&#234;u &#273;&#7873; b&#224;i h&#7885;c..." class="fi" style="font-size:18px;font-weight:700;"><select id="ed-type" class="fi"><option value="video">Video</option><option value="doc">T&#224;i li&#7879;u</option><option value="quiz">Quiz</option></select><input id="ed-duration" placeholder="Th&#7901;i l&#432;&#7907;ng (VD: 20p)" class="fi"><button onclick="saveLesson()" class="btn bgreen">&#128190; L&#432;u</button></div>
+            <div class="edwrap"><div class="edtb" id="editor-toolbar"><div class="edgrp"><button title="Undo" onclick="edCmd('undo')">&#8617;</button><button title="Redo" onclick="edCmd('redo')">&#8618;</button></div><div class="edgrp"><select title="&#272;o&#7841;n v&#259;n" onchange="formatBlock(this.value); this.value='p';"><option value="p">B&#236;nh th&#432;&#7901;ng</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Tr&#237;ch d&#7851;n</option><option value="pre">Code block</option></select></div><div class="edgrp"><select title="Font" onchange="edCmd('fontName', this.value)"><option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Fira Code</option></select><select title="C&#7905; ch&#7919;" onchange="setFontSize(this.value)"><option>12</option><option>14</option><option selected>15</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option></select></div><div class="edgrp"><button title="Bold" onclick="edCmd('bold')">B</button><button title="Italic" onclick="edCmd('italic')"><i>I</i></button><button title="Underline" onclick="edCmd('underline')"><u>U</u></button><button title="Strike" onclick="edCmd('strikeThrough')"><s>S</s></button><input title="M&#224;u ch&#7919;" type="color" onchange="edCmd('foreColor', this.value)"><input title="M&#224;u n&#7873;n" type="color" value="#fff59d" onchange="edCmd('backColor', this.value)"></div><div class="edgrp"><button title="Tr&#225;i" onclick="edCmd('justifyLeft')">&#8801;</button><button title="Gi&#7919;a" onclick="edCmd('justifyCenter')">&#8803;</button><button title="Ph&#7843;i" onclick="edCmd('justifyRight')">&#8801;</button><button title="&#272;&#7873;u" onclick="edCmd('justifyFull')">&#9776;</button></div><div class="edgrp"><button title="Bullet list" onclick="edCmd('insertUnorderedList')">&bull;</button><button title="Number list" onclick="edCmd('insertOrderedList')">1.</button><button title="Indent" onclick="edCmd('indent')">&rarr;</button><button title="Outdent" onclick="edCmd('outdent')">&larr;</button></div><div class="edgrp"><button title="Toggle" onclick="insertToggle()">&#128317;</button><button title="Box nội dung" onclick="insertTextBox()">&#9635;</button><button title="Callout ghi chú" onclick="insertCallout('note')">&#128161;</button><button title="Callout cảnh báo" onclick="insertCallout('warn')">&#9888;</button><button title="&#7842;nh" onclick="openImageModal()">&#128444;</button><button title="Video YouTube" onclick="insertVideoPrompt()">&#9654;</button><button title="HTML" onclick="openHTMLModal()">&lt;/&gt;</button><button title="Divider" onclick="insertHTMLAtCursor('<hr><p><br></p>')">&mdash;</button><button title="Emoji/Icon" onclick="toggleEmojiPicker(this)">&#128512;</button><button title="Link" onclick="insertLinkPrompt()">&#128279;</button></div></div><div id="edcontent" contenteditable="true"></div><div class="edfooter"><span id="ed-wordcount" style="font-size:12px;color:#94a3b8;">0 t&#7915;</span><button onclick="previewLesson()" class="btn bgray">&#128065; Xem tr&#432;&#7899;c</button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN MEMBERS VIEW ===== -->
+    <div id="view-admin-members" style="display:none">
+      <div class="vwrap">
+        <div class="admin-topbar"><div class="page-header" style="margin-bottom:0;"><h2>Qu&#7843;n l&#253; th&#224;nh vi&#234;n</h2><p>Th&#234;m, import v&#224; xu&#7845;t danh s&#225;ch th&#224;nh vi&#234;n.</p></div><div class="admin-actions"><div class="search-box" style="width:260px;"><span>&#128269;</span><input id="member-search" placeholder="Search" oninput="renderAdminMembers()"></div><button class="btn bblue" onclick="openMemberModal()">+ Th&#234;m 1 th&#224;nh vi&#234;n</button><button class="btn bgray" onclick="openMemberImportModal()">&#128229; Import CSV/Excel</button><button class="btn bgreen" onclick="exportMembersCSV()">&#128228; Xu&#7845;t CSV</button></div></div>
+        <div class="admin-table-wrap" id="members-table-wrap"></div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN SETTINGS VIEW ===== -->
+    <div id="view-admin-settings" style="display:none">
+      <div class="vwrap">
+        <div class="admin-topbar">
+          <div class="page-header" style="margin-bottom:0;"><h2>C&#224;i &#273;&#7863;t giao di&#7879;n</h2><p>Ch&#7881;nh t&#234;n web, favicon v&#224; c&#225;c link trong m&#7909;c T&#7893;ng quan.</p></div>
+        </div>
+        <div class="settings-layout">
+          <div class="admin-form">
+            <h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Th&#432;&#417;ng hi&#7879;u</h3>
+            <div id="settings-brand-form"></div>
+          </div>
+          <div class="admin-form">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;">
+              <div>
+                <h3 style="font-size:18px;font-weight:800;">Link trong T&#7893;ng quan</h3>
+                <p style="font-size:13px;color:#64748b;margin-top:4px;">Th&#234;m link, &#273;&#7863;t icon v&#224; s&#7855;p x&#7871;p th&#7913; t&#7921; hi&#7875;n th&#7883; tr&#234;n sidebar.</p>
+              </div>
+              <button class="btn bgray" onclick="clearOverviewLinkForm()">+ Link m&#7899;i</button>
+            </div>
+            <div id="overview-link-form"></div>
+            <div style="height:1px;background:#eef2f7;margin:18px 0;"></div>
+            <div id="overview-links-admin"></div>
+            <div id="marketing-settings-form" class="settings-section"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Member modal -->
+<div class="modal" id="member-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Th&#234;m th&#224;nh vi&#234;n</h3><button class="close-x" onclick="closeMemberModal()">&times;</button></div><div class="form-grid"><div class="form-row"><label>T&#234;n</label><input id="member-name" class="fi" placeholder="Nguyen Van A"></div><div class="form-row"><label>Email</label><input id="member-email" class="fi" type="email" placeholder="a@email.com"></div><div class="form-row"><label>M&#7853;t kh&#7849;u</label><input id="member-pass" class="fi" type="password" placeholder="T&#7889;i thi&#7875;u 6 k&#253; t&#7921;"></div><div class="form-row"><label>Vai tr&#242;</label><select id="member-role" class="fi"><option value="member">Member</option><option value="admin">Admin</option></select></div></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;"><button class="btn bgray" onclick="closeMemberModal()">H&#7911;y</button><button class="btn bgreen" onclick="addMemberFromModal()">Th&#234;m th&#224;nh vi&#234;n</button></div></div></div>
+
+<!-- Member import modal -->
+<div class="modal" id="member-import-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Import CSV/Excel</h3><button class="close-x" onclick="closeMemberImportModal()">&times;</button></div><div class="dropzone" onclick="document.getElementById('member-import-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDropFile(event,'member')">K&#233;o th&#7843; file .csv ho&#7863;c click &#273;&#7875; ch&#7885;n. File .xlsx: h&#227;y export th&#224;nh CSV tr&#432;&#7899;c khi import.<input id="member-import-file" type="file" accept=".csv,.xlsx" style="display:none" onchange="handleMemberImportFile(this.files[0])"></div><div style="display:flex;gap:8px;margin:14px 0;"><button class="btn bgray" onclick="downloadMemberTemplate()">T&#7843;i template CSV</button><button class="btn bgreen" id="member-import-confirm" onclick="confirmImportMembers()" style="display:none">Import 0 th&#224;nh vi&#234;n</button></div><div id="member-import-result" style="font-size:13px;color:#64748b;margin-bottom:10px;"></div><div id="member-import-preview"></div></div></div>
+
+<!-- Lesson import modal -->
+<div class="modal" id="lesson-import-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Import b&#224;i h&#7885;c t&#7915; file</h3><button class="close-x" onclick="closeLessonImportModal()">&times;</button></div><div class="dropzone" onclick="document.getElementById('lesson-import-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDropFile(event,'lesson')">CSV columns: topic, course, chapter, lesson_title, lesson_type, duration. File .xlsx c&#7847;n export th&#224;nh CSV tr&#432;&#7899;c.<input id="lesson-import-file" type="file" accept=".csv,.xlsx" style="display:none" onchange="handleLessonImportFile(this.files[0])"></div><div style="display:flex;gap:8px;margin:14px 0;"><button class="btn bgray" onclick="downloadLessonTemplate()">T&#7843;i template CSV</button><button class="btn bgreen" id="lesson-import-confirm" onclick="confirmImportLessons()" style="display:none">Import 0 b&#224;i h&#7885;c</button></div><div id="lesson-import-result" style="font-size:13px;color:#64748b;margin-bottom:10px;"></div><div id="lesson-import-preview"></div></div></div>
+
+<!-- Image modal -->
+<div class="modal" id="image-modal" style="display:none"><div class="modal-card" style="width:min(560px,96vw);"><div class="modal-head"><h3>Ch&#232;n &#7843;nh</h3><button class="close-x" onclick="closeImageModal()">&times;</button></div><div class="form-row"><label>URL &#7843;nh</label><input id="image-url" class="fi" placeholder="https://..."></div><div style="display:flex;gap:8px;margin-bottom:14px;"><button class="btn bblue" onclick="insertImageFromURL()">Ch&#232;n URL</button><button class="btn bgray" onclick="document.getElementById('image-upload').click()">Upload &#7843;nh</button><input id="image-upload" type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this.files[0])"></div></div></div>
+
+<!-- HTML insert modal -->
+<div class="modal" id="html-modal" style="display:none"><div class="modal-card" style="width:min(760px,96vw);"><div class="modal-head"><h3>Ch&#232;n HTML</h3><button class="close-x" onclick="closeHTMLModal()">&times;</button></div><div class="form-row"><label>M&#227; HTML</label><textarea id="html-code" class="fi" style="min-height:220px;font-family:'Fira Code',monospace;" placeholder="<div class='box'>Nội dung...</div>"></textarea></div><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;"><span style="font-size:12px;color:#64748b;line-height:1.5;">Block HTML sẽ hiển thị như code trong editor và render thật khi xem trước. Chèn trực tiếp sẽ đưa HTML vào bài ngay.</span><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgray" onclick="closeHTMLModal()">Hủy</button><button class="btn bblue" onclick="insertHTMLFromModal('block')">Chèn block HTML</button><button class="btn bgreen" onclick="insertHTMLFromModal('direct')">Chèn trực tiếp</button></div></div></div></div>
+
+<!-- Lesson preview modal -->
+<div class="modal preview-modal" id="lesson-preview-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Xem tr&#432;&#7899;c b&#224;i h&#7885;c</h3><button class="close-x" onclick="closePreviewLesson()">&times;</button></div><div class="preview-body" id="lesson-preview-body"></div></div></div>
+
+<!-- Lesson reader modal -->
+<div class="modal reader-modal" id="lesson-reader-modal" style="display:none"><div class="modal-card"><div class="reader-head"><div><div class="reader-kicker" id="lesson-reader-meta"></div><h3 class="reader-title" id="lesson-reader-title">Bài học</h3></div><button class="close-x" onclick="closeLessonReader()">&times;</button></div><div class="preview-body reader-body" id="lesson-reader-body"></div><div class="reader-actions"><span id="lesson-reader-status" style="font-size:13px;color:#64748b;"></span><button class="btn bgreen" onclick="markReaderLessonDone()">Đánh dấu hoàn thành</button></div></div></div>
+
+<!-- Marketing popup -->
+<div class="modal" id="marketing-popup-modal" style="display:none"><div class="modal-card promo-card"><img class="promo-image" id="marketing-popup-image" alt="Popup banner"><div class="promo-content"><div class="modal-head"><div class="promo-kicker" id="marketing-popup-kicker">Thông báo</div><button class="close-x" onclick="closeMarketingPopup()">&times;</button></div><h3 class="promo-title" id="marketing-popup-title"></h3><div class="promo-text" id="marketing-popup-text"></div><div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;"><button class="btn bgray" onclick="closeMarketingPopup()">Đóng</button><a class="btn bblue" id="marketing-popup-cta" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:none;">Xem ngay</a></div></div></div></div>
+<div class="emoji-pop" id="emoji-pop"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+let DATA = {
+  categories: [
+    {
+      id: 'mkt',
+      name: 'Marketing',
+      icon: '📈',
+      color: '#0ea5e9',
+      bg: '#e0f2fe',
+      gradient: 'linear-gradient(135deg,#0ea5e9,#38bdf8)',
+      courses: [
+        {
+          id: 'mkt-basics',
+          name: 'Marketing Cơ Bản',
+          desc: 'Nền tảng marketing từ A-Z dành cho người mới bắt đầu. Hiểu bản chất marketing, phân tích thị trường và xây dựng chiến lược.',
+          icon: '📊',
+          level: 'Cơ bản',
+          duration: '12h 30p',
+          lessons_total: 28,
+          chapters: [
+            {
+              id: 'c1', title: 'Nền tảng Marketing', desc: '4 bài học · 2h 10p',
+              lessons: [
+                { id: 'l1', title: 'Marketing là gì? Tại sao cần Marketing?', type: 'video', duration: '18p', done: true, subs: [
+                  { id: 's1', title: 'Định nghĩa và lịch sử Marketing', done: true, duration: '6p' },
+                  { id: 's2', title: 'Vai trò của Marketing trong doanh nghiệp', done: true, duration: '7p' },
+                  { id: 's3', title: 'Các lầm tưởng phổ biến về Marketing', done: false, duration: '5p' },
+                ]},
+                { id: 'l2', title: 'Phân tích thị trường và khách hàng mục tiêu', type: 'video', duration: '24p', done: true, subs: [] },
+                { id: 'l3', title: 'Marketing Mix 4P — Công thức vàng', type: 'doc', duration: '30p', done: false, subs: [
+                  { id: 's4', title: 'Product — Sản phẩm', done: false, duration: '8p' },
+                  { id: 's5', title: 'Price — Định giá chiến lược', done: false, duration: '10p' },
+                  { id: 's6', title: 'Place — Kênh phân phối', done: false, duration: '7p' },
+                  { id: 's7', title: 'Promotion — Truyền thông marketing', done: false, duration: '5p' },
+                ]},
+                { id: 'l4', title: 'Quiz: Kiểm tra kiến thức chương 1', type: 'quiz', duration: '15p', done: false, subs: [] },
+              ]
+            },
+            {
+              id: 'c2', title: 'Nghiên cứu thị trường', desc: '5 bài học · 3h 20p',
+              lessons: [
+                { id: 'l5', title: 'Phương pháp nghiên cứu định tính', type: 'video', duration: '22p', done: false, subs: [] },
+                { id: 'l6', title: 'Phương pháp nghiên cứu định lượng', type: 'video', duration: '28p', done: false, subs: [] },
+                { id: 'l7', title: 'Phân tích đối thủ cạnh tranh — SWOT', type: 'doc', duration: '35p', done: false, subs: [
+                  { id: 's8', title: 'Xác định đối thủ trực tiếp và gián tiếp', done: false, duration: '10p' },
+                  { id: 's9', title: 'Ma trận SWOT thực tế', done: false, duration: '15p' },
+                  { id: 's10', title: 'Phân tích 5 lực lượng Porter', done: false, duration: '10p' },
+                ]},
+                { id: 'l8', title: 'Xây dựng Buyer Persona', type: 'doc', duration: '40p', done: false, subs: [] },
+                { id: 'l9', title: 'Case Study: Nghiên cứu thị trường thực tế', type: 'video', duration: '55p', done: false, subs: [] },
+              ]
+            },
+            {
+              id: 'c3', title: 'Chiến lược thương hiệu', desc: '4 bài học · 2h 50p',
+              lessons: [
+                { id: 'l10', title: 'Brand Identity — Nhận diện thương hiệu', type: 'video', duration: '30p', done: false, subs: [] },
+                { id: 'l11', title: 'Brand Story — Kể chuyện thương hiệu', type: 'video', duration: '25p', done: false, subs: [] },
+                { id: 'l12', title: 'Positioning — Định vị thương hiệu', type: 'doc', duration: '45p', done: false, subs: [
+                  { id: 's11', title: 'Perceptual Map — Bản đồ nhận thức', done: false, duration: '15p' },
+                  { id: 's12', title: 'Unique Selling Proposition (USP)', done: false, duration: '20p' },
+                ]},
+                { id: 'l13', title: 'Quiz: Chiến lược thương hiệu', type: 'quiz', duration: '20p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+        {
+          id: 'dm-az',
+          name: 'Digital Marketing A-Z',
+          desc: 'Toàn bộ kỹ năng digital marketing: SEO, Facebook Ads, Google Ads, Email Marketing và Analytics.',
+          icon: '🚀',
+          level: 'Trung cấp',
+          duration: '20h 45p',
+          lessons_total: 52,
+          chapters: [
+            {
+              id: 'dc1', title: 'Nền tảng Digital Marketing', desc: '3 bài học · 1h 30p',
+              lessons: [
+                { id: 'dl1', title: 'Tổng quan Digital Marketing năm 2025', type: 'video', duration: '20p', done: true, subs: [] },
+                { id: 'dl2', title: 'Customer Journey trong môi trường số', type: 'doc', duration: '35p', done: true, subs: [
+                  { id: 'ds1', title: 'Awareness — Nhận biết', done: true, duration: '8p' },
+                  { id: 'ds2', title: 'Consideration — Cân nhắc', done: true, duration: '10p' },
+                  { id: 'ds3', title: 'Decision — Quyết định mua', done: false, duration: '8p' },
+                  { id: 'ds4', title: 'Retention — Giữ chân khách hàng', done: false, duration: '9p' },
+                ]},
+                { id: 'dl3', title: 'KPIs và đo lường hiệu quả', type: 'doc', duration: '35p', done: false, subs: [] },
+              ]
+            },
+            {
+              id: 'dc2', title: 'Content Marketing', desc: '6 bài học · 4h 20p',
+              lessons: [
+                { id: 'dl4', title: 'Content Strategy — Chiến lược nội dung', type: 'video', duration: '40p', done: false, subs: [] },
+                { id: 'dl5', title: 'SEO Copywriting — Viết content chuẩn SEO', type: 'video', duration: '50p', done: false, subs: [] },
+                { id: 'dl6', title: 'Video Marketing và YouTube Strategy', type: 'video', duration: '45p', done: false, subs: [] },
+                { id: 'dl7', title: 'Social Media Content — Facebook, Instagram, TikTok', type: 'doc', duration: '60p', done: false, subs: [
+                  { id: 'ds5', title: 'Facebook Content Strategy', done: false, duration: '15p' },
+                  { id: 'ds6', title: 'Instagram Reels & Stories', done: false, duration: '18p' },
+                  { id: 'ds7', title: 'TikTok Algorithm & Growth', done: false, duration: '22p' },
+                  { id: 'ds8', title: 'Content Calendar Planning', done: false, duration: '5p' },
+                ]},
+                { id: 'dl8', title: 'Email Marketing Automation', type: 'video', duration: '55p', done: false, subs: [] },
+                { id: 'dl9', title: 'Quiz: Content Marketing', type: 'quiz', duration: '20p', done: false, subs: [] },
+              ]
+            },
+            {
+              id: 'dc3', title: 'Facebook & Instagram Ads', desc: '8 bài học · 5h 10p',
+              lessons: [
+                { id: 'dl10', title: 'Cài đặt Facebook Business Manager', type: 'video', duration: '25p', done: false, subs: [] },
+                { id: 'dl11', title: 'Facebook Pixel và Conversion API', type: 'doc', duration: '40p', done: false, subs: [] },
+                { id: 'dl12', title: 'Cấu trúc chiến dịch quảng cáo', type: 'video', duration: '35p', done: false, subs: [
+                  { id: 'ds9', title: 'Campaign — Mục tiêu chiến dịch', done: false, duration: '8p' },
+                  { id: 'ds10', title: 'Ad Set — Nhắm đối tượng', done: false, duration: '15p' },
+                  { id: 'ds11', title: 'Ad — Sáng tạo quảng cáo', done: false, duration: '12p' },
+                ]},
+                { id: 'dl13', title: 'Retargeting và Lookalike Audience', type: 'video', duration: '45p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+        {
+          id: 'social',
+          name: 'Social Media Marketing',
+          desc: 'Xây dựng thương hiệu cá nhân và doanh nghiệp trên mạng xã hội: TikTok, Facebook, Instagram.',
+          icon: '📱',
+          level: 'Cơ bản',
+          duration: '8h 20p',
+          lessons_total: 22,
+          chapters: [
+            {
+              id: 'sc1', title: 'TikTok Marketing', desc: '5 bài học · 3h',
+              lessons: [
+                { id: 'sl1', title: 'Thuật toán TikTok hoạt động như thế nào', type: 'video', duration: '30p', done: false, subs: [] },
+                { id: 'sl2', title: 'Tạo nội dung viral trên TikTok', type: 'video', duration: '45p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+      ]
+    },
+    {
+      id: 'biz',
+      name: 'Kinh Doanh',
+      icon: '💼',
+      color: '#8b5cf6',
+      bg: '#ede9fe',
+      gradient: 'linear-gradient(135deg,#8b5cf6,#a78bfa)',
+      courses: [
+        {
+          id: 'startup',
+          name: 'Khởi nghiệp từ A-Z',
+          desc: 'Từ ý tưởng đến doanh nghiệp: validate ý tưởng, lên kế hoạch kinh doanh, gọi vốn và scale.',
+          icon: '🏢',
+          level: 'Trung cấp',
+          duration: '16h',
+          lessons_total: 38,
+          chapters: [
+            {
+              id: 'bc1', title: 'Ý tưởng và Validation', desc: '5 bài học · 3h 30p',
+              lessons: [
+                { id: 'bl1', title: 'Cách tìm ý tưởng kinh doanh tốt', type: 'video', duration: '35p', done: false, subs: [] },
+                { id: 'bl2', title: 'Validate ý tưởng không cần tiền', type: 'video', duration: '40p', done: false, subs: [
+                  { id: 'bs1', title: 'Customer Discovery Interview', done: false, duration: '15p' },
+                  { id: 'bs2', title: 'Landing Page Test', done: false, duration: '12p' },
+                  { id: 'bs3', title: 'Smoke Test và Concierge MVP', done: false, duration: '13p' },
+                ]},
+                { id: 'bl3', title: 'Business Model Canvas', type: 'doc', duration: '50p', done: false, subs: [] },
+              ]
+            },
+            {
+              id: 'bc2', title: 'Kế hoạch kinh doanh', desc: '4 bài học · 3h',
+              lessons: [
+                { id: 'bl4', title: 'Viết Business Plan chuyên nghiệp', type: 'doc', duration: '60p', done: false, subs: [] },
+                { id: 'bl5', title: 'Financial Projection — Dự báo tài chính', type: 'doc', duration: '45p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+        {
+          id: 'sales-skills',
+          name: 'Kỹ năng bán hàng',
+          desc: 'Thành thạo nghệ thuật bán hàng: từ tiếp cận, thuyết phục đến chốt đơn và xử lý từ chối.',
+          icon: '🤝',
+          level: 'Cơ bản',
+          duration: '10h',
+          lessons_total: 25,
+          chapters: [
+            {
+              id: 'sc1b', title: 'Tư duy người bán hàng', desc: '3 bài học · 2h',
+              lessons: [
+                { id: 'sl1b', title: 'Mindset người bán hàng thành công', type: 'video', duration: '30p', done: false, subs: [] },
+                { id: 'sl2b', title: 'Hiểu tâm lý khách hàng', type: 'video', duration: '40p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+      ]
+    },
+    {
+      id: 'fin',
+      name: 'Tài Chính',
+      icon: '💰',
+      color: '#10b981',
+      bg: '#dcfce7',
+      gradient: 'linear-gradient(135deg,#10b981,#34d399)',
+      courses: [
+        {
+          id: 'personal-fin',
+          name: 'Tài chính cá nhân',
+          desc: 'Quản lý tiền bạc thông minh: ngân sách, tiết kiệm, đầu tư và xây dựng tự do tài chính.',
+          icon: '💳',
+          level: 'Cơ bản',
+          duration: '9h',
+          lessons_total: 20,
+          chapters: [
+            {
+              id: 'fc1', title: 'Nền tảng tài chính cá nhân', desc: '4 bài học · 2h 30p',
+              lessons: [
+                { id: 'fl1', title: 'Tại sao 90% người Việt không giàu được', type: 'video', duration: '25p', done: false, subs: [] },
+                { id: 'fl2', title: 'Quy tắc 50-30-20 trong quản lý ngân sách', type: 'doc', duration: '30p', done: false, subs: [
+                  { id: 'fs1', title: '50% cho nhu cầu thiết yếu', done: false, duration: '8p' },
+                  { id: 'fs2', title: '30% cho nhu cầu cá nhân', done: false, duration: '8p' },
+                  { id: 'fs3', title: '20% cho tiết kiệm và đầu tư', done: false, duration: '14p' },
+                ]},
+                { id: 'fl3', title: 'Thoát bẫy nợ và lãi suất', type: 'video', duration: '35p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+        {
+          id: 'invest',
+          name: 'Đầu tư cơ bản',
+          desc: 'Từ chứng khoán, trái phiếu đến bất động sản: hiểu và bắt đầu đầu tư an toàn.',
+          icon: '📉',
+          level: 'Trung cấp',
+          duration: '14h',
+          lessons_total: 35,
+          chapters: [
+            {
+              id: 'ic1', title: 'Nguyên lý đầu tư', desc: '4 bài học · 2h 20p',
+              lessons: [
+                { id: 'il1', title: 'Risk và Return — Rủi ro và lợi nhuận', type: 'video', duration: '30p', done: false, subs: [] },
+                { id: 'il2', title: 'Đa dạng hóa danh mục đầu tư', type: 'doc', duration: '40p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+      ]
+    },
+    {
+      id: 'mindset',
+      name: 'Tư Duy & Kỹ Năng',
+      icon: '🧠',
+      color: '#f59e0b',
+      bg: '#fef3c7',
+      gradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)',
+      courses: [
+        {
+          id: 'productivity',
+          name: 'Năng suất & Quản lý thời gian',
+          desc: 'Làm việc thông minh hơn: GTD, Deep Work, Pomodoro và xây dựng hệ thống làm việc hiệu quả.',
+          icon: '⚡',
+          level: 'Cơ bản',
+          duration: '6h',
+          lessons_total: 15,
+          chapters: [
+            {
+              id: 'pc1', title: 'Hệ thống năng suất', desc: '4 bài học · 2h 30p',
+              lessons: [
+                { id: 'pl1', title: 'Deep Work — Làm việc tập trung sâu', type: 'video', duration: '35p', done: false, subs: [] },
+                { id: 'pl2', title: 'Getting Things Done (GTD)', type: 'doc', duration: '45p', done: false, subs: [] },
+              ]
+            },
+          ]
+        },
+      ]
+    },
+  ]
+};
+
+// ============================================================
+// STATE & AUTH
+// ============================================================
+let state = {
+  user: null,
+  view: 'dashboard',
+  prevView: 'dashboard',
+  activeCat: null,
+  activeCourse: null,
+  libFilter: 'all',
+};
+
+function getUsers() {
+  try {
+    const users = JSON.parse(localStorage.getItem('lh_users') || '[]');
+    return Array.isArray(users) ? users : [];
+  } catch(e) {
+    return [];
+  }
+}
+function saveUsers(u) { localStorage.setItem('lh_users', JSON.stringify(u)); }
+function getProgress() { return JSON.parse(localStorage.getItem('lh_progress') || '{}'); }
+function saveProgress(p) { localStorage.setItem('lh_progress', JSON.stringify(p)); }
+
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email) { showToast('Vui lòng nhập email', true); return; }
+  if (pass.length < 6) { showToast('Mật khẩu tối thiểu 6 ký tự', true); return; }
+  const users = getUsers();
+  let user = users.find(u => u.email === email);
+  if (!user) {
+    // Auto create on first login for demo
+    user = { name: email.split('@')[0], email, pass };
+    users.push(user);
+    saveUsers(users);
+  } else if (user.pass !== pass) {
+    showToast('Mật khẩu không đúng', true); return;
+  }
+  loginSuccess(user);
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if (!name) { showToast('Vui lòng nhập tên', true); return; }
+  if (!email) { showToast('Vui lòng nhập email', true); return; }
+  if (pass.length < 6) { showToast('Mật khẩu tối thiểu 6 ký tự', true); return; }
+  const users = getUsers();
+  if (users.find(u => u.email === email)) { showToast('Email đã được sử dụng', true); return; }
+  const user = { name, email, pass };
+  users.push(user);
+  saveUsers(users);
+  loginSuccess(user);
+}
+
+function loginSuccess(user) {
+  state.user = user;
+  document.getElementById('auth-page').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  const init = user.name.charAt(0).toUpperCase();
+  document.getElementById('sidebar-avatar').textContent = init;
+  document.getElementById('topbar-avatar').textContent = init;
+  document.getElementById('sidebar-name').textContent = user.name;
+  document.getElementById('topbar-name').textContent = user.name;
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Chào buổi sáng' : hr < 17 ? 'Chào buổi chiều' : 'Chào buổi tối';
+  document.getElementById('dash-greeting').textContent = greet + ', ' + user.name.split(' ').pop() + '! 👋';
+  buildCategorySidebar();
+  renderDashboard();
+  showView('dashboard');
+  showToast('Chào mừng ' + user.name + '!');
+}
+
+function doLogout() {
+  state.user = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-page').style.display = 'flex';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(view) {
+  state.prevView = state.view;
+  state.view = view;
+  ['dashboard','library','course'].forEach(v => {
+    document.getElementById('view-' + v).style.display = v === view ? 'block' : 'none';
+  });
+  ['dashboard','library'].forEach(v => {
+    document.getElementById('nav-' + v).classList.toggle('active', v === view);
+  });
+  if (view === 'library') renderLibrary();
+}
+
+function goBack() { showView(state.prevView === 'course' ? 'library' : state.prevView); }
+
+function buildCategorySidebar() {
+  const nav = document.getElementById('nav-categories');
+  const catList = document.getElementById('cat-list');
+  renderOverviewLinks();
+  nav.innerHTML = '';
+  if (catList) catList.innerHTML = '';
+  DATA.categories.forEach(cat => {
+    const total = (cat.courses || []).length;
+    nav.innerHTML += `<div class="nav-item" onclick="openCategory('${cat.id}')" id="nav-cat-${cat.id}">
+      <span>${cat.icon}</span> ${esc(cat.name)}
+    </div>`;
+    if (catList) {
+      catList.innerHTML += `<div class="cat-item" onclick="openCategory('${cat.id}')" id="catlist-${cat.id}">
+        <div class="cat-dot" style="background:${cat.bg};">${cat.icon}</div>
+        <div style="flex:1;">
+          <div class="cat-name">${esc(cat.name)}</div>
+          <div class="cat-count">${total} khóa học</div>
+        </div>
+      </div>`;
+    }
+  });
+}
+
+function openCategory(catId) {
+  state.activeCat = catId;
+  showView('library');
+  document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('catlist-' + catId);
+  if (el) el.classList.add('active');
+  renderLibrary(catId);
+}
+
+function openCourse(catId, courseId) {
+  const cat = DATA.categories.find(c => c.id === catId);
+  if (!cat) return;
+  const course = cat.courses.find(c => c.id === courseId);
+  if (!course) return;
+  state.activeCat = catId;
+  state.activeCourse = courseId;
+  renderCourseDetail(cat, course);
+  showView('course');
+}
+
+function filterLib(f) {
+  state.libFilter = f;
+  document.querySelectorAll('.ftab').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+  renderLibrary(state.activeCat);
+}
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+function getCourseProgress(catId, courseId) {
+  // Simulated progress
+  const map = { 'mkt/mkt-basics': 65, 'mkt/dm-az': 42, 'mkt/social': 10, 'biz/startup': 28, 'fin/personal-fin': 80, 'fin/invest': 5 };
+  return map[catId + '/' + courseId] || 0;
+}
+
+function collectCourseEntries(cats = DATA.categories) {
+  const entries = [];
+  (cats || []).forEach(cat => {
+    (cat.courses || []).forEach(course => {
+      entries.push({ cat, course, pct: getCourseProgress(cat.id, course.id) });
+    });
+  });
+  return entries;
+}
+
+function renderDashboard() {
+  // Recent courses
+  const container = document.getElementById('recent-courses');
+  const recentIds = [['mkt','dm-az'],['mkt','mkt-basics'],['biz','startup'],['fin','personal-fin']];
+  const preferred = recentIds.map(([cid, courseid]) => {
+    const cat = DATA.categories.find(c => c.id === cid);
+    const course = cat?.courses?.find(c => c.id === courseid);
+    return cat && course ? { cat, course, pct: getCourseProgress(cid, courseid) } : null;
+  }).filter(Boolean);
+  const seen = new Set(preferred.map(x => `${x.cat.id}/${x.course.id}`));
+  const fallback = collectCourseEntries().filter(x => !seen.has(`${x.cat.id}/${x.course.id}`));
+  const recent = [...preferred, ...fallback].slice(0, 4);
+  container.innerHTML = recent.length
+    ? recent.map(x => courseCardHTML(x.cat, x.course, x.pct)).join('')
+    : '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">Chưa có khóa học nào.</div>';
+
+  // Activity
+  const acts = [
+    { icon: '✅', bg: '#dcfce7', text: 'Hoàn thành bài: Customer Journey trong môi trường số', time: '2 giờ trước' },
+    { icon: '▶️', bg: '#e0f2fe', text: 'Đang học: Digital Marketing A-Z', time: '3 giờ trước' },
+    { icon: '⭐', bg: '#fef3c7', text: 'Hoàn thành module: Marketing Cơ Bản — Module 1', time: 'Hôm qua' },
+    { icon: '📝', bg: '#f3e8ff', text: 'Làm quiz: Nền tảng Marketing — Đạt 85/100', time: '2 ngày trước' },
+    { icon: '🆕', bg: '#e0f2fe', text: 'Đăng ký nhóm nội dung: Đầu tư cơ bản...', time: '3 ngày trước' },
+  ];
+  document.getElementById('activity-list').innerHTML = acts.map(a => `
+    <div class="activity-item">
+      <div class="act-icon" style="background:${a.bg};">${a.icon}</div>
+      <div class="act-info">
+        <p>${a.text}</p>
+        <span>${a.time}</span>
+      </div>
+    </div>`).join('');
+}
+
+function courseCardHTML(cat, course, pct) {
+  if (!cat || !course) return '';
+  const avatarColors = ['#0ea5e9','#8b5cf6','#10b981','#f59e0b','#ef4444'];
+  const avHTML = [0,1,2].map((_, i) => `<div class="av" style="background:${avatarColors[i % avatarColors.length]};">${String.fromCharCode(65+i)}</div>`).join('');
+  return `<div class="course-card" onclick="openCourse('${cat.id}','${course.id}')">
+    <div class="course-icon" style="background:${cat.bg};">${course.icon}</div>
+    <div class="course-name">${esc(course.name)}</div>
+    <div class="course-meta">
+      <span style="width:12px; height:12px; border-radius:50%; background:${cat.bg}; border:2px solid ${cat.color}; display:inline-block;"></span>
+      ${esc(cat.name)} · ${esc(course.level)}
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <div class="progress-text"><span>Tiến độ</span><strong>${pct}%</strong></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px;">
+      <div class="member-avatars">${avHTML}<div class="av" style="background:#94a3b8; font-size:9px;">+5</div></div>
+      <span style="font-size:11px; color:#94a3b8;">${course.lessons_total || countCourseLessons(course)} bài học</span>
+    </div>
+  </div>`;
+}
+
+function renderLibrary(catId) {
+  const activeCat = catId ? DATA.categories.find(c => c.id === catId) : null;
+  const cats = activeCat ? [activeCat] : DATA.categories;
+  let allCourses = collectCourseEntries(cats);
+
+  const titleEl = document.getElementById('lib-title');
+  const subEl = document.getElementById('lib-subtitle');
+  if (titleEl) titleEl.textContent = activeCat ? `${activeCat.icon || ''} ${activeCat.name}`.trim() : 'Thư viện kiến thức';
+  if (subEl) subEl.textContent = activeCat
+    ? `${allCourses.length} nhóm nội dung thuộc danh mục ${activeCat.name}`
+    : 'Khám phá toàn bộ nội dung học tập';
+
+  let filtered = allCourses;
+  if (state.libFilter === 'inprogress') filtered = allCourses.filter(x => x.pct > 0 && x.pct < 100);
+  else if (state.libFilter === 'done') filtered = allCourses.filter(x => x.pct === 100);
+
+  document.getElementById('fc-all').textContent = allCourses.length;
+  document.getElementById('fc-ip').textContent = allCourses.filter(x => x.pct > 0 && x.pct < 100).length;
+  document.getElementById('fc-done').textContent = allCourses.filter(x => x.pct === 100).length;
+
+  document.getElementById('lib-courses').innerHTML = filtered.length
+    ? filtered.map(x => courseCardHTML(x.cat, x.course, x.pct)).join('')
+    : '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">Không có khóa học nào.</div>';
+}
+
+function renderCourseDetail(cat, course) {
+  // Header
+  const pct = getCourseProgress(cat.id, course.id);
+  const totalLessons = course.lessons_total || countCourseLessons(course);
+  const chapters = course.chapters || [];
+  const doneCount = Math.round(totalLessons * pct / 100);
+  document.getElementById('course-header').innerHTML = `
+    <div class="course-detail-icon" style="background:${cat.bg};">${course.icon}</div>
+    <div class="course-detail-info" style="flex:1;">
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <span style="background:${cat.bg}; color:${cat.color}; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px;">${esc(cat.name)}</span>
+        <span style="background:#f1f5f9; color:#64748b; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px;">${esc(course.level)}</span>
+      </div>
+      <h2>${esc(course.name)}</h2>
+      <p>${esc(course.desc)}</p>
+      <div class="course-stats">
+        <div class="cstat">📚 <span>${chapters.length} chương</span></div>
+        <div class="cstat">🎯 <span>${totalLessons} bài học</span></div>
+        <div class="cstat">⏱ <span>${esc(course.duration)}</span></div>
+      </div>
+    </div>
+    <div style="text-align:center; flex-shrink:0;">
+      <div style="font-size:36px; font-weight:800; color:${cat.color};">${pct}%</div>
+      <div style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Hoàn thành</div>
+      <div class="progress-bar-wrap" style="width:120px;"><div class="progress-bar" style="width:${pct}%"></div></div>
+    </div>`;
+
+  document.getElementById('course-lesson-count').textContent = `${doneCount}/${totalLessons} bài đã học`;
+
+  // Chapters
+  const chapColors = [cat.color, '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  document.getElementById('chapters-list').innerHTML = chapters.length ? chapters.map((chap, ci) => {
+    const col = chapColors[ci % chapColors.length];
+    const lessonsHTML = (chap.lessons || []).map(lesson => lessonHTML(lesson)).join('');
+    return `<div class="chapter-block">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <div class="chapter-num" style="background:${col};">${ci+1}</div>
+        <div class="chapter-title">
+          <h4>${esc(chap.title)}</h4>
+          <p>${esc(chap.desc)}</p>
+        </div>
+        <svg class="chapter-chevron" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="chapter-body ${ci === 0 ? 'open' : ''}">
+        <div class="lessons-wrap">${lessonsHTML}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="background:white;border-radius:14px;padding:28px;text-align:center;color:#94a3b8;">Khóa học này chưa có chương.</div>';
+
+  // Progress detail
+  document.getElementById('course-progress-detail').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:13px; color:#374151;">Tổng tiến độ</span>
+        <strong style="font-size:13px; color:${cat.color};">${pct}%</strong>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    </div>
+    ${chapters.map((chap, i) => {
+      const cpct = Math.max(0, pct - i * 20);
+      const cc = Math.min(100, cpct);
+      return `<div style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:#64748b;">Chương ${i+1}</span>
+          <span style="font-size:12px; color:#94a3b8;">${cc}%</span>
+        </div>
+        <div class="progress-bar-wrap" style="height:4px;"><div class="progress-bar" style="width:${cc}%"></div></div>
+      </div>`;
+    }).join('')}`;
+
+  // Course info panel
+  document.getElementById('course-info-panel').innerHTML = `
+    <div style="font-size:13px; color:#374151; display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Danh mục</span><span>${esc(cat.name)}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Trình độ</span><span>${esc(course.level)}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Thời lượng</span><span>${esc(course.duration)}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Số bài học</span><span>${totalLessons} bài</span></div>
+      <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Số chương</span><span>${chapters.length} chương</span></div>
+    </div>`;
+}
+
+function lessonHTML(lesson) {
+  const hasSubs = lesson.subs && lesson.subs.length > 0;
+  const subHTML = hasSubs ? lesson.subs.map(s => `
+    <div class="sub-lesson-item" onclick="openSubLessonReader('${jsStr(s.id)}')">
+      <div class="sub-check ${s.done ? 'done' : ''}" id="sch-${s.id}" onclick="event.stopPropagation(); toggleSubLesson('${jsStr(s.id)}', this)">
+        ${s.done ? '<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+      </div>
+      <span class="sub-title">${esc(s.title)}</span>
+      <span class="sub-duration">${esc(s.duration)}</span>
+    </div>`).join('') : '';
+
+  return `<div>
+    <div class="lesson-item" onclick="openLessonReader('${jsStr(lesson.id)}')">
+      <div class="lesson-check ${lesson.done ? 'done' : ''}" id="lch-${lesson.id}" onclick="event.stopPropagation(); toggleLesson('${jsStr(lesson.id)}', this)">
+        ${lesson.done ? '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+      </div>
+      <span class="lesson-title">${esc(lesson.title)}</span>
+      <span class="lesson-duration">${esc(lesson.duration)}</span>
+      ${hasSubs ? `<div class="lesson-expand-btn" id="lexp-${lesson.id}" onclick="event.stopPropagation(); toggleSubList('${jsStr(lesson.id)}')">
+        <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>` : ''}
+    </div>
+    ${hasSubs ? `<div class="sub-lessons" id="subs-${lesson.id}">${subHTML}</div>` : ''}
+  </div>`;
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function toggleChapter(el) {
+  const body = el.nextElementSibling;
+  const chev = el.querySelector('.chapter-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+function toggleSubList(lessonId) {
+  const subs = document.getElementById('subs-' + lessonId);
+  const btn = document.getElementById('lexp-' + lessonId);
+  if (!subs) return;
+  const isOpen = subs.classList.contains('open');
+  subs.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+function findActiveCourseContext() {
+  const activeCat = DATA.categories.find(cat => cat.id === state.activeCat);
+  const activeCourse = activeCat?.courses?.find(course => course.id === state.activeCourse);
+  return activeCat && activeCourse ? { cat: activeCat, course: activeCourse } : null;
+}
+
+function findLessonContext(lessonId) {
+  const active = findActiveCourseContext();
+  const cats = active ? [{ cat: active.cat, courses: [active.course] }] : DATA.categories.map(cat => ({ cat, courses: cat.courses || [] }));
+  for (const bucket of cats) {
+    for (const course of bucket.courses || []) {
+      for (const chap of course.chapters || []) {
+        const lesson = (chap.lessons || []).find(l => l.id === lessonId);
+        if (lesson) return { cat: bucket.cat, course, chap, lesson };
+      }
+    }
+  }
+  return null;
+}
+
+function findSubLessonContext(subId) {
+  const active = findActiveCourseContext();
+  const cats = active ? [{ cat: active.cat, courses: [active.course] }] : DATA.categories.map(cat => ({ cat, courses: cat.courses || [] }));
+  for (const bucket of cats) {
+    for (const course of bucket.courses || []) {
+      for (const chap of course.chapters || []) {
+        for (const lesson of chap.lessons || []) {
+          const sub = (lesson.subs || []).find(s => s.id === subId);
+          if (sub) return { cat: bucket.cat, course, chap, lesson, sub };
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function htmlToPlainText(html) {
+  return String(html || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function hasUsefulLessonContent(html) {
+  const text = htmlToPlainText(html).toLowerCase();
+  if (!text) return false;
+  return !['nội dung bài học...', 'noi dung bai hoc...', 'nội dung bên trong...', 'noi dung ben trong...'].includes(text);
+}
+
+function renderReaderHTML(html) {
+  const host = document.createElement('div');
+  host.innerHTML = normalizeEditorHTML(html);
+  host.querySelectorAll('.ed-html').forEach(el => {
+    const frag = document.createElement('div');
+    try { frag.innerHTML = decodeURIComponent(el.dataset.raw || ''); }
+    catch(e) { frag.textContent = el.textContent; }
+    el.replaceWith(...Array.from(frag.childNodes));
+  });
+  return host.innerHTML;
+}
+
+function fallbackLessonArticle(ctx) {
+  const { cat, course, chap, lesson } = ctx;
+  return `
+    <h1>${esc(lesson.title)}</h1>
+    <p>Bài học này thuộc chương <strong>${esc(chap.title)}</strong> trong khóa <strong>${esc(course.name)}</strong>. Nội dung tập trung vào cách hiểu đúng chủ đề, cách áp dụng vào tình huống thực tế và các điểm cần ghi nhớ khi triển khai.</p>
+    <h2>Mục tiêu sau bài học</h2>
+    <ul>
+      <li>Nắm được ý chính của <strong>${esc(lesson.title)}</strong> trong bối cảnh ${esc(cat.name)}.</li>
+      <li>Biết cách nhận diện vấn đề, chọn hướng xử lý và tránh các lỗi phổ biến.</li>
+      <li>Có một checklist ngắn để áp dụng ngay vào công việc hoặc dự án cá nhân.</li>
+    </ul>
+    <h2>Nội dung chính</h2>
+    <p>Trước hết, hãy xác định vấn đề mà bài học đang giải quyết. Với chủ đề này, người học cần nhìn từ góc độ hệ thống: mục tiêu là gì, dữ liệu hoặc tín hiệu nào cần quan sát, và kết quả mong muốn phải đo bằng tiêu chí nào.</p>
+    <p>Khi triển khai, hãy chia nhỏ thành ba bước: phân tích hiện trạng, chọn một hành động ưu tiên, sau đó đo phản hồi. Cách làm này giúp tránh việc học lý thuyết rời rạc nhưng không biến thành hành động cụ thể.</p>
+    <blockquote>Gợi ý: sau khi đọc xong, hãy viết lại một ví dụ thực tế của riêng bạn trong 3-5 dòng. Đây là cách nhanh nhất để biến bài học thành kiến thức dùng được.</blockquote>
+    <h2>Cách áp dụng</h2>
+    <ol>
+      <li>Ghi lại một tình huống thật liên quan đến chủ đề bài học.</li>
+      <li>Xác định một chỉ số hoặc dấu hiệu cho biết bạn đang làm đúng.</li>
+      <li>Thử một thay đổi nhỏ trong 24-48 giờ và ghi nhận kết quả.</li>
+    </ol>
+    <h2>Bài tập nhanh</h2>
+    <p>Thời lượng gợi ý: <strong>${esc(lesson.duration || '15p')}</strong>. Hãy tóm tắt bài học thành 3 ý chính, sau đó chọn 1 ý để áp dụng ngay trong tuần này.</p>
+  `;
+}
+
+function fallbackSubLessonArticle(ctx) {
+  const { cat, course, chap, lesson, sub } = ctx;
+  return `
+    <h1>${esc(sub.title)}</h1>
+    <p>Đây là phần mở rộng của bài <strong>${esc(lesson.title)}</strong>, thuộc chương <strong>${esc(chap.title)}</strong>. Nội dung giúp bạn đi sâu hơn vào một ý nhỏ để dễ hiểu và dễ áp dụng.</p>
+    <h2>Ý chính cần nắm</h2>
+    <p>Hãy xem phần này như một lát cắt thực hành của chủ đề <strong>${esc(cat.name)}</strong>. Mục tiêu không chỉ là ghi nhớ định nghĩa, mà là biết khi nào nên dùng, dùng để làm gì và dấu hiệu nào cho thấy bạn đang áp dụng đúng.</p>
+    <h2>Checklist thực hành</h2>
+    <ul>
+      <li>Viết lại khái niệm bằng ngôn ngữ của bạn.</li>
+      <li>Tìm một ví dụ trong khóa <strong>${esc(course.name)}</strong> hoặc trong công việc hiện tại.</li>
+      <li>Ghi một hành động nhỏ có thể làm ngay sau khi học xong.</li>
+    </ul>
+    <blockquote>Thời lượng gợi ý: ${esc(sub.duration || '5p')}. Học chậm ở phần nhỏ này sẽ giúp phần bài chính dễ nhớ hơn.</blockquote>
+  `;
+}
+
+function openLessonReader(lessonId) {
+  const ctx = findLessonContext(lessonId);
+  if (!ctx) { showToast('Không tìm thấy bài học', true); return; }
+  state.readerLesson = { kind: 'lesson', lessonId };
+  const body = hasUsefulLessonContent(ctx.lesson.content) ? renderReaderHTML(ctx.lesson.content) : fallbackLessonArticle(ctx);
+  byId('lesson-reader-meta').textContent = `${ctx.cat.name} > ${ctx.course.name} > ${ctx.chap.title} · ${ctx.lesson.duration || ''}`;
+  byId('lesson-reader-title').textContent = ctx.lesson.title;
+  byId('lesson-reader-body').innerHTML = body;
+  byId('lesson-reader-status').textContent = ctx.lesson.done ? 'Bài học đã hoàn thành' : 'Đang xem bài học';
+  byId('lesson-reader-modal').style.display = 'flex';
+}
+
+function openSubLessonReader(subId) {
+  const ctx = findSubLessonContext(subId);
+  if (!ctx) { showToast('Không tìm thấy nội dung phụ', true); return; }
+  state.readerLesson = { kind: 'sub', subId };
+  const body = hasUsefulLessonContent(ctx.sub.content) ? renderReaderHTML(ctx.sub.content) : fallbackSubLessonArticle(ctx);
+  byId('lesson-reader-meta').textContent = `${ctx.cat.name} > ${ctx.course.name} > ${ctx.chap.title} > ${ctx.lesson.title} · ${ctx.sub.duration || ''}`;
+  byId('lesson-reader-title').textContent = ctx.sub.title;
+  byId('lesson-reader-body').innerHTML = body;
+  byId('lesson-reader-status').textContent = ctx.sub.done ? 'Nội dung phụ đã hoàn thành' : 'Đang xem nội dung phụ';
+  byId('lesson-reader-modal').style.display = 'flex';
+}
+
+function closeLessonReader() {
+  byId('lesson-reader-modal').style.display = 'none';
+}
+
+function doneCheckSVG(size) {
+  return `<svg width="${size}" height="${size}" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+}
+
+function setLessonDone(lessonId, done) {
+  const ctx = findLessonContext(lessonId);
+  if (ctx) ctx.lesson.done = done;
+  const check = document.getElementById('lch-' + lessonId);
+  if (check) {
+    check.classList.toggle('done', done);
+    check.innerHTML = done ? doneCheckSVG(12) : '';
+  }
+}
+
+function setSubLessonDone(subId, done) {
+  const ctx = findSubLessonContext(subId);
+  if (ctx) ctx.sub.done = done;
+  const check = document.getElementById('sch-' + subId);
+  if (check) {
+    check.classList.toggle('done', done);
+    check.innerHTML = done ? doneCheckSVG(10) : '';
+  }
+}
+
+function markReaderLessonDone() {
+  if (!state.readerLesson) return;
+  if (state.readerLesson.kind === 'lesson') setLessonDone(state.readerLesson.lessonId, true);
+  if (state.readerLesson.kind === 'sub') setSubLessonDone(state.readerLesson.subId, true);
+  byId('lesson-reader-status').textContent = 'Đã đánh dấu hoàn thành';
+  showToast('Đã đánh dấu hoàn thành!');
+}
+
+function toggleLesson(lessonId, el) {
+  const check = document.getElementById('lch-' + lessonId);
+  if (!check) return;
+  const isDone = check.classList.contains('done');
+  setLessonDone(lessonId, !isDone);
+  if (!isDone) showToast('Đã đánh dấu hoàn thành! 🎉');
+}
+
+function toggleSubLesson(subId, el) {
+  const check = document.getElementById('sch-' + subId);
+  if (!check) return;
+  const isDone = check.classList.contains('done');
+  setSubLessonDone(subId, !isDone);
+  if (!isDone) showToast('Hoàn thành! Tiếp tục nhé 💪');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ============================================================
+// ENTER key on auth
+// ============================================================
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const auth = document.getElementById('auth-page');
+  if (!auth || getComputedStyle(auth).display === 'none') return;
+  if (!document.getElementById('form-login').classList.contains('hidden')) doLogin();
+  else doRegister();
+});
+
+// Init
+window.addEventListener('load', () => {
+  ensureAdminBoot();
+  // Check saved session
+  const saved = sessionStorage.getItem('lh_user');
+  if (saved) {
+    try { loginSuccess(JSON.parse(saved)); return; } catch(e) {}
+  }
+});
+
+// ============================================================
+
+// ============================================================
+// CODEX ADMIN EXTENSIONS
+// ============================================================
+let lhBooted = false;
+const ADMIN_VIEW_IDS = ['dashboard','library','course','admin-dash','admin-content','admin-editor','admin-members','admin-settings'];
+const DEFAULT_SITE_SETTINGS = {
+  brandName: 'LearnHub',
+  tagline: 'Nền tảng học tập',
+  favicon: '📚',
+  logo: '',
+  showSidebarBrandName: true,
+  primaryColor: '#0ea5e9',
+  secondaryColor: '#6366f1',
+  darkMode: false,
+  headingFont: 'Inter',
+  bodyFont: 'Inter',
+  announcementEnabled: false,
+  announcementText: '',
+  announcementLink: '',
+  announcementBg: '#0ea5e9',
+  seoTitle: '',
+  seoDescription: '',
+  seoKeywords: '',
+  pushEnabled: false,
+  pushNewContent: true,
+  pushDeadline: true,
+  affiliateEnabled: false,
+  affiliateCommission: '20%',
+  affiliateDescription: '',
+  popupEnabled: false,
+  popupKicker: 'Thông báo',
+  popupImage: '',
+  popupTitle: '',
+  popupText: '',
+  popupCtaText: 'Xem ngay',
+  popupUrl: '',
+  popupFrequency: 'session',
+  overviewLinks: []
+};
+Object.assign(state, { adminSelection:null, editingLesson:null, readerLesson:null, adminOpen:{}, adminTreeQuery:'', editorTreeQuery:'', memberImportRows:[], lessonImportRows:[], editorRange:null, lessonDrag:null, siteSettings:null, editingOverviewLink:null });
+
+function byId(id){ return document.getElementById(id); }
+function esc(v){ return String(v ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function jsStr(v){ return String(v ?? '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r/g,'\\r').replace(/\n/g,'\\n'); }
+function cleanText(v){ return String(v ?? '').trim(); }
+function slugify(text){ return String(text || 'item').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\u0111/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,34) || 'item'; }
+function newId(prefix,name){ return `${prefix}-${slugify(name)}-${Date.now().toString(36).slice(-5)}`; }
+function nowISO(){ return new Date().toISOString(); }
+function isAdminUser(user){ return !!user && (user.isAdmin === true || String(user.email).toLowerCase() === 'admin@learnhub.com'); }
+function colorToSoftBg(color){ const hex=String(color||'#0ea5e9').replace('#',''); if(hex.length!==6) return '#e0f2fe'; const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16); return `rgba(${r},${g},${b},0.12)`; }
+function xmlEsc(v){ return String(v ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function normalizeSiteSettings(raw){
+  const s={...DEFAULT_SITE_SETTINGS,...(raw||{})};
+  s.brandName=cleanText(s.brandName)||DEFAULT_SITE_SETTINGS.brandName;
+  s.tagline=cleanText(s.tagline)||DEFAULT_SITE_SETTINGS.tagline;
+  s.favicon=cleanText(s.favicon)||DEFAULT_SITE_SETTINGS.favicon;
+  s.logo=cleanText(s.logo);
+  s.showSidebarBrandName=s.showSidebarBrandName!==false;
+  s.primaryColor=/^#[0-9a-f]{6}$/i.test(s.primaryColor||'')?s.primaryColor:DEFAULT_SITE_SETTINGS.primaryColor;
+  s.secondaryColor=/^#[0-9a-f]{6}$/i.test(s.secondaryColor||'')?s.secondaryColor:DEFAULT_SITE_SETTINGS.secondaryColor;
+  s.darkMode=s.darkMode===true;
+  s.headingFont=cleanText(s.headingFont)||DEFAULT_SITE_SETTINGS.headingFont;
+  s.bodyFont=cleanText(s.bodyFont)||DEFAULT_SITE_SETTINGS.bodyFont;
+  s.announcementEnabled=s.announcementEnabled===true;
+  s.announcementText=cleanText(s.announcementText);
+  s.announcementLink=cleanText(s.announcementLink);
+  s.announcementBg=/^#[0-9a-f]{6}$/i.test(s.announcementBg||'')?s.announcementBg:DEFAULT_SITE_SETTINGS.announcementBg;
+  s.seoTitle=cleanText(s.seoTitle);
+  s.seoDescription=cleanText(s.seoDescription);
+  s.seoKeywords=cleanText(s.seoKeywords);
+  s.pushEnabled=s.pushEnabled===true;
+  s.pushNewContent=s.pushNewContent!==false;
+  s.pushDeadline=s.pushDeadline!==false;
+  s.affiliateEnabled=s.affiliateEnabled===true;
+  s.affiliateCommission=cleanText(s.affiliateCommission)||DEFAULT_SITE_SETTINGS.affiliateCommission;
+  s.affiliateDescription=cleanText(s.affiliateDescription);
+  s.popupEnabled=s.popupEnabled===true;
+  s.popupKicker=cleanText(s.popupKicker)||DEFAULT_SITE_SETTINGS.popupKicker;
+  s.popupImage=cleanText(s.popupImage);
+  s.popupTitle=cleanText(s.popupTitle);
+  s.popupText=cleanText(s.popupText);
+  s.popupCtaText=cleanText(s.popupCtaText)||DEFAULT_SITE_SETTINGS.popupCtaText;
+  s.popupUrl=cleanText(s.popupUrl);
+  s.popupFrequency=['always','session'].includes(s.popupFrequency)?s.popupFrequency:DEFAULT_SITE_SETTINGS.popupFrequency;
+  s.overviewLinks=Array.isArray(s.overviewLinks)?s.overviewLinks.map((link,i)=>({
+    id: cleanText(link.id)||newId('link',link.name||i),
+    name: cleanText(link.name),
+    icon: cleanText(link.icon)||'🔗',
+    url: cleanText(link.url),
+    target: link.target==='_self'?'_self':'_blank'
+  })).filter(link=>link.name&&link.url):[];
+  return s;
+}
+function loadSiteSettings(){
+  try{ return normalizeSiteSettings(JSON.parse(localStorage.getItem('lh_site_settings')||'{}')); }
+  catch(e){ return normalizeSiteSettings({}); }
+}
+function getSiteSettings(){ if(!state.siteSettings) state.siteSettings=loadSiteSettings(); return state.siteSettings; }
+function saveSiteSettings(){
+  state.siteSettings=normalizeSiteSettings(state.siteSettings);
+  localStorage.setItem('lh_site_settings', JSON.stringify(state.siteSettings));
+  applySiteSettings();
+}
+function fontValue(name){
+  const map={
+    'Inter': "'Inter', sans-serif",
+    'Arial': 'Arial, sans-serif',
+    'Georgia': 'Georgia, serif',
+    'Times New Roman': "'Times New Roman', serif",
+    'Fira Code': "'Fira Code', monospace"
+  };
+  return map[name]||map.Inter;
+}
+function setMetaContent(id,value){
+  const meta=byId(id);
+  if(!meta) return;
+  if(meta.setAttribute) meta.setAttribute('content', value||'');
+  else meta.content=value||'';
+}
+function faviconHref(value){
+  const v=cleanText(value)||DEFAULT_SITE_SETTINGS.favicon;
+  if(/^(https?:|data:|blob:)/i.test(v)||/[/.]/.test(v)) return v;
+  const emoji=[...v][0]||DEFAULT_SITE_SETTINGS.favicon;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#e0f2fe"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="38">${xmlEsc(emoji)}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function applySiteSettings(){
+  const s=getSiteSettings();
+  const title=`${s.brandName} — ${s.tagline}`;
+  document.title=s.seoTitle||title;
+  document.documentElement.style.setProperty('--primary',s.primaryColor);
+  document.documentElement.style.setProperty('--secondary',s.secondaryColor);
+  document.documentElement.style.setProperty('--font-body',fontValue(s.bodyFont));
+  document.documentElement.style.setProperty('--font-heading',fontValue(s.headingFont));
+  document.body.classList.toggle('theme-dark',!!s.darkMode);
+  setMetaContent('seo-description',s.seoDescription);
+  setMetaContent('seo-keywords',s.seoKeywords);
+  const favicon=byId('site-favicon'); if(favicon) favicon.href=faviconHref(s.favicon);
+  const sidebarBrand=byId('sidebar-brand'); if(sidebarBrand){ sidebarBrand.textContent=s.brandName; sidebarBrand.style.display=s.showSidebarBrandName?'':'none'; }
+  const sidebarTagline=byId('sidebar-tagline'); if(sidebarTagline) sidebarTagline.textContent=s.tagline;
+  const authBrand=byId('auth-brand'); if(authBrand) authBrand.textContent=s.brandName;
+  const authTagline=byId('auth-tagline'); if(authTagline) authTagline.textContent=s.tagline;
+  [sidebarBrand,authBrand].forEach(el=>{
+    if(!el) return;
+    el.style.backgroundImage=`linear-gradient(90deg,${s.primaryColor},${s.secondaryColor})`;
+    el.style.backgroundClip='text';
+    el.style.webkitBackgroundClip='text';
+    el.style.webkitTextFillColor='transparent';
+    el.style.color='transparent';
+  });
+  const sidebarLogo=byId('sidebar-logo-img'), authLogo=byId('auth-logo-img');
+  [sidebarLogo,authLogo].forEach(img=>{
+    if(!img) return;
+    img.src=s.logo||'';
+    img.style.display=s.logo?'block':'none';
+  });
+  renderAnnouncement();
+  renderOverviewLinks();
+}
+function renderAnnouncement(){
+  const bar=byId('site-announcement');
+  if(!bar) return;
+  const s=getSiteSettings();
+  if(!s.announcementEnabled||!s.announcementText){
+    bar.style.display='none';
+    bar.innerHTML='';
+    return;
+  }
+  bar.style.display='flex';
+  bar.style.background=`linear-gradient(90deg,${s.announcementBg},${s.secondaryColor})`;
+  bar.innerHTML=`<span>${esc(s.announcementText)}</span>${s.announcementLink?`<a href="${esc(s.announcementLink)}" target="_blank" rel="noopener">Xem thêm</a>`:''}`;
+}
+function maybeShowMarketingPopup(settings=null){
+  const s=settings||getSiteSettings();
+  if(!s.popupEnabled||(!s.popupTitle&&!s.popupText)) return;
+  if(s.popupFrequency==='session'&&sessionStorage.getItem('lh_marketing_popup_seen')==='1') return;
+  const modal=byId('marketing-popup-modal');
+  if(!modal) return;
+  const image=byId('marketing-popup-image');
+  if(image){
+    image.src=s.popupImage||'';
+    image.style.display=s.popupImage?'block':'none';
+  }
+  byId('marketing-popup-kicker').textContent=s.popupKicker||'Thông báo';
+  byId('marketing-popup-title').textContent=s.popupTitle||'Thông báo mới';
+  byId('marketing-popup-text').textContent=s.popupText||'';
+  const cta=byId('marketing-popup-cta');
+  if(s.popupUrl){
+    cta.href=s.popupUrl;
+    cta.textContent=s.popupCtaText||'Xem ngay';
+    cta.style.display='inline-flex';
+  } else cta.style.display='none';
+  modal.style.display='flex';
+  if(s.popupFrequency==='session') sessionStorage.setItem('lh_marketing_popup_seen','1');
+}
+function closeMarketingPopup(){ const modal=byId('marketing-popup-modal'); if(modal) modal.style.display='none'; }
+function loadContentFromStorage(){ const raw=localStorage.getItem('lh_content'); if(!raw) return; try{ const saved=JSON.parse(raw); if(saved && Array.isArray(saved.categories)) DATA=saved; }catch(e){ console.warn('Cannot read lh_content', e); } }
+function saveContentToStorage(){ syncAllCourseMeta(); localStorage.setItem('lh_content', JSON.stringify(DATA)); }
+function seedAdminUser(){ const users=getUsers(); const email='admin@learnhub.com'; const admin=users.find(u=>String(u.email).toLowerCase()===email); if(admin){ admin.name=admin.name||'Admin'; admin.pass='admin123'; admin.isAdmin=true; admin.createdAt=admin.createdAt||nowISO(); } else users.push({name:'Admin',email,pass:'admin123',isAdmin:true,createdAt:nowISO()}); saveUsers(users); }
+function ensureAdminBoot(){ if(lhBooted) return; state.siteSettings=loadSiteSettings(); applySiteSettings(); loadContentFromStorage(); syncAllCourseMeta(); seedAdminUser(); lhBooted=true; }
+function updateAdminNav(){ const nav=byId('admin-nav'); if(nav) nav.style.display=isAdminUser(state.user)?'block':'none'; const role=byId('sidebar-role'); if(role) role.textContent=isAdminUser(state.user)?'Quản trị viên':'Học viên'; }
+
+function doLogin(){ ensureAdminBoot(); const email=byId('login-email').value.trim().toLowerCase(); const pass=byId('login-pass').value; if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); let user=users.find(u=>String(u.email).toLowerCase()===email); if(!user){ user={name:email.split('@')[0],email,pass,isAdmin:email==='admin@learnhub.com',createdAt:nowISO()}; users.push(user); saveUsers(users); } else if(user.pass!==pass){ showToast('Mật khẩu không đúng',true); return; } if(email==='admin@learnhub.com' && !user.isAdmin){ user.isAdmin=true; saveUsers(users); } loginSuccess(user); }
+function doRegister(){ ensureAdminBoot(); const name=byId('reg-name').value.trim(), email=byId('reg-email').value.trim().toLowerCase(), pass=byId('reg-pass').value; if(!name){showToast('Vui lòng nhập tên',true);return;} if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); if(users.find(u=>String(u.email).toLowerCase()===email)){showToast('Email đã được sử dụng',true);return;} const user={name,email,pass,isAdmin:false,createdAt:nowISO()}; users.push(user); saveUsers(users); loginSuccess(user); }
+function loginSuccess(user){ ensureAdminBoot(); state.user=user; sessionStorage.setItem('lh_user', JSON.stringify(user)); byId('auth-page').style.display='none'; byId('app').style.display='flex'; const init=(user.name||user.email||'U').charAt(0).toUpperCase(); byId('sidebar-avatar').textContent=init; byId('topbar-avatar').textContent=init; byId('sidebar-name').textContent=user.name||user.email; byId('topbar-name').textContent=user.name||user.email; const hr=new Date().getHours(); const greet=hr<12?'Chào buổi sáng':hr<17?'Chào buổi chiều':'Chào buổi tối'; byId('dash-greeting').textContent=greet+', '+(user.name||user.email).split(' ').pop()+'!'; updateAdminNav(); buildCategorySidebar(); renderDashboard(); showView('dashboard'); showToast('Chào mừng '+(user.name||user.email)+'!'); maybeShowMarketingPopup(); }
+function doLogout(){ state.user=null; sessionStorage.removeItem('lh_user'); byId('app').style.display='none'; byId('auth-page').style.display='flex'; updateAdminNav(); }
+function showView(view){ ensureAdminBoot(); if(view.startsWith('admin') && !isAdminUser(state.user)){ showToast('Cần quyền admin để truy cập',true); view='dashboard'; } state.prevView=state.view; state.view=view; ADMIN_VIEW_IDS.forEach(v=>{ const el=byId('view-'+v); if(el) el.style.display=v===view?'block':'none'; }); updateActiveNav(view); if(view==='library') renderLibrary(state.activeCat); if(view==='admin-dash') renderAdminDash(); if(view==='admin-content') renderAdminContent(); if(view==='admin-members') renderAdminMembers(); if(view==='admin-editor') renderEditor(); if(view==='admin-settings') renderAdminSettings(); }
+function updateActiveNav(view){ document.querySelectorAll('.nav-item,.ni').forEach(el=>el.classList.remove('active')); const nav=byId('nav-'+view); if(nav) nav.classList.add('active'); }
+function openLibrary(){
+  state.activeCat=null;
+  state.activeCourse=null;
+  document.querySelectorAll('.cat-item,.nav-item').forEach(el=>el.classList.remove('active'));
+  showView('library');
+  renderLibrary(null);
+}
+function renderOverviewLinks(){
+  const host=byId('overview-links');
+  if(!host) return;
+  const links=getSiteSettings().overviewLinks||[];
+  host.innerHTML=links.map(link=>`<div class="nav-item" onclick="openOverviewLink('${jsStr(link.id)}')" id="nav-overview-link-${esc(link.id)}"><span>${esc(link.icon||'🔗')}</span> ${esc(link.name)}</div>`).join('');
+}
+function openOverviewLink(linkId){
+  const link=(getSiteSettings().overviewLinks||[]).find(item=>item.id===linkId);
+  if(!link){showToast('Không tìm thấy link',true);return;}
+  if(!link.url){showToast('Link chưa có URL',true);return;}
+  window.open(link.url, link.target==='_self'?'_self':'_blank', 'noopener');
+}
+function openCategory(catId){ state.activeCat=catId; showView('library'); document.querySelectorAll('.cat-item,.nav-item').forEach(el=>el.classList.remove('active')); const el=byId('catlist-'+catId); if(el) el.classList.add('active'); const nav=byId('nav-cat-'+catId); if(nav) nav.classList.add('active'); renderLibrary(catId); }
+function filterLib(el,f){ state.libFilter=f; document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('active')); if(el) el.classList.add('active'); renderLibrary(state.activeCat); }
+function showToast(msg,isError){ const t=byId('toast'); t.textContent=msg; t.className='toast'+((isError===true||isError==='err')?' error':''); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+
+function findCat(catId){ return DATA.categories.find(c=>c.id===catId); }
+function findCourse(catId,courseId){ return findCat(catId)?.courses?.find(c=>c.id===courseId); }
+function findChapter(catId,courseId,chapId){ return findCourse(catId,courseId)?.chapters?.find(ch=>ch.id===chapId); }
+function findLesson(catId,courseId,chapId,lessonId){ return findChapter(catId,courseId,chapId)?.lessons?.find(l=>l.id===lessonId); }
+function countCourseLessons(course){ return (course.chapters||[]).reduce((sum,ch)=>sum+(ch.lessons||[]).length,0); }
+function syncCourseMeta(course){ course.lessons_total=countCourseLessons(course); return course; }
+function syncAllCourseMeta(){ DATA.categories.forEach(cat=>(cat.courses||[]).forEach(syncCourseMeta)); }
+function refreshContentUI(skipForm){ saveContentToStorage(); buildCategorySidebar(); if(state.view==='admin-content'&&!skipForm) renderAdminContent(); if(state.view==='admin-editor') renderEditorTree(); if(state.view==='admin-dash') renderAdminDash(); if(state.view==='library') renderLibrary(state.activeCat); }
+function addTopic(name,icon,color){
+  name=cleanText(name); if(!name){showToast('Tên topic không được trống',true);return null;}
+  const finalColor=/^#[0-9a-f]{6}$/i.test(color||'')?color:'#0ea5e9';
+  const cat={id:newId('cat',name),name,icon:cleanText(icon)||'📚',color:finalColor,bg:colorToSoftBg(finalColor),gradient:`linear-gradient(135deg,${finalColor},#38bdf8)`,courses:[]};
+  DATA.categories.push(cat); state.adminSelection={kind:'topic',catId:cat.id}; refreshContentUI(); return cat;
+}
+function editTopic(catId,fields){
+  const cat=findCat(catId); if(!cat)return;
+  const name=cleanText(fields.name); if(!name){showToast('Tên topic không được trống',true);return;}
+  const color=/^#[0-9a-f]{6}$/i.test(fields.color||'')?fields.color:cat.color;
+  Object.assign(cat,{name,icon:cleanText(fields.icon)||cat.icon,color,bg:colorToSoftBg(color),gradient:`linear-gradient(135deg,${color},#38bdf8)`});
+  refreshContentUI();
+}
+function deleteTopic(catId){
+  const cat=findCat(catId); if(!cat||!confirm(`Xóa topic "${cat.name}"?`))return;
+  DATA.categories=DATA.categories.filter(c=>c.id!==catId);
+  if(state.activeCat===catId){state.activeCat=null;state.activeCourse=null;}
+  state.adminSelection=DATA.categories[0]?{kind:'topic',catId:DATA.categories[0].id}:null; refreshContentUI();
+}
+function addCourse(catId,courseData){
+  const cat=findCat(catId); if(!cat)return null;
+  const name=cleanText(courseData.name)||'Khóa học mới';
+  const course={id:newId('course',name),name,desc:'',icon:'📘',level:'Cơ bản',duration:'1h',lessons_total:0,chapters:[],...courseData,name};
+  course.chapters=course.chapters||[]; cat.courses=cat.courses||[]; cat.courses.push(course);
+  state.adminSelection={kind:'course',catId,courseId:course.id}; refreshContentUI(); return course;
+}
+function editCourse(catId,courseId,fields){
+  const course=findCourse(catId,courseId); if(!course)return;
+  const name=cleanText(fields.name); if(!name){showToast('Tên khóa học không được trống',true);return;}
+  Object.assign(course,{...fields,name,icon:cleanText(fields.icon)||course.icon,level:cleanText(fields.level)||'Cơ bản',duration:cleanText(fields.duration)||'1h',desc:cleanText(fields.desc)});
+  refreshContentUI();
+}
+function deleteCourse(catId,courseId){
+  const cat=findCat(catId),course=findCourse(catId,courseId); if(!cat||!course||!confirm(`Xóa khóa học "${course.name}"?`))return;
+  cat.courses=(cat.courses||[]).filter(c=>c.id!==courseId);
+  if(state.activeCourse===courseId){state.activeCourse=null;}
+  state.adminSelection={kind:'topic',catId}; refreshContentUI();
+}
+function addChapter(catId,courseId,title){
+  const course=findCourse(catId,courseId); if(!course)return null;
+  title=cleanText(title); if(!title){showToast('Tên chương không được trống',true);return null;}
+  course.chapters=course.chapters||[];
+  const chapter={id:newId('chap',title),title,desc:'0 bài học',lessons:[]};
+  course.chapters.push(chapter); state.adminSelection={kind:'chapter',catId,courseId,chapId:chapter.id}; refreshContentUI(); return chapter;
+}
+function editChapter(catId,courseId,chapId,fields){
+  const ch=findChapter(catId,courseId,chapId); if(!ch)return;
+  const title=cleanText(fields.title); if(!title){showToast('Tên chương không được trống',true);return;}
+  Object.assign(ch,{...fields,title,desc:cleanText(fields.desc)}); refreshContentUI();
+}
+function deleteChapter(catId,courseId,chapId){
+  const course=findCourse(catId,courseId),ch=findChapter(catId,courseId,chapId); if(!course||!ch||!confirm(`Xóa chương "${ch.title}"?`))return;
+  course.chapters=(course.chapters||[]).filter(x=>x.id!==chapId); state.adminSelection={kind:'course',catId,courseId}; refreshContentUI();
+}
+function addLesson(catId,courseId,chapId,lessonData){
+  const ch=findChapter(catId,courseId,chapId); if(!ch)return null;
+  const title=cleanText(lessonData.title)||'Bài học mới';
+  ch.lessons=ch.lessons||[];
+  const lesson={id:newId('lesson',title),title,type:'doc',duration:'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>',...lessonData,title};
+  ch.lessons.push(lesson); state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId:lesson.id}; refreshContentUI(); return lesson;
+}
+function editLesson(catId,courseId,chapId,lessonId,fields){ const lesson=findLesson(catId,courseId,chapId,lessonId); if(!lesson)return; Object.assign(lesson,fields); refreshContentUI(); }
+function deleteLesson(catId,courseId,chapId,lessonId){
+  const ch=findChapter(catId,courseId,chapId),lesson=findLesson(catId,courseId,chapId,lessonId); if(!ch||!lesson||!confirm(`Xóa bài học "${lesson.title}"?`))return;
+  ch.lessons=(ch.lessons||[]).filter(l=>l.id!==lessonId); state.adminSelection={kind:'chapter',catId,courseId,chapId}; refreshContentUI();
+}
+function moveLessonWithinChapter(catId,courseId,chapId,lessonId,targetLessonId,position){
+  const ch=findChapter(catId,courseId,chapId);
+  if(!ch||lessonId===targetLessonId) return false;
+  const lessons=ch.lessons||[];
+  const from=lessons.findIndex(l=>l.id===lessonId);
+  const target=lessons.findIndex(l=>l.id===targetLessonId);
+  if(from<0||target<0) return false;
+  const [lesson]=lessons.splice(from,1);
+  let to=lessons.findIndex(l=>l.id===targetLessonId);
+  if(position==='after') to += 1;
+  lessons.splice(Math.max(0,to),0,lesson);
+  return true;
+}
+function sameLessonDropScope(drag,catId,courseId,chapId){
+  return !!drag && drag.catId===catId && drag.courseId===courseId && drag.chapId===chapId;
+}
+function clearLessonDropState(){
+  document.querySelectorAll('.tree-row.drop-before,.tree-row.drop-after,.tree-row.dragging').forEach(row=>{
+    row.classList.remove('drop-before','drop-after','dragging');
+    delete row.dataset.dropPosition;
+  });
+}
+function lessonDragAttrs(catId,courseId,chapId,lessonId){
+  const c=jsStr(catId), cr=jsStr(courseId), ch=jsStr(chapId), l=jsStr(lessonId);
+  return `draggable="true" ondragstart="treeDragStart(event,'${c}','${cr}','${ch}','${l}')" ondragover="treeDragOver(event,'${c}','${cr}','${ch}','${l}')" ondragleave="treeDragLeave(event)" ondrop="treeDropLesson(event,'${c}','${cr}','${ch}','${l}')" ondragend="treeDragEnd(event)"`;
+}
+function treeDragStart(event,catId,courseId,chapId,lessonId){
+  state.lessonDrag={catId,courseId,chapId,lessonId};
+  event.currentTarget.classList.add('dragging');
+  if(event.dataTransfer){
+    event.dataTransfer.effectAllowed='move';
+    event.dataTransfer.setData('text/plain', lessonId);
+  }
+}
+function treeDragOver(event,catId,courseId,chapId,targetLessonId){
+  const drag=state.lessonDrag;
+  if(!sameLessonDropScope(drag,catId,courseId,chapId)||drag.lessonId===targetLessonId) return;
+  event.preventDefault();
+  event.stopPropagation();
+  if(event.dataTransfer) event.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.tree-row.drop-before,.tree-row.drop-after').forEach(row=>{
+    if(row!==event.currentTarget){
+      row.classList.remove('drop-before','drop-after');
+      delete row.dataset.dropPosition;
+    }
+  });
+  const rect=event.currentTarget.getBoundingClientRect();
+  const position=event.clientY>rect.top+(rect.height/2)?'after':'before';
+  event.currentTarget.dataset.dropPosition=position;
+  event.currentTarget.classList.toggle('drop-before',position==='before');
+  event.currentTarget.classList.toggle('drop-after',position==='after');
+}
+function treeDragLeave(event){
+  if(event.currentTarget.contains(event.relatedTarget)) return;
+  event.currentTarget.classList.remove('drop-before','drop-after');
+  delete event.currentTarget.dataset.dropPosition;
+}
+function treeDropLesson(event,catId,courseId,chapId,targetLessonId){
+  event.preventDefault();
+  event.stopPropagation();
+  const drag=state.lessonDrag;
+  const position=event.currentTarget.dataset.dropPosition||'after';
+  if(!sameLessonDropScope(drag,catId,courseId,chapId)){
+    clearLessonDropState();
+    state.lessonDrag=null;
+    showToast('Chỉ kéo bài học trong cùng một chương',true);
+    return;
+  }
+  const moved=moveLessonWithinChapter(catId,courseId,chapId,drag.lessonId,targetLessonId,position);
+  clearLessonDropState();
+  state.lessonDrag=null;
+  if(!moved) return;
+  saveContentToStorage();
+  buildCategorySidebar();
+  refreshTreeBodies();
+  showToast('Đã đổi vị trí bài học');
+}
+function treeDragEnd(event){
+  if(event?.currentTarget) event.currentTarget.classList.remove('dragging');
+  state.lessonDrag=null;
+  clearLessonDropState();
+}
+function formatDate(iso){ if(!iso)return ''; const d=new Date(iso); return Number.isNaN(d.getTime())?iso:d.toLocaleDateString('vi-VN'); }
+function rolePill(u){ return `<span class="role-pill ${isAdminUser(u)?'role-admin':'role-member'}">${isAdminUser(u)?'Admin':'Member'}</span>`; }
+function renderAdminDash(){
+  const users=getUsers();
+  const topics=DATA.categories.length;
+  const courses=DATA.categories.reduce((s,cat)=>s+(cat.courses||[]).length,0);
+  const lessons=DATA.categories.reduce((s,cat)=>s+(cat.courses||[]).reduce((a,c)=>a+countCourseLessons(c),0),0);
+  byId('admin-stats').innerHTML=[
+    ['📁',topics,'Tổng topic','#e0f2fe'],
+    ['📚',courses,'Tổng khóa học','#ede9fe'],
+    ['📝',lessons,'Tổng bài học','#dcfce7'],
+    ['👥',users.length,'Tổng thành viên','#fef3c7']
+  ].map(s=>`<div class="stat-card"><div class="stat-icon" style="background:${s[3]};">${s[0]}</div><div class="stat-value">${s[1]}</div><div class="stat-label">${s[2]}</div></div>`).join('');
+  const recent=[...users].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,5);
+  byId('admin-recent-members').innerHTML=recent.length?`<table class="table"><thead><tr><th>Tên</th><th>Email</th><th>Vai trò</th><th>Ngày tạo</th></tr></thead><tbody>${recent.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${rolePill(u)}</td><td>${formatDate(u.createdAt)}</td></tr>`).join('')}</tbody></table>`:'<div style="color:#94a3b8;font-size:13px;">Chưa có thành viên.</div>';
+  const all=collectCourseEntries().sort((a,b)=>countCourseLessons(b.course)-countCourseLessons(a.course));
+  byId('admin-popular-courses').innerHTML=all.length?`<div class="mini-list">${all.slice(0,6).map(x=>`<div class="mini-item"><span>${x.course.icon||'📘'} ${esc(x.course.name)}</span><strong>${countCourseLessons(x.course)} bài</strong></div>`).join('')}</div>`:'<div style="color:#94a3b8;font-size:13px;">Chưa có khóa học.</div>';
+}
+function adminSelectionExists(sel){
+  if(!sel) return false;
+  if(sel.kind==='topic') return !!findCat(sel.catId);
+  if(sel.kind==='course') return !!findCourse(sel.catId,sel.courseId);
+  if(sel.kind==='chapter') return !!findChapter(sel.catId,sel.courseId,sel.chapId);
+  if(sel.kind==='lesson') return !!findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId);
+  return false;
+}
+function ensureAdminSelection(){
+  if(!adminSelectionExists(state.adminSelection)){
+    state.adminSelection=DATA.categories[0]?{kind:'topic',catId:DATA.categories[0].id}:null;
+  }
+}
+function renderAdminContent(){
+  ensureAdminSelection();
+  openAdminSelectionPath();
+  byId('admin-content-tree').innerHTML=adminTreePanelHTML();
+  renderAdminForm();
+}
+function adminTreeStats(){ const topics=DATA.categories.length; const courses=DATA.categories.reduce((s,c)=>s+(c.courses||[]).length,0); return `${topics} topic · ${courses} khóa`; }
+function adminTreePanelHTML(){
+  return `<div class="tree-head"><div class="tree-head-top"><div><div class="tree-head-title">Cây nội dung</div><div class="tree-sub">${adminTreeStats()}</div></div><button class="tree-add" title="Thêm topic" onclick="promptAddTopic()">+</button></div><div class="tree-search"><span>🔎</span><input id="admin-tree-search" value="${esc(state.adminTreeQuery||'')}" placeholder="Tìm topic, khóa, bài..." oninput="adminTreeSearch(this.value)"></div></div><div class="tree-body" id="admin-tree-body">${adminTreeBodyHTML()}</div>`;
+}
+function adminTreeBodyHTML(){
+  const q=(state.adminTreeQuery||'').toLowerCase().trim();
+  const cats=DATA.categories.filter(cat=>adminTopicMatches(cat,q));
+  if(!DATA.categories.length) return `<div class="tree-empty">Chưa có topic.<br><button class="btn bblue" style="margin-top:12px;" onclick="promptAddTopic()">+ Thêm topic mới</button></div>`;
+  if(!cats.length) return `<div class="tree-empty">Không tìm thấy nội dung phù hợp.</div>`;
+  return cats.map(cat=>adminTopicHTML(cat,q)).join('');
+}
+function adminTreeSearch(value){ state.adminTreeQuery=value; const body=byId('admin-tree-body'); if(body) body.innerHTML=adminTreeBodyHTML(); }
+function adminKey(kind,id){ return `${kind}:${id}`; }
+function adminIsOpen(kind,id,defaultOpen){ const key=adminKey(kind,id); return state.adminOpen[key] ?? defaultOpen; }
+function adminToggleOpen(kind,id){ const key=adminKey(kind,id); state.adminOpen[key]=!adminIsOpen(kind,id,false); refreshTreeBodies(); }
+function refreshTreeBodies(){ const adminBody=byId('admin-tree-body'); if(adminBody) adminBody.innerHTML=adminTreeBodyHTML(); const editorBody=byId('editor-tree-body'); if(editorBody) editorBody.innerHTML=editorTreeBodyHTML(); }
+function openAdminSelectionPath(){
+  const sel=state.adminSelection; if(!sel) return;
+  state.adminOpen[adminKey('topic',sel.catId)]=true;
+  if(sel.courseId) state.adminOpen[adminKey('course',sel.courseId)]=true;
+  if(sel.chapId) state.adminOpen[adminKey('chapter',sel.chapId)]=true;
+}
+function textMatches(q,...parts){ return !q || parts.some(part=>String(part||'').toLowerCase().includes(q)); }
+function adminTopicMatches(cat,q){ return !q || textMatches(q,cat.name) || (cat.courses||[]).some(course=>adminCourseMatches(course,q)); }
+function adminCourseMatches(course,q){ return !q || textMatches(q,course.name,course.desc,course.level) || (course.chapters||[]).some(ch=>adminChapterMatches(ch,q)); }
+function adminChapterMatches(ch,q){ return !q || textMatches(q,ch.title,ch.desc) || (ch.lessons||[]).some(l=>adminLessonMatches(l,q)); }
+function adminLessonMatches(l,q){ return !q || textMatches(q,l.title,l.type,l.duration); }
+function adminChevron(kind,id,isOpen,hasChildren){ return hasChildren?`<button class="tree-chevron" onclick="event.stopPropagation();adminToggleOpen('${kind}','${id}')">${isOpen?'▼':'▶'}</button>`:`<span class="tree-chevron empty">•</span>`; }
+function adminTopicHTML(cat,q){
+  const active=state.adminSelection?.kind==='topic'&&state.adminSelection.catId===cat.id;
+  const topicMatch=textMatches(q,cat.name);
+  const courses=(cat.courses||[]).filter(course=>topicMatch||adminCourseMatches(course,q));
+  const isOpen=!!q||adminIsOpen('topic',cat.id,active);
+  return `<div class="tree-node tree-topic"><div class="tree-row ${active?'active':''}" onclick="adminSelect('topic','${cat.id}')" title="${esc(cat.name)}">${adminChevron('topic',cat.id,isOpen,courses.length>0)}<div class="tree-ico" style="background:${cat.bg||'#f8fafc'}">${cat.icon||'📚'}</div><div class="tree-main"><span class="tree-title">${esc(cat.name)}</span><span class="tree-sub">${(cat.courses||[]).length} khóa học</span></div><div class="tree-actions"><button class="tree-btn" title="Thêm khóa" onclick="event.stopPropagation();promptAddCourse('${cat.id}')">+</button></div></div>${isOpen?`<div class="tree-children">${courses.map(course=>adminCourseHTML(cat,course,q,topicMatch)).join('')}</div>`:''}</div>`;
+}
+function adminCourseHTML(cat,course,q,parentMatch){
+  const active=state.adminSelection?.kind==='course'&&state.adminSelection.courseId===course.id;
+  const courseMatch=parentMatch||textMatches(q,course.name,course.desc,course.level);
+  const chapters=(course.chapters||[]).filter(ch=>courseMatch||adminChapterMatches(ch,q));
+  const isOpen=!!q||adminIsOpen('course',course.id,active||state.adminSelection?.courseId===course.id);
+  return `<div class="tree-node tree-course"><div class="tree-row ${active?'active':''}" onclick="adminSelect('course','${cat.id}','${course.id}')" title="${esc(course.name)}">${adminChevron('course',course.id,isOpen,chapters.length>0)}<div class="tree-ico">${course.icon||'📘'}</div><div class="tree-main"><span class="tree-title">${esc(course.name)}</span><span class="tree-sub">${(course.chapters||[]).length} chương · ${countCourseLessons(course)} bài</span></div><div class="tree-actions"><button class="tree-btn" title="Thêm chương" onclick="event.stopPropagation();promptAddChapter('${cat.id}','${course.id}')">+</button><button class="tree-btn" title="Sửa" onclick="event.stopPropagation();adminSelect('course','${cat.id}','${course.id}')">✎</button><button class="tree-btn" title="Xóa" onclick="event.stopPropagation();deleteCourse('${cat.id}','${course.id}')">×</button></div></div>${isOpen?`<div class="tree-children">${chapters.map(ch=>adminChapterHTML(cat,course,ch,q,courseMatch)).join('')}</div>`:''}</div>`;
+}
+function adminChapterHTML(cat,course,ch,q,parentMatch){
+  const active=state.adminSelection?.kind==='chapter'&&state.adminSelection.chapId===ch.id;
+  const chapterMatch=parentMatch||textMatches(q,ch.title,ch.desc);
+  const lessons=(ch.lessons||[]).filter(l=>chapterMatch||adminLessonMatches(l,q));
+  const isOpen=!!q||adminIsOpen('chapter',ch.id,active||state.adminSelection?.chapId===ch.id);
+  return `<div class="tree-node tree-chapter"><div class="tree-row ${active?'active':''}" onclick="adminSelect('chapter','${cat.id}','${course.id}','${ch.id}')" title="${esc(ch.title)}">${adminChevron('chapter',ch.id,isOpen,lessons.length>0)}<div class="tree-ico">#</div><div class="tree-main"><span class="tree-title">${esc(ch.title)}</span><span class="tree-sub">${(ch.lessons||[]).length} bài học</span></div><div class="tree-actions"><button class="tree-btn" title="Thêm bài" onclick="event.stopPropagation();promptAddLesson('${cat.id}','${course.id}','${ch.id}')">+</button><button class="tree-btn" title="Sửa" onclick="event.stopPropagation();adminSelect('chapter','${cat.id}','${course.id}','${ch.id}')">✎</button></div></div>${isOpen?`<div class="tree-children">${lessons.map(l=>adminLessonHTML(cat,course,ch,l)).join('')}</div>`:''}</div>`;
+}
+function adminLessonHTML(cat,course,ch,l){
+  const active=state.adminSelection?.kind==='lesson'&&state.adminSelection.lessonId===l.id;
+  const icon=l.type==='video'?'▶':l.type==='quiz'?'✎':'📄';
+  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="adminSelect('lesson','${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">${icon}</div><div class="tree-main"><span class="tree-title">${esc(l.title)}</span><span class="tree-sub">${esc(l.type||'doc')} · ${esc(l.duration||'')}</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span><button class="tree-btn" title="Mở editor" onclick="event.stopPropagation();openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')">✎</button><button class="tree-btn" title="Xóa" onclick="event.stopPropagation();deleteLesson('${cat.id}','${course.id}','${ch.id}','${l.id}')">×</button></div></div></div>`;
+}
+function adminSelect(kind,catId,courseId,chapId,lessonId){ state.adminSelection={kind,catId,courseId,chapId,lessonId}; openAdminSelectionPath(); renderAdminContent(); }
+function editorTreeStats(){ const lessons=DATA.categories.reduce((sum,cat)=>sum+(cat.courses||[]).reduce((courseSum,course)=>courseSum+countCourseLessons(course),0),0); return `${lessons} bài có thể sửa`; }
+function renderEditorTree(){ const host=byId('admin-editor-tree'); if(host) host.innerHTML=editorTreePanelHTML(); }
+function editorTreePanelHTML(){
+  return `<div class="tree-head"><div class="tree-head-top"><div><div class="tree-head-title">Chọn bài viết</div><div class="tree-sub">${editorTreeStats()}</div></div><button class="tree-add" title="Quản lý nội dung" onclick="showView('admin-content')">⚙</button></div><div class="tree-search"><span>🔎</span><input id="editor-tree-search" value="${esc(state.editorTreeQuery||'')}" placeholder="Tìm bài để sửa..." oninput="editorTreeSearch(this.value)"></div></div><div class="tree-body" id="editor-tree-body">${editorTreeBodyHTML()}</div>`;
+}
+function editorTreeBodyHTML(){
+  const q=(state.editorTreeQuery||'').toLowerCase().trim();
+  const cats=DATA.categories.filter(cat=>adminTopicMatches(cat,q));
+  if(!DATA.categories.length) return `<div class="tree-empty">Chưa có nội dung.<br><button class="btn bblue" style="margin-top:12px;" onclick="showView('admin-content')">Tạo nội dung</button></div>`;
+  if(!cats.length) return `<div class="tree-empty">Không tìm thấy bài phù hợp.</div>`;
+  return cats.map(cat=>editorTopicHTML(cat,q)).join('');
+}
+function editorTreeSearch(value){ state.editorTreeQuery=value; const body=byId('editor-tree-body'); if(body) body.innerHTML=editorTreeBodyHTML(); }
+function openEditorSelectionPath(){
+  const sel=state.editingLesson; if(!sel) return;
+  state.adminOpen[adminKey('topic',sel.catId)]=true;
+  if(sel.courseId) state.adminOpen[adminKey('course',sel.courseId)]=true;
+  if(sel.chapId) state.adminOpen[adminKey('chapter',sel.chapId)]=true;
+}
+function editorPathActive(kind,ids){
+  const sel=state.editingLesson; if(!sel) return false;
+  if(kind==='topic') return sel.catId===ids.catId;
+  if(kind==='course') return sel.courseId===ids.courseId;
+  if(kind==='chapter') return sel.chapId===ids.chapId;
+  if(kind==='lesson') return sel.lessonId===ids.lessonId;
+  return false;
+}
+function editorTopicHTML(cat,q){
+  const pathActive=editorPathActive('topic',{catId:cat.id});
+  const topicMatch=textMatches(q,cat.name);
+  const courses=(cat.courses||[]).filter(course=>topicMatch||adminCourseMatches(course,q));
+  const isOpen=!!q||adminIsOpen('topic',cat.id,pathActive);
+  return `<div class="tree-node tree-topic"><div class="tree-row ${pathActive?'active':''}" onclick="adminToggleOpen('topic','${cat.id}')" title="${esc(cat.name)}">${adminChevron('topic',cat.id,isOpen,courses.length>0)}<div class="tree-ico" style="background:${cat.bg||'#f8fafc'}">${cat.icon||'📚'}</div><div class="tree-main"><span class="tree-title">${esc(cat.name)}</span><span class="tree-sub">${(cat.courses||[]).length} nhóm nội dung</span></div><div class="tree-actions"></div></div>${isOpen?`<div class="tree-children">${courses.map(course=>editorCourseHTML(cat,course,q,topicMatch)).join('')}</div>`:''}</div>`;
+}
+function editorCourseHTML(cat,course,q,parentMatch){
+  const pathActive=editorPathActive('course',{courseId:course.id});
+  const courseMatch=parentMatch||textMatches(q,course.name,course.desc,course.level);
+  const chapters=(course.chapters||[]).filter(ch=>courseMatch||adminChapterMatches(ch,q));
+  const isOpen=!!q||adminIsOpen('course',course.id,pathActive);
+  return `<div class="tree-node tree-course"><div class="tree-row ${pathActive?'active':''}" onclick="adminToggleOpen('course','${course.id}')" title="${esc(course.name)}">${adminChevron('course',course.id,isOpen,chapters.length>0)}<div class="tree-ico">${course.icon||'📘'}</div><div class="tree-main"><span class="tree-title">${esc(course.name)}</span><span class="tree-sub">${(course.chapters||[]).length} chương · ${countCourseLessons(course)} bài</span></div><div class="tree-actions"></div></div>${isOpen?`<div class="tree-children">${chapters.map(ch=>editorChapterHTML(cat,course,ch,q,courseMatch)).join('')}</div>`:''}</div>`;
+}
+function editorChapterHTML(cat,course,ch,q,parentMatch){
+  const pathActive=editorPathActive('chapter',{chapId:ch.id});
+  const chapterMatch=parentMatch||textMatches(q,ch.title,ch.desc);
+  const lessons=(ch.lessons||[]).filter(l=>chapterMatch||adminLessonMatches(l,q));
+  const isOpen=!!q||adminIsOpen('chapter',ch.id,pathActive);
+  return `<div class="tree-node tree-chapter"><div class="tree-row ${pathActive?'active':''}" onclick="adminToggleOpen('chapter','${ch.id}')" title="${esc(ch.title)}">${adminChevron('chapter',ch.id,isOpen,lessons.length>0)}<div class="tree-ico">#</div><div class="tree-main"><span class="tree-title">${esc(ch.title)}</span><span class="tree-sub">${(ch.lessons||[]).length} bài học</span></div><div class="tree-actions"><button class="tree-btn" title="Thêm bài" onclick="event.stopPropagation();promptAddLesson('${cat.id}','${course.id}','${ch.id}')">+</button></div></div>${isOpen?`<div class="tree-children">${lessons.map(l=>editorLessonHTML(cat,course,ch,l)).join('')}</div>`:''}</div>`;
+}
+function editorLessonHTML(cat,course,ch,l){
+  const active=editorPathActive('lesson',{lessonId:l.id});
+  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">✎</div><div class="tree-main"><span class="tree-title">${esc(l.title)}</span><span class="tree-sub">${esc(l.duration||'')} · click để sửa</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span></div></div></div>`;
+}
+function renderAdminForm(){ const sel=state.adminSelection,box=byId('admin-content-form'); if(!sel){box.innerHTML='<div style="color:#94a3b8;padding:20px;text-align:center;">Chọn hoặc tạo topic để bắt đầu.</div>';return;} if(sel.kind==='topic')return renderTopicForm(sel); if(sel.kind==='course')return renderCourseForm(sel); if(sel.kind==='chapter')return renderChapterForm(sel); if(sel.kind==='lesson')return renderLessonForm(sel); }
+function renderTopicForm(sel){ const cat=findCat(sel.catId); if(!cat)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa topic</h3><div class="form-grid"><div class="form-row"><label>Tên topic</label><input id="adm-topic-name" class="fi" value="${esc(cat.name)}"></div><div class="form-row"><label>Icon</label><input id="adm-topic-icon" class="fi" value="${esc(cat.icon)}"></div><div class="form-row"><label>Màu</label><input id="adm-topic-color" class="fi" type="color" value="${esc(cat.color)}"></div></div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn bgreen" onclick="saveTopicForm('${cat.id}')">Lưu topic</button><button class="btn bblue" onclick="promptAddCourse('${cat.id}')">+ Thêm khóa</button><button class="btn bred" onclick="deleteTopic('${cat.id}')">Xóa topic</button></div>`; }
+function saveTopicForm(catId){ editTopic(catId,{name:byId('adm-topic-name').value.trim(),icon:byId('adm-topic-icon').value.trim(),color:byId('adm-topic-color').value}); showToast('Đã lưu topic'); }
+function renderCourseForm(sel){ const cat=findCat(sel.catId),course=findCourse(sel.catId,sel.courseId); if(!cat||!course)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa khóa học</h3><div class="form-grid"><div class="form-row"><label>Tên khóa học</label><input id="adm-course-name" class="fi" value="${esc(course.name)}"></div><div class="form-row"><label>Icon</label><input id="adm-course-icon" class="fi" value="${esc(course.icon||'&#128216;')}"></div><div class="form-row"><label>Level</label><input id="adm-course-level" class="fi" value="${esc(course.level||'Co ban')}"></div><div class="form-row"><label>Thời lượng</label><input id="adm-course-duration" class="fi" value="${esc(course.duration||'')}"></div></div><div class="form-row"><label>Mô tả</label><textarea id="adm-course-desc" class="fi">${esc(course.desc||'')}</textarea></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveCourseForm('${cat.id}','${course.id}')">Lưu khóa học</button><button class="btn bblue" onclick="promptAddChapter('${cat.id}','${course.id}')">+ Thêm chương</button><button class="btn bred" onclick="deleteCourse('${cat.id}','${course.id}')">Xóa khóa học</button></div><h4 style="font-size:14px;font-weight:800;margin-top:18px;">Chương</h4><div class="mini-list">${(course.chapters||[]).map(ch=>`<div class="mini-item" onclick="adminSelect('chapter','${cat.id}','${course.id}','${ch.id}')"><span>${esc(ch.title)}</span><span>${(ch.lessons||[]).length} bài</span></div>`).join('')||'<div style="color:#94a3b8;font-size:13px;">Chưa có chương.</div>'}</div>`; }
+function saveCourseForm(catId,courseId){ editCourse(catId,courseId,{name:byId('adm-course-name').value.trim(),icon:byId('adm-course-icon').value.trim(),level:byId('adm-course-level').value.trim(),duration:byId('adm-course-duration').value.trim(),desc:byId('adm-course-desc').value.trim()}); showToast('Đã lưu khóa học'); }
+function renderChapterForm(sel){ const ch=findChapter(sel.catId,sel.courseId,sel.chapId); if(!ch)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa chương</h3><div class="form-row"><label>Tiêu đề chương</label><input id="adm-ch-title" class="fi" value="${esc(ch.title)}"></div><div class="form-row"><label>Mô tả</label><input id="adm-ch-desc" class="fi" value="${esc(ch.desc||'')}"></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveChapterForm('${sel.catId}','${sel.courseId}','${sel.chapId}')">Lưu chương</button><button class="btn bblue" onclick="promptAddLesson('${sel.catId}','${sel.courseId}','${sel.chapId}')">+ Thêm bài học</button><button class="btn bred" onclick="deleteChapter('${sel.catId}','${sel.courseId}','${sel.chapId}')">Xóa chương</button></div><h4 style="font-size:14px;font-weight:800;margin-top:18px;">Bài học</h4><div class="mini-list">${(ch.lessons||[]).map(l=>`<div class="mini-item" onclick="adminSelect('lesson','${sel.catId}','${sel.courseId}','${sel.chapId}','${l.id}')"><span>${esc(l.title)}</span><span>${esc(l.type)} - ${esc(l.duration)}</span></div>`).join('')||'<div style="color:#94a3b8;font-size:13px;">Chưa có bài học.</div>'}</div>`; }
+function saveChapterForm(catId,courseId,chapId){ editChapter(catId,courseId,chapId,{title:byId('adm-ch-title').value.trim(),desc:byId('adm-ch-desc').value.trim()}); showToast('Đã lưu chương'); }
+function renderLessonForm(sel){ const l=findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId); if(!l)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa bài học</h3><div class="form-grid"><div class="form-row"><label>Tiêu đề</label><input id="adm-les-title" class="fi" value="${esc(l.title)}"></div><div class="form-row"><label>Loại</label><select id="adm-les-type" class="fi"><option value="video" ${l.type==='video'?'selected':''}>Video</option><option value="doc" ${l.type==='doc'?'selected':''}>Tài liệu</option><option value="quiz" ${l.type==='quiz'?'selected':''}>Quiz</option></select></div><div class="form-row"><label>Thời lượng</label><input id="adm-les-duration" class="fi" value="${esc(l.duration||'')}"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveLessonMetaForm('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Lưu metadata</button><button class="btn bblue" onclick="openLessonEditor('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Mở Editor</button><button class="btn bred" onclick="deleteLesson('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Xóa bài học</button></div>`; }
+function saveLessonMetaForm(catId,courseId,chapId,lessonId){ const title=byId('adm-les-title').value.trim(); if(!title){showToast('Tiêu đề bài học không được trống',true);return;} editLesson(catId,courseId,chapId,lessonId,{title,type:byId('adm-les-type').value,duration:byId('adm-les-duration').value.trim()}); showToast('Đã lưu bài học'); }
+function promptAddTopic(){ const name=prompt('Tên topic mới'); if(!name)return; const icon=prompt('Icon topic','📚')||'📚'; const color=prompt('Màu HEX','#0ea5e9')||'#0ea5e9'; addTopic(name.trim(),icon.trim(),color.trim()); }
+function promptAddCourse(catId){ const name=prompt('Tên khóa học mới'); if(!name)return; addCourse(catId,{name:name.trim(),desc:'Mô tả khóa học mới',icon:'📘',level:'Cơ bản',duration:'1h',chapters:[]}); }
+function promptAddChapter(catId,courseId){ const title=prompt('Tên chương mới'); if(!title)return; addChapter(catId,courseId,title.trim()); }
+function promptAddLesson(catId,courseId,chapId){ const title=prompt('Tên bài học mới'); if(!title)return; const lesson=addLesson(catId,courseId,chapId,{title:title.trim(),type:'doc',duration:'15p'}); if(lesson&&state.view==='admin-editor') openLessonEditor(catId,courseId,chapId,lesson.id); }
+function renderAdminMembers(){
+  const q=(byId('member-search')?.value||'').toLowerCase();
+  const users=getUsers().filter(u=>!q||String(u.name||'').toLowerCase().includes(q)||String(u.email||'').toLowerCase().includes(q));
+  byId('members-table-wrap').innerHTML=`<table class="table"><thead><tr><th>#</th><th>Avatar</th><th>Tên</th><th>Email</th><th>Vai trò</th><th>Ngày tạo</th><th>Hành động</th></tr></thead><tbody>${users.map((u,i)=>`<tr><td>${i+1}</td><td><div class="avatar" style="width:32px;height:32px;font-size:12px;">${esc((u.name||u.email||'U').charAt(0).toUpperCase())}</div></td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${rolePill(u)}</td><td>${formatDate(u.createdAt)}</td><td><button class="tree-btn" onclick="toggleMemberRole('${jsStr(u.email)}')">Role</button> <button class="tree-btn" onclick="deleteMember('${jsStr(u.email)}')">Xóa</button></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:28px;">Không có thành viên.</td></tr>`}</tbody></table>`;
+}
+function openMemberModal(){ byId('member-modal').style.display='flex'; ['member-name','member-email','member-pass'].forEach(id=>byId(id).value=''); byId('member-role').value='member'; }
+function closeMemberModal(){ byId('member-modal').style.display='none'; }
+function addMemberFromModal(){ const name=byId('member-name').value.trim(),email=byId('member-email').value.trim().toLowerCase(),pass=byId('member-pass').value,role=byId('member-role').value; if(!name||!email){showToast('Nhập tên và email',true);return;} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email không hợp lệ',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); if(users.some(u=>String(u.email).toLowerCase()===email)){showToast('Email đã tồn tại',true);return;} users.push({name,email,pass,isAdmin:role==='admin',createdAt:nowISO()}); saveUsers(users); closeMemberModal(); renderAdminMembers(); showToast('Đã thêm thành viên'); }
+function deleteMember(email){ if(state.user&&String(state.user.email).toLowerCase()===String(email).toLowerCase()){showToast('Không thể xóa tài khoản đang đăng nhập',true);return;} if(!confirm('Xóa thành viên này?'))return; saveUsers(getUsers().filter(u=>String(u.email).toLowerCase()!==String(email).toLowerCase())); renderAdminMembers(); }
+function toggleMemberRole(email){ const users=getUsers(); const u=users.find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); if(!u)return; u.isAdmin=!isAdminUser(u); if(String(u.email).toLowerCase()==='admin@learnhub.com')u.isAdmin=true; saveUsers(users); renderAdminMembers(); }
+function openMemberImportModal(){ state.memberImportRows=[]; byId('member-import-modal').style.display='flex'; byId('member-import-preview').innerHTML=''; byId('member-import-result').textContent=''; byId('member-import-confirm').style.display='none'; }
+function closeMemberImportModal(){ byId('member-import-modal').style.display='none'; }
+function handleMemberImportFile(file){ if(!file)return; if(file.name.toLowerCase().endsWith('.xlsx')){byId('member-import-result').textContent='File .xlsx: hãy export thành CSV trước khi import.';return;} const reader=new FileReader(); reader.onload=e=>parseMemberCSV(e.target.result); reader.readAsText(file,'utf-8'); }
+function parseMemberCSV(text){ const rows=parseCSV(text); if(rows.length<2){byId('member-import-result').textContent='CSV không có dữ liệu.';return;} const h=rows[0].map(x=>x.toLowerCase().trim()); state.memberImportRows=rows.slice(1).map(r=>({name:cleanText(r[h.indexOf('name')]),email:cleanText(r[h.indexOf('email')]).toLowerCase(),pass:r[h.indexOf('password')]||r[h.indexOf('pass')]||'',role:cleanText(r[h.indexOf('role')]||'member').toLowerCase()})).filter(r=>r.name&&r.email); renderMemberImportPreview(); }
+function renderMemberImportPreview(){ const rows=state.memberImportRows; byId('member-import-confirm').style.display=rows.length?'inline-flex':'none'; byId('member-import-confirm').textContent=`Import ${rows.length} thành viên`; byId('member-import-preview').innerHTML=rows.length?`<table class="table"><thead><tr><th>Tên</th><th>Email</th><th>Password</th><th>Role</th></tr></thead><tbody>${rows.slice(0,20).map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.email)}</td><td>${esc(r.pass)}</td><td>${esc(r.role)}</td></tr>`).join('')}</tbody></table>`:''; }
+function confirmImportMembers(){ const users=getUsers(); const seen=new Set(users.map(u=>String(u.email).toLowerCase())); let imported=0,skipped=0; state.memberImportRows.forEach(r=>{ if(!r.email||seen.has(r.email)){skipped++;return;} const pass=r.pass&&r.pass.length>=6?r.pass:'123456'; users.push({name:r.name,email:r.email,pass,isAdmin:r.role==='admin',createdAt:nowISO()}); seen.add(r.email); imported++; }); saveUsers(users); byId('member-import-result').textContent=`Đã import ${imported}, bỏ qua ${skipped} (email trùng)`; renderAdminMembers(); }
+function exportMembersCSV(){ const users=getUsers(); const rows=[['Tên','Email','Vai trò','Ngày tạo']]; users.forEach(u=>rows.push([u.name,u.email,isAdminUser(u)?'Admin':'Member',u.createdAt||''])); downloadFile('members.csv',rows.map(r=>r.map(csvEscape).join(',')).join('\n'),'text/csv'); }
+function downloadMemberTemplate(){ downloadFile('members-template.csv','name,email,password,role\nNguyen Van A,a@email.com,123456,member','text/csv'); }
+
+function renderAdminSettings(){
+  const s=getSiteSettings();
+  const brandBox=byId('settings-brand-form');
+  if(brandBox) brandBox.innerHTML=`<div class="settings-section"><h4>Thương hiệu</h4><div class="form-row"><label>Tên web</label><input id="site-brand-name" class="fi" value="${esc(s.brandName)}" placeholder="LearnHub"></div><div class="form-row"><label>Dòng mô tả dưới logo</label><input id="site-tagline" class="fi" value="${esc(s.tagline)}" placeholder="Nền tảng học tập"></div><div class="form-row"><label>Logo URL hoặc ảnh upload</label><input id="site-logo-input" class="fi" value="${esc(s.logo)}" placeholder="https://.../logo.png"></div><label class="toggle-row"><span>Hiển thị tên web ở sidebar</span><input id="site-show-sidebar-brand" type="checkbox" ${s.showSidebarBrandName?'checked':''}></label><div class="form-row"><label>Favicon URL hoặc emoji</label><input id="site-favicon-input" class="fi" value="${esc(s.favicon)}" placeholder="📚 hoặc https://.../favicon.png"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;"><button class="btn bgray" onclick="setFaviconPreset('📚')">📚</button><button class="btn bgray" onclick="setFaviconPreset('🚀')">🚀</button><button class="btn bgray" onclick="setFaviconPreset('💡')">💡</button><button class="btn bgray" onclick="document.getElementById('site-logo-upload').click()">Upload logo</button><button class="btn bgray" onclick="document.getElementById('site-favicon-upload').click()">Upload favicon</button><input id="site-logo-upload" type="file" accept="image/*" style="display:none" onchange="handleLogoUpload(this.files[0])"><input id="site-favicon-upload" type="file" accept="image/*,.ico" style="display:none" onchange="handleFaviconUpload(this.files[0])"></div></div><div class="settings-section"><h4>Giao diện</h4><div class="form-grid"><div class="form-row"><label>Màu primary</label><input id="site-primary-color" class="fi" type="color" value="${esc(s.primaryColor)}"></div><div class="form-row"><label>Màu secondary</label><input id="site-secondary-color" class="fi" type="color" value="${esc(s.secondaryColor)}"></div><div class="form-row"><label>Font heading</label><select id="site-heading-font" class="fi">${fontOptions(s.headingFont)}</select></div><div class="form-row"><label>Font body</label><select id="site-body-font" class="fi">${fontOptions(s.bodyFont)}</select></div></div><label class="toggle-row"><span>Dark mode</span><input id="site-dark-mode" type="checkbox" ${s.darkMode?'checked':''}></label></div><div class="settings-section"><h4>Banner thông báo</h4><label class="toggle-row"><span>Bật banner đầu trang</span><input id="site-announcement-enabled" type="checkbox" ${s.announcementEnabled?'checked':''}></label><div class="form-row"><label>Nội dung banner</label><input id="site-announcement-text" class="fi" value="${esc(s.announcementText)}" placeholder="Hệ thống đang bảo trì lúc 22:00"></div><div class="form-grid"><div class="form-row"><label>Link đính kèm</label><input id="site-announcement-link" class="fi" value="${esc(s.announcementLink)}" placeholder="https://..."></div><div class="form-row"><label>Màu banner</label><input id="site-announcement-bg" class="fi" type="color" value="${esc(s.announcementBg)}"></div></div></div><div class="settings-section"><h4>Hệ thống & SEO</h4><div class="form-row"><label>Meta title</label><input id="site-seo-title" class="fi" value="${esc(s.seoTitle)}" placeholder="${esc(s.brandName+' — '+s.tagline)}"></div><div class="form-row"><label>Meta description</label><textarea id="site-seo-description" class="fi" placeholder="Mô tả ngắn cho công cụ tìm kiếm">${esc(s.seoDescription)}</textarea></div><div class="form-row"><label>Meta keywords</label><input id="site-seo-keywords" class="fi" value="${esc(s.seoKeywords)}" placeholder="học tập, khóa học, marketing"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;"><button class="btn bgreen" onclick="saveBrandSettings()">Lưu cài đặt giao diện</button><button class="btn bgray" onclick="resetBrandSettings()">Khôi phục mặc định</button></div>`;
+  renderOverviewLinkForm();
+  renderOverviewLinksAdmin();
+  renderMarketingSettings();
+}
+function fontOptions(selected){
+  return ['Inter','Arial','Georgia','Times New Roman','Fira Code'].map(font=>`<option value="${esc(font)}" ${selected===font?'selected':''}>${esc(font)}</option>`).join('');
+}
+function saveBrandSettings(){
+  const s=getSiteSettings();
+  const brand=byId('site-brand-name').value.trim();
+  const tagline=byId('site-tagline').value.trim();
+  if(!brand){showToast('Tên web không được trống',true);return;}
+  s.brandName=brand;
+  s.tagline=tagline||DEFAULT_SITE_SETTINGS.tagline;
+  s.logo=byId('site-logo-input').value.trim();
+  s.showSidebarBrandName=byId('site-show-sidebar-brand').checked;
+  s.favicon=byId('site-favicon-input').value.trim()||DEFAULT_SITE_SETTINGS.favicon;
+  s.primaryColor=byId('site-primary-color').value||DEFAULT_SITE_SETTINGS.primaryColor;
+  s.secondaryColor=byId('site-secondary-color').value||DEFAULT_SITE_SETTINGS.secondaryColor;
+  s.darkMode=byId('site-dark-mode').checked;
+  s.headingFont=byId('site-heading-font').value;
+  s.bodyFont=byId('site-body-font').value;
+  s.announcementEnabled=byId('site-announcement-enabled').checked;
+  s.announcementText=byId('site-announcement-text').value.trim();
+  s.announcementLink=byId('site-announcement-link').value.trim();
+  s.announcementBg=byId('site-announcement-bg').value||DEFAULT_SITE_SETTINGS.announcementBg;
+  s.seoTitle=byId('site-seo-title').value.trim();
+  s.seoDescription=byId('site-seo-description').value.trim();
+  s.seoKeywords=byId('site-seo-keywords').value.trim();
+  saveSiteSettings();
+  renderAdminSettings();
+  showToast('Đã lưu cài đặt giao diện');
+}
+function resetBrandSettings(){
+  if(!confirm('Khôi phục tên web, dòng mô tả và favicon mặc định?')) return;
+  const s=getSiteSettings();
+  s.brandName=DEFAULT_SITE_SETTINGS.brandName;
+  s.tagline=DEFAULT_SITE_SETTINGS.tagline;
+  s.favicon=DEFAULT_SITE_SETTINGS.favicon;
+  s.logo=DEFAULT_SITE_SETTINGS.logo;
+  s.showSidebarBrandName=DEFAULT_SITE_SETTINGS.showSidebarBrandName;
+  s.primaryColor=DEFAULT_SITE_SETTINGS.primaryColor;
+  s.secondaryColor=DEFAULT_SITE_SETTINGS.secondaryColor;
+  s.darkMode=DEFAULT_SITE_SETTINGS.darkMode;
+  s.headingFont=DEFAULT_SITE_SETTINGS.headingFont;
+  s.bodyFont=DEFAULT_SITE_SETTINGS.bodyFont;
+  s.announcementEnabled=DEFAULT_SITE_SETTINGS.announcementEnabled;
+  s.announcementText=DEFAULT_SITE_SETTINGS.announcementText;
+  s.announcementLink=DEFAULT_SITE_SETTINGS.announcementLink;
+  s.announcementBg=DEFAULT_SITE_SETTINGS.announcementBg;
+  s.seoTitle=DEFAULT_SITE_SETTINGS.seoTitle;
+  s.seoDescription=DEFAULT_SITE_SETTINGS.seoDescription;
+  s.seoKeywords=DEFAULT_SITE_SETTINGS.seoKeywords;
+  saveSiteSettings();
+  renderAdminSettings();
+}
+function setFaviconPreset(value){ const input=byId('site-favicon-input'); if(input) input.value=value; }
+function handleLogoUpload(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ const input=byId('site-logo-input'); if(input) input.value=e.target.result; showToast('Đã nạp logo, bấm Lưu cài đặt giao diện để áp dụng'); };
+  reader.readAsDataURL(file);
+}
+function handleFaviconUpload(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ const input=byId('site-favicon-input'); if(input) input.value=e.target.result; showToast('Đã nạp favicon, bấm Lưu cài đặt giao diện để áp dụng'); };
+  reader.readAsDataURL(file);
+}
+function renderMarketingSettings(){
+  const host=byId('marketing-settings-form');
+  if(!host) return;
+  const s=getSiteSettings();
+  host.innerHTML=`<h4>Marketing & Tương tác</h4><label class="toggle-row"><span>Push notification</span><input id="site-push-enabled" type="checkbox" ${s.pushEnabled?'checked':''}></label><div class="form-grid"><label class="toggle-row"><span>Bài mới</span><input id="site-push-new-content" type="checkbox" ${s.pushNewContent?'checked':''}></label><label class="toggle-row"><span>Deadline</span><input id="site-push-deadline" type="checkbox" ${s.pushDeadline?'checked':''}></label></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"><button class="btn bgray" onclick="requestPushPermission()">Xin quyền trình duyệt</button></div><label class="toggle-row"><span>Affiliate</span><input id="site-affiliate-enabled" type="checkbox" ${s.affiliateEnabled?'checked':''}></label><div class="form-row"><label>Hoa hồng mặc định</label><input id="site-affiliate-commission" class="fi" value="${esc(s.affiliateCommission)}" placeholder="20%"></div><div class="form-row"><label>Mô tả chương trình</label><textarea id="site-affiliate-description" class="fi" placeholder="Giới thiệu bạn bè và nhận hoa hồng...">${esc(s.affiliateDescription)}</textarea></div><label class="toggle-row"><span>Popup & banner quảng cáo</span><input id="site-popup-enabled" type="checkbox" ${s.popupEnabled?'checked':''}></label><div class="form-grid"><div class="form-row"><label>Nhãn nhỏ</label><input id="site-popup-kicker" class="fi" value="${esc(s.popupKicker)}"></div><div class="form-row"><label>Tần suất</label><select id="site-popup-frequency" class="fi"><option value="session" ${s.popupFrequency==='session'?'selected':''}>Mỗi phiên 1 lần</option><option value="always" ${s.popupFrequency==='always'?'selected':''}>Luôn hiện khi đăng nhập</option></select></div></div><div class="form-row"><label>Ảnh banner popup</label><input id="site-popup-image" class="fi" value="${esc(s.popupImage)}" placeholder="https://.../banner.jpg hoặc upload ảnh"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;"><button class="btn bgray" onclick="document.getElementById('site-popup-image-upload').click()">Upload ảnh popup</button><button class="btn bgray" onclick="clearPopupImage()">Xóa ảnh</button><input id="site-popup-image-upload" type="file" accept="image/*" style="display:none" onchange="handlePopupImageUpload(this.files[0])"></div><div class="form-row"><label>Tiêu đề popup</label><input id="site-popup-title" class="fi" value="${esc(s.popupTitle)}" placeholder="Ưu đãi đặc biệt"></div><div class="form-row"><label>Nội dung popup</label><textarea id="site-popup-text" class="fi">${esc(s.popupText)}</textarea></div><div class="form-grid"><div class="form-row"><label>Text nút CTA</label><input id="site-popup-cta-text" class="fi" value="${esc(s.popupCtaText)}"></div><div class="form-row"><label>URL CTA</label><input id="site-popup-url" class="fi" value="${esc(s.popupUrl)}" placeholder="https://..."></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveMarketingSettings()">Lưu Marketing</button><button class="btn bgray" onclick="previewMarketingPopup()">Xem thử popup</button></div>`;
+}
+function saveMarketingSettings(){
+  const s=getSiteSettings();
+  s.pushEnabled=byId('site-push-enabled').checked;
+  s.pushNewContent=byId('site-push-new-content').checked;
+  s.pushDeadline=byId('site-push-deadline').checked;
+  s.affiliateEnabled=byId('site-affiliate-enabled').checked;
+  s.affiliateCommission=byId('site-affiliate-commission').value.trim()||DEFAULT_SITE_SETTINGS.affiliateCommission;
+  s.affiliateDescription=byId('site-affiliate-description').value.trim();
+  s.popupEnabled=byId('site-popup-enabled').checked;
+  s.popupKicker=byId('site-popup-kicker').value.trim()||DEFAULT_SITE_SETTINGS.popupKicker;
+  s.popupImage=byId('site-popup-image').value.trim();
+  s.popupTitle=byId('site-popup-title').value.trim();
+  s.popupText=byId('site-popup-text').value.trim();
+  s.popupCtaText=byId('site-popup-cta-text').value.trim()||DEFAULT_SITE_SETTINGS.popupCtaText;
+  s.popupUrl=byId('site-popup-url').value.trim();
+  s.popupFrequency=byId('site-popup-frequency').value;
+  saveSiteSettings();
+  renderMarketingSettings();
+  showToast('Đã lưu cài đặt Marketing');
+}
+function handlePopupImageUpload(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ const input=byId('site-popup-image'); if(input) input.value=e.target.result; showToast('Đã nạp ảnh popup, bấm Lưu Marketing để áp dụng'); };
+  reader.readAsDataURL(file);
+}
+function clearPopupImage(){ const input=byId('site-popup-image'); if(input) input.value=''; }
+function requestPushPermission(){
+  if(!('Notification' in window)){ showToast('Trình duyệt chưa hỗ trợ Notification API',true); return; }
+  Notification.requestPermission().then(result=>showToast(result==='granted'?'Đã bật quyền thông báo':'Chưa cấp quyền thông báo',result!=='granted'));
+}
+function previewMarketingPopup(){
+  maybeShowMarketingPopup({
+    ...getSiteSettings(),
+    popupEnabled:true,
+    popupKicker:byId('site-popup-kicker').value.trim()||DEFAULT_SITE_SETTINGS.popupKicker,
+    popupImage:byId('site-popup-image').value.trim(),
+    popupTitle:byId('site-popup-title').value.trim()||'Popup xem thử',
+    popupText:byId('site-popup-text').value.trim()||'Nội dung popup sẽ hiển thị tại đây.',
+    popupCtaText:byId('site-popup-cta-text').value.trim()||DEFAULT_SITE_SETTINGS.popupCtaText,
+    popupUrl:byId('site-popup-url').value.trim(),
+    popupFrequency:'always'
+  });
+}
+function renderOverviewLinkForm(linkId=state.editingOverviewLink){
+  const host=byId('overview-link-form');
+  if(!host) return;
+  const link=(getSiteSettings().overviewLinks||[]).find(item=>item.id===linkId)||{};
+  state.editingOverviewLink=link.id||null;
+  host.innerHTML=`<div class="form-grid"><div class="form-row"><label>Tên link</label><input id="overview-link-name" class="fi" value="${esc(link.name||'')}" placeholder="Cộng đồng Facebook"></div><div class="form-row"><label>Icon</label><input id="overview-link-icon" class="fi" value="${esc(link.icon||'🔗')}" placeholder="🔗"></div><div class="form-row"><label>URL</label><input id="overview-link-url" class="fi" value="${esc(link.url||'')}" placeholder="https://..."></div><div class="form-row"><label>Cách mở</label><select id="overview-link-target" class="fi"><option value="_blank" ${link.target!=='_self'?'selected':''}>Tab mới</option><option value="_self" ${link.target==='_self'?'selected':''}>Cùng tab</option></select></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveOverviewLink()">${link.id?'Lưu link':'Thêm link'}</button>${link.id?'<button class="btn bgray" onclick="clearOverviewLinkForm()">Hủy sửa</button>':''}</div>`;
+}
+function clearOverviewLinkForm(){ state.editingOverviewLink=null; renderOverviewLinkForm(null); }
+function saveOverviewLink(){
+  const s=getSiteSettings();
+  const name=byId('overview-link-name').value.trim();
+  const icon=byId('overview-link-icon').value.trim()||'🔗';
+  const url=byId('overview-link-url').value.trim();
+  const target=byId('overview-link-target').value==='_self'?'_self':'_blank';
+  if(!name){showToast('Tên link không được trống',true);return;}
+  if(!url){showToast('URL không được trống',true);return;}
+  const links=s.overviewLinks||[];
+  const existing=links.find(link=>link.id===state.editingOverviewLink);
+  if(existing) Object.assign(existing,{name,icon,url,target});
+  else links.push({id:newId('link',name),name,icon,url,target});
+  s.overviewLinks=links;
+  state.editingOverviewLink=null;
+  saveSiteSettings();
+  renderAdminSettings();
+  showToast('Đã lưu link Tổng quan');
+}
+function renderOverviewLinksAdmin(){
+  const host=byId('overview-links-admin');
+  if(!host) return;
+  const links=getSiteSettings().overviewLinks||[];
+  if(!links.length){
+    host.innerHTML='<div class="tree-empty" style="background:#f8fafc;border-radius:12px;">Chưa có link tùy chỉnh trong mục Tổng quan.</div>';
+    return;
+  }
+  host.innerHTML=`<div class="link-admin-list">${links.map((link,i)=>`<div class="link-admin-item"><div class="link-admin-icon">${esc(link.icon||'🔗')}</div><div style="min-width:0;"><div class="link-admin-title">${esc(link.name)}</div><div class="link-admin-url">${esc(link.url)}</div></div><div class="link-admin-actions"><button class="tree-btn" title="Lên" onclick="moveOverviewLink('${jsStr(link.id)}',-1)" ${i===0?'disabled':''}>↑</button><button class="tree-btn" title="Xuống" onclick="moveOverviewLink('${jsStr(link.id)}',1)" ${i===links.length-1?'disabled':''}>↓</button><button class="tree-btn" title="Sửa" onclick="editOverviewLink('${jsStr(link.id)}')">✎</button><button class="tree-btn" title="Xóa" onclick="deleteOverviewLink('${jsStr(link.id)}')">×</button></div></div>`).join('')}</div>`;
+}
+function editOverviewLink(linkId){ state.editingOverviewLink=linkId; renderOverviewLinkForm(linkId); }
+function deleteOverviewLink(linkId){
+  const s=getSiteSettings();
+  const link=(s.overviewLinks||[]).find(item=>item.id===linkId);
+  if(!link||!confirm(`Xóa link "${link.name}"?`)) return;
+  s.overviewLinks=s.overviewLinks.filter(item=>item.id!==linkId);
+  if(state.editingOverviewLink===linkId) state.editingOverviewLink=null;
+  saveSiteSettings();
+  renderAdminSettings();
+}
+function moveOverviewLink(linkId,dir){
+  const s=getSiteSettings();
+  const links=s.overviewLinks||[];
+  const from=links.findIndex(link=>link.id===linkId);
+  const to=from+dir;
+  if(from<0||to<0||to>=links.length) return;
+  const [item]=links.splice(from,1);
+  links.splice(to,0,item);
+  saveSiteSettings();
+  renderOverviewLinksAdmin();
+  renderOverviewLinks();
+}
+
+function findFirstLesson(){ for(const cat of DATA.categories) for(const course of (cat.courses||[])) for(const ch of (course.chapters||[])) for(const lesson of (ch.lessons||[])) return {catId:cat.id,courseId:course.id,chapId:ch.id,lessonId:lesson.id}; return null; }
+function openLessonEditor(catId,courseId,chapId,lessonId){ state.editingLesson={catId,courseId,chapId,lessonId}; state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId}; openEditorSelectionPath(); showView('admin-editor'); }
+function renderEditor(){
+  if(!state.editingLesson){
+    const sel=state.adminSelection;
+    if(sel&&sel.kind==='lesson'&&sel.lessonId) state.editingLesson={catId:sel.catId,courseId:sel.courseId,chapId:sel.chapId,lessonId:sel.lessonId};
+    else state.editingLesson=findFirstLesson();
+  }
+  if(!state.editingLesson){
+    renderEditorTree();
+    byId('ed-breadcrumb').textContent='Chưa có bài học. Tạo bài học trong Quản lý nội dung trước.';
+    byId('ed-title').value=''; byId('ed-type').value='doc'; byId('ed-duration').value=''; byId('edcontent').innerHTML='';
+    state.editorRange=null; updateWordCount(); return;
+  }
+  const {catId,courseId,chapId,lessonId}=state.editingLesson;
+  const cat=findCat(catId),course=findCourse(catId,courseId),ch=findChapter(catId,courseId,chapId),lesson=findLesson(catId,courseId,chapId,lessonId);
+  if(!lesson){ state.editingLesson=findFirstLesson(); renderEditor(); return; }
+  state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId};
+  openEditorSelectionPath();
+  renderEditorTree();
+  byId('ed-breadcrumb').innerHTML=`${esc(cat.name)} &gt; ${esc(course.name)} &gt; ${esc(ch.title)} &gt; <strong>${esc(lesson.title)}</strong>`;
+  byId('ed-title').value=lesson.title||''; byId('ed-type').value=lesson.type||'doc'; byId('ed-duration').value=lesson.duration||'';
+  byId('edcontent').innerHTML=normalizeEditorHTML(lesson.content||'<p>N&#7897;i dung b&#224;i h&#7885;c...</p>');
+  state.editorRange=null;
+  updateWordCount();
+}
+function saveLesson(){
+  if(!state.editingLesson){showToast('Chưa chọn bài học',true);return;}
+  const {catId,courseId,chapId,lessonId}=state.editingLesson;
+  const lesson=findLesson(catId,courseId,chapId,lessonId);
+  if(!lesson){showToast('Không tìm thấy bài học',true);return;}
+  const editor=byId('edcontent');
+  normalizeEditorTables(editor);
+  const title=byId('ed-title').value.trim();
+  if(!title){showToast('Tiêu đề bài học không được trống',true);return;}
+  lesson.title=title;
+  lesson.type=byId('ed-type').value;
+  lesson.duration=byId('ed-duration').value.trim();
+  lesson.content=normalizeEditorHTML(editor.innerHTML);
+  state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId};
+  saveContentToStorage(); buildCategorySidebar(); renderEditorTree(); showToast('Đã lưu bài học!','ok');
+}
+function edCmd(cmd,value=null){
+  restoreEditorSelection();
+  const listCmd=cmd==='insertUnorderedList'||cmd==='insertOrderedList';
+  const wasInList=listCmd&&selectionInsideList();
+  try{ document.execCommand(cmd,false,value); }catch(e){}
+  if(listCmd&&!wasInList&&!selectionInsideList()) insertListFallback(cmd);
+  byId('edcontent').focus();
+  saveEditorSelection();
+  updateWordCount();
+}
+function formatBlock(tag){ restoreEditorSelection(); document.execCommand('formatBlock',false,tag); updateWordCount(); }
+function setFontSize(size){ restoreEditorSelection(); document.execCommand('fontSize',false,'4'); byId('edcontent').querySelectorAll('font[size="4"]').forEach(font=>{ const span=document.createElement('span'); span.style.fontSize=size+'px'; span.innerHTML=font.innerHTML; font.replaceWith(span); }); updateWordCount(); }
+function saveEditorSelection(){ const sel=window.getSelection(); if(!sel.rangeCount)return; const editor=byId('edcontent'); if(editor&&editor.contains(sel.anchorNode))state.editorRange=sel.getRangeAt(0).cloneRange(); }
+function rangeInsideEditor(range,editor){ const node=range?.commonAncestorContainer; return !!node && (node===editor || editor.contains(node)); }
+function placeCaretAtEnd(editor){ const range=document.createRange(); range.selectNodeContents(editor); range.collapse(false); const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); state.editorRange=range.cloneRange(); }
+function restoreEditorSelection(){ const editor=byId('edcontent'); editor.focus(); const sel=window.getSelection(); if(state.editorRange&&rangeInsideEditor(state.editorRange,editor)){ try{sel.removeAllRanges(); sel.addRange(state.editorRange); return;}catch(e){state.editorRange=null;} } if(!sel.rangeCount||!rangeInsideEditor(sel.getRangeAt(0),editor)) placeCaretAtEnd(editor); }
+function insertHTMLAtCursor(html){ const editor=byId('edcontent'); restoreEditorSelection(); const sel=window.getSelection(); if(sel.rangeCount){ const range=sel.getRangeAt(0); range.deleteContents(); const el=document.createElement('div'); el.innerHTML=normalizeEditorHTML(html); const frag=document.createDocumentFragment(); let lastNode; while(el.firstChild)lastNode=frag.appendChild(el.firstChild); range.insertNode(frag); if(lastNode){ const r2=range.cloneRange(); r2.setStartAfter(lastNode); r2.collapse(true); sel.removeAllRanges(); sel.addRange(r2); state.editorRange=r2.cloneRange(); } } else editor.innerHTML+=normalizeEditorHTML(html); normalizeEditorTables(editor); updateWordCount(); }
+function insertToggle(){ const id='tgl-'+Date.now(); insertHTMLAtCursor(`<div class="ed-toggle" id="${id}"><div class="ed-toggle-head" onclick="this.parentElement.classList.toggle('open')"><span class="ed-toggle-arrow">&#9654;</span><span contenteditable="true" onclick="event.stopPropagation()" style="flex:1;outline:none;font-weight:600;">Tieu de toggle</span></div><div class="ed-toggle-body" contenteditable="true">Noi dung ben trong...</div></div><p><br></p>`); }
+function selectionInsideList(){
+  const editor=byId('edcontent'), sel=window.getSelection();
+  if(!editor||!sel.rangeCount) return false;
+  let node=sel.anchorNode;
+  while(node&&node!==editor){
+    if(node.nodeType===1&&['UL','OL'].includes(node.nodeName)) return true;
+    node=node.parentNode;
+  }
+  return false;
+}
+function insertListFallback(cmd){
+  const sel=window.getSelection();
+  const selected=sel&&sel.rangeCount?sel.toString().trim():'';
+  const items=(selected?selected.split(/\r?\n/):['Mục danh sách']).map(x=>cleanText(x)).filter(Boolean);
+  const tag=cmd==='insertOrderedList'?'ol':'ul';
+  insertHTMLAtCursor(`<${tag}>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</${tag}><p><br></p>`);
+}
+function insertTextBox(){
+  insertHTMLAtCursor(`<div class="ed-textbox" contenteditable="true"><div class="ed-textbox-title">Tiêu đề box</div><p>Nhập nội dung trong box...</p></div><p><br></p>`);
+}
+function insertCallout(type='note'){
+  const config={
+    note:['💡','Ghi chú','Nội dung ghi chú...',''],
+    tip:['✅','Mẹo áp dụng','Nội dung gợi ý thực hành...',' tip'],
+    warn:['⚠','Lưu ý quan trọng','Nội dung cần chú ý...',' warn']
+  }[type]||['💡','Ghi chú','Nội dung ghi chú...',''];
+  insertHTMLAtCursor(`<div class="ed-callout${config[3]}" contenteditable="true"><strong>${config[0]} ${config[1]}</strong><p>${config[2]}</p></div><p><br></p>`);
+}
+function openImageModal(){ saveEditorSelection(); byId('image-modal').style.display='flex'; byId('image-url').value=''; }
+function closeImageModal(){ byId('image-modal').style.display='none'; }
+function insertImageFromURL(){ const url=byId('image-url').value.trim(); if(!url)return; insertImageURL(url); closeImageModal(); }
+function insertImageURL(url){ insertHTMLAtCursor(`<img src="${esc(url)}" style="max-width:100%;border-radius:8px;margin:8px 0;"><p><br></p>`); }
+function handleImageUpload(file){ if(!file)return; const reader=new FileReader(); reader.onload=e=>{insertImageURL(e.target.result); closeImageModal();}; reader.readAsDataURL(file); }
+function insertVideoPrompt(){ const url=prompt('URL YouTube'); if(url)insertVideo(url); }
+function extractYouTubeId(url){
+  try{
+    const u=new URL(url);
+    const host=u.hostname.replace(/^www\./,'');
+    if(host==='youtu.be') return u.pathname.split('/').filter(Boolean)[0];
+    if(host.endsWith('youtube.com')){
+      if(u.pathname==='/watch') return u.searchParams.get('v');
+      const parts=u.pathname.split('/').filter(Boolean);
+      if(['embed','shorts','live'].includes(parts[0])) return parts[1];
+    }
+  }catch(e){}
+  const match=String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*?v=|embed\/|shorts\/|live\/))([^&\n?#/]+)/);
+  return match?match[1]:null;
+}
+function insertVideo(url){ const vid=extractYouTubeId(url); if(!vid){showToast('URL YouTube không hợp lệ','err');return;} insertHTMLAtCursor(`<div class="ed-video"><iframe src="https://www.youtube.com/embed/${esc(vid)}" allowfullscreen></iframe></div><p><br></p>`); }
+function openHTMLModal(){ saveEditorSelection(); byId('html-modal').style.display='flex'; byId('html-code').value=''; setTimeout(()=>byId('html-code').focus(),0); }
+function closeHTMLModal(){ byId('html-modal').style.display='none'; }
+function insertHTMLPrompt(){ openHTMLModal(); }
+function insertHTMLFromModal(mode){
+  const code=byId('html-code').value.trim();
+  if(!code){showToast('Chưa có mã HTML',true);return;}
+  if(mode==='direct') insertHTMLAtCursor(code+'<p><br></p>');
+  else insertHTMLBlock(code);
+  closeHTMLModal();
+}
+function insertHTMLBlock(code){ insertHTMLAtCursor(`<div class="ed-html" data-raw="${encodeURIComponent(code)}">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><p><br></p>`); }
+function insertLinkPrompt(){ const url=prompt('URL lien ket'); if(url)edCmd('createLink',url); }
+function toggleEmojiPicker(btn){ const pop=byId('emoji-pop'); if(!pop.innerHTML)renderEmojiPicker(); const r=btn.getBoundingClientRect(); pop.style.left=Math.max(12,Math.min(r.left,window.innerWidth-330))+'px'; pop.style.top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-300))+'px'; pop.style.display=pop.style.display==='grid'?'none':'grid'; }
+function renderEmojiPicker(){ const emojis='😀 😂 🥰 😎 🤔 💪 🙌 👏 ✅ ❌ ⭐ 🔥 💯 🎯 🏆 📚 📝 ✏️ 📊 📈 📉 💡 🔑 🔒 🎓 🏫 📖 🗂️ 💼 💰 💳 🏢 🤝 📱 💻 🖥️ ⌨️ 🖱️ 🚀 ✈️ 🌍 🌟 ⚡ 🔧 🛠️ 🎨 🎭 🎬 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ ➡️ ⬅️ ⬆️ ⬇️'.split(/\s+/); byId('emoji-pop').innerHTML=emojis.map(e=>`<button onclick="insertHTMLAtCursor('${e}'); byId('emoji-pop').style.display='none';">${e}</button>`).join(''); }
+function updateWordCount(){ const txt=byId('edcontent')?.innerText.trim()||''; byId('ed-wordcount').textContent=(txt?txt.split(/\s+/).length:0)+' t\u1eeb'; }
+function normalizeEditorHTML(html){
+  const host=document.createElement('div');
+  host.innerHTML=html||'';
+  host.querySelectorAll('script,style,meta,link').forEach(el=>el.remove());
+  normalizeEditorTables(host);
+  return host.innerHTML;
+}
+function normalizeEditorTables(root){
+  if(!root) return;
+  root.querySelectorAll('table').forEach(table=>{
+    table.removeAttribute('width'); table.removeAttribute('height');
+    table.style.width=''; table.style.height=''; table.style.tableLayout=''; table.style.writingMode=''; table.style.transform=''; table.style.whiteSpace='';
+  });
+  root.querySelectorAll('th,td').forEach(cell=>{
+    cell.removeAttribute('width'); cell.removeAttribute('height');
+    cell.style.width=''; cell.style.height=''; cell.style.minWidth=''; cell.style.maxWidth=''; cell.style.writingMode=''; cell.style.transform=''; cell.style.whiteSpace=''; cell.style.wordBreak='';
+  });
+  root.querySelectorAll('[style]').forEach(el=>{
+    const style=el.getAttribute('style')||'';
+    if(/writing-mode|vertical-rl|sideways|rotate|transform/i.test(style)){ el.style.writingMode=''; el.style.transform=''; }
+    if(!el.getAttribute('style')) el.removeAttribute('style');
+  });
+}
+function handleEditorPaste(e){
+  e.preventDefault(); saveEditorSelection();
+  const text=e.clipboardData?.getData('text/plain')||'';
+  const html=e.clipboardData?.getData('text/html')||'';
+  if(text && looksLikeMarkdownTable(text)){ insertHTMLAtCursor(markdownToEditorHTML(text)); return; }
+  if(html){ insertHTMLAtCursor(html); return; }
+  insertHTMLAtCursor(textToEditorHTML(text));
+}
+function handleEditorKeydown(e){
+  if(e.key==='Enter') e.stopPropagation();
+  if((e.ctrlKey||e.metaKey) && e.key==='s'){ e.preventDefault(); saveLesson(); }
+}
+function looksLikeMarkdownTable(text){
+  const lines=text.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  return lines.some((line,i)=>line.includes('|') && i+1<lines.length && /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(lines[i+1]));
+}
+function splitMarkdownRow(line){ return line.replace(/^\|/,'').replace(/\|$/,'').split('|').map(cell=>cell.trim()); }
+function inlineMarkdown(text){ return esc(text).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>'); }
+function markdownToEditorHTML(text){
+  const lines=text.split(/\r?\n/);
+  let html='', i=0;
+  while(i<lines.length){
+    if(lines[i].includes('|') && i+1<lines.length && /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(lines[i+1].trim())){
+      const headers=splitMarkdownRow(lines[i]); i+=2;
+      const rows=[];
+      while(i<lines.length && lines[i].includes('|')){ rows.push(splitMarkdownRow(lines[i])); i++; }
+      html+=`<table><thead><tr>${headers.map(h=>`<th>${inlineMarkdown(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td>${inlineMarkdown(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table><p><br></p>`;
+    } else {
+      const buf=[];
+      while(i<lines.length && !(lines[i].includes('|') && i+1<lines.length && /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(lines[i+1].trim()))){ if(lines[i].trim()) buf.push(lines[i]); i++; }
+      if(buf.length) html+=`<p>${buf.map(inlineMarkdown).join('<br>')}</p>`;
+    }
+  }
+  return html;
+}
+function textToEditorHTML(text){ return String(text||'').split(/\n{2,}/).filter(p=>p.trim()).map(p=>`<p>${esc(p.trim()).replace(/\n/g,'<br>')}</p>`).join('')||'<p><br></p>'; }
+function previewLesson(){ const host=document.createElement('div'); host.innerHTML=normalizeEditorHTML(byId('edcontent').innerHTML); host.querySelectorAll('.ed-html').forEach(el=>{ const frag=document.createElement('div'); try{frag.innerHTML=decodeURIComponent(el.dataset.raw||'');}catch(e){frag.textContent=el.textContent;} el.replaceWith(...Array.from(frag.childNodes)); }); byId('lesson-preview-body').innerHTML=host.innerHTML; byId('lesson-preview-modal').style.display='flex'; }
+function closePreviewLesson(){ byId('lesson-preview-modal').style.display='none'; }
+function openLessonImportModal(){ state.lessonImportRows=[]; byId('lesson-import-modal').style.display='flex'; byId('lesson-import-preview').innerHTML=''; byId('lesson-import-result').textContent=''; byId('lesson-import-confirm').style.display='none'; }
+function closeLessonImportModal(){ byId('lesson-import-modal').style.display='none'; }
+function handleLessonImportFile(file){ if(!file)return; if(file.name.toLowerCase().endsWith('.xlsx')){byId('lesson-import-result').textContent='File .xlsx: hãy export thành CSV trước khi import.';return;} const reader=new FileReader(); reader.onload=e=>parseLessonImportCSV(e.target.result); reader.readAsText(file,'utf-8'); }
+function parseLessonImportCSV(text){ const rows=parseCSV(text); if(rows.length<2){byId('lesson-import-result').textContent='CSV không có dữ liệu.';return;} const h=rows[0].map(x=>x.toLowerCase().trim()); state.lessonImportRows=rows.slice(1).map(r=>({topic:cleanText(r[h.indexOf('topic')]),course:cleanText(r[h.indexOf('course')]),chapter:cleanText(r[h.indexOf('chapter')]),title:cleanText(r[h.indexOf('lesson_title')]),type:cleanText(r[h.indexOf('lesson_type')]||'doc').toLowerCase(),duration:cleanText(r[h.indexOf('duration')])})).filter(r=>r.topic&&r.course&&r.chapter&&r.title); byId('lesson-import-confirm').style.display=state.lessonImportRows.length?'inline-flex':'none'; byId('lesson-import-confirm').textContent=`Import ${state.lessonImportRows.length} bài học`; byId('lesson-import-preview').innerHTML=state.lessonImportRows.length?`<table class="table"><thead><tr><th>Topic</th><th>Course</th><th>Chapter</th><th>Lesson</th><th>Type</th><th>Duration</th></tr></thead><tbody>${state.lessonImportRows.slice(0,20).map(r=>`<tr><td>${esc(r.topic)}</td><td>${esc(r.course)}</td><td>${esc(r.chapter)}</td><td>${esc(r.title)}</td><td>${esc(r.type)}</td><td>${esc(r.duration)}</td></tr>`).join('')}</tbody></table>`:''; }
+function confirmImportLessons(){ let imported=0,skipped=0,last=null; state.lessonImportRows.forEach(r=>{ const cat=findOrCreateTopicByName(r.topic); const course=findOrCreateCourseByName(cat,r.course); const ch=findOrCreateChapterByName(course,r.chapter); ch.lessons=ch.lessons||[]; if(ch.lessons.some(l=>String(l.title).toLowerCase()===r.title.toLowerCase())){skipped++;return;} const lesson={id:newId('lesson',r.title),title:r.title,type:['video','doc','quiz'].includes(r.type)?r.type:'doc',duration:r.duration||'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>'}; ch.lessons.push(lesson); last={catId:cat.id,courseId:course.id,chapId:ch.id,lessonId:lesson.id}; imported++; }); saveContentToStorage(); buildCategorySidebar(); if(last) state.adminSelection={kind:'lesson',...last}; renderAdminContent(); byId('lesson-import-result').textContent=`Đã import ${imported}, bỏ qua ${skipped} (bài trùng tên)`; }
+function findOrCreateTopicByName(name){ let cat=DATA.categories.find(c=>String(c.name).toLowerCase()===name.toLowerCase()); if(!cat){ cat={id:newId('cat',name),name,icon:'📚',color:'#0ea5e9',bg:colorToSoftBg('#0ea5e9'),gradient:'linear-gradient(135deg,#0ea5e9,#38bdf8)',courses:[]}; DATA.categories.push(cat); } return cat; }
+function findOrCreateCourseByName(cat,name){ cat.courses=cat.courses||[]; let course=cat.courses.find(c=>String(c.name).toLowerCase()===name.toLowerCase()); if(!course){ course={id:newId('course',name),name,desc:'Khóa học import từ file',icon:'📘',level:'Cơ bản',duration:'1h',lessons_total:0,chapters:[]}; cat.courses.push(course); } return course; }
+function findOrCreateChapterByName(course,title){ course.chapters=course.chapters||[]; let ch=course.chapters.find(x=>String(x.title).toLowerCase()===title.toLowerCase()); if(!ch){ ch={id:newId('chap',title),title,desc:'0 bài học',lessons:[]}; course.chapters.push(ch); } return ch; }
+function downloadLessonTemplate(){ downloadFile('lesson-import-template.csv','topic,course,chapter,lesson_title,lesson_type,duration\nMarketing,Marketing Cơ Bản,Chương 1,Bài mới về SEO,doc,15p\nMarketing,Digital Marketing A-Z,Chương 2,Video về Ads,video,30p','text/csv'); }
+function parseCSV(text){
+  const rows=[]; let row=[], cell='', quoted=false;
+  const src=String(text||'').replace(/^\ufeff/,'');
+  for(let i=0;i<src.length;i++){
+    const ch=src[i], next=src[i+1];
+    if(ch==='"' && quoted && next==='"'){ cell+='"'; i++; continue; }
+    if(ch==='"'){ quoted=!quoted; continue; }
+    if(ch===',' && !quoted){ row.push(cell.trim()); cell=''; continue; }
+    if((ch==='\n'||ch==='\r') && !quoted){ if(ch==='\r'&&next==='\n')i++; row.push(cell.trim()); if(row.some(v=>v!==''))rows.push(row); row=[]; cell=''; continue; }
+    cell+=ch;
+  }
+  row.push(cell.trim()); if(row.some(v=>v!==''))rows.push(row);
+  return rows;
+}
+function csvEscape(v){ const s=String(v??''); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
+function downloadFile(name,content,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+content],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function handleDropFile(event,target){ event.preventDefault(); event.currentTarget.classList.remove('drag'); const file=event.dataTransfer.files&&event.dataTransfer.files[0]; if(target==='member')handleMemberImportFile(file); if(target==='lesson')handleLessonImportFile(file); }
+
+document.addEventListener('selectionchange',()=>{ const editor=byId('edcontent'); if(!editor)return; const sel=window.getSelection(); if(sel.rangeCount&&editor.contains(sel.anchorNode))saveEditorSelection(); });
+document.addEventListener('mousedown',e=>{ if(e.target.closest('#editor-toolbar')) saveEditorSelection(); if(e.target.closest('#editor-toolbar button')) e.preventDefault(); });
+document.addEventListener('click',e=>{ const pop=byId('emoji-pop'); if(pop&&pop.style.display==='grid'&&!pop.contains(e.target)&&!e.target.closest('#editor-toolbar'))pop.style.display='none'; });
+window.addEventListener('load',()=>{ ensureAdminBoot(); const editor=byId('edcontent'); if(editor){ editor.addEventListener('input',updateWordCount); editor.addEventListener('paste',handleEditorPaste); editor.addEventListener('keydown',handleEditorKeydown); } updateAdminNav(); });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hướng dẫn sử dụng — LearnHub Membership Site</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+  * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+  body { background: #f0f2f5; margin: 0; color: #0f172a; }
+  :root { --primary: #0ea5e9; --secondary: #6366f1; }
+
+  /* Layout */
+  .sidebar { width: 280px; min-height: 100vh; background: white; position: fixed; left: 0; top: 0; bottom: 0; border-right: 1px solid #e2e8f0; overflow-y: auto; padding: 0 0 24px; z-index: 50; }
+  .main { margin-left: 280px; padding: 40px 48px; max-width: 960px; }
+  @media (max-width: 900px) { .sidebar { position: static; width: 100%; min-height: auto; } .main { margin-left: 0; padding: 24px 20px; } }
+
+  /* Sidebar */
+  .sb-header { padding: 24px 20px 20px; border-bottom: 1px solid #f1f5f9; }
+  .sb-logo { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #0ea5e9, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sb-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .sb-section { padding: 16px 12px 4px; }
+  .sb-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 6px; }
+  .sb-link { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; text-decoration: none; transition: all 0.15s; margin-bottom: 2px; }
+  .sb-link:hover { background: #f8fafc; color: #0f172a; }
+  .sb-link.active { background: linear-gradient(90deg, #e0f2fe, #ede9fe); color: #0ea5e9; }
+  .sb-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; margin-left: 4px; }
+
+  /* Content */
+  .page-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+  .page-sub { font-size: 16px; color: #64748b; margin-bottom: 36px; }
+  .section { margin-bottom: 52px; scroll-margin-top: 24px; }
+  .section-title { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .section-desc { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.6; }
+  .divider { height: 1px; background: #e2e8f0; margin: 0 0 28px; }
+
+  /* Cards */
+  .card { background: white; border-radius: 16px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .card-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .card-body { font-size: 14px; color: #374151; line-height: 1.75; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step { display: flex; gap: 16px; align-items: flex-start; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: #64748b; line-height: 1.6; }
+
+  /* Highlight / callout */
+  .callout { border-radius: 12px; padding: 14px 16px; margin: 16px 0; font-size: 13px; line-height: 1.65; }
+  .callout.blue { background: #f0f9ff; border-left: 4px solid #0ea5e9; color: #0c4a6e; }
+  .callout.green { background: #f0fdf4; border-left: 4px solid #10b981; color: #065f46; }
+  .callout.amber { background: #fffbeb; border-left: 4px solid #f59e0b; color: #78350f; }
+  .callout.purple { background: #faf5ff; border-left: 4px solid #8b5cf6; color: #4c1d95; }
+  .callout strong { font-weight: 700; }
+
+  /* Code/credential */
+  .cred { display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #e2e8f0; border-radius: 8px; padding: 4px 10px; font-family: 'Fira Code', monospace; font-size: 13px; margin: 2px 4px; }
+  .cred-label { font-size: 11px; color: #64748b; font-weight: 600; display: inline-block; margin-right: 2px; }
+  .kbd { display: inline-flex; align-items: center; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 600; color: #374151; font-family: 'Fira Code', monospace; }
+
+  /* Table */
+  .gtable { width: 100%; border-collapse: collapse; font-size: 13px; border-radius: 12px; overflow: hidden; }
+  .gtable th { background: #f8fafc; color: #64748b; font-weight: 700; text-align: left; padding: 11px 14px; border-bottom: 1px solid #e2e8f0; }
+  .gtable td { padding: 11px 14px; border-bottom: 1px solid #f1f5f9; color: #374151; vertical-align: top; }
+  .gtable tr:last-child td { border-bottom: none; }
+
+  /* Feature grid */
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 700px) { .feat-grid { grid-template-columns: 1fr; } }
+  .feat-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .feat-icon { font-size: 26px; margin-bottom: 10px; }
+  .feat-name { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .feat-desc { font-size: 12px; color: #64748b; line-height: 1.55; }
+
+  /* Tree diagram */
+  .tree-demo { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; font-size: 13px; font-family: 'Fira Code', monospace; line-height: 2; color: #334155; }
+  .tree-demo .lvl0 { color: #0ea5e9; font-weight: 700; }
+  .tree-demo .lvl1 { color: #8b5cf6; font-weight: 600; padding-left: 24px; }
+  .tree-demo .lvl2 { color: #10b981; padding-left: 48px; }
+  .tree-demo .lvl3 { color: #f59e0b; padding-left: 72px; }
+
+  /* Pill tag */
+  .pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .pill.blue { background: #e0f2fe; color: #0284c7; }
+  .pill.green { background: #dcfce7; color: #15803d; }
+  .pill.purple { background: #ede9fe; color: #7c3aed; }
+  .pill.red { background: #fee2e2; color: #dc2626; }
+
+  /* Back to top */
+  #back-top { position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px; background: linear-gradient(135deg, #0ea5e9, #6366f1); border-radius: 50%; color: white; border: none; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(14,165,233,0.35); opacity: 0; transition: opacity 0.3s; z-index: 100; }
+  #back-top.show { opacity: 1; }
+
+  /* Highlight box */
+  .hbox { background: linear-gradient(135deg, #e0f2fe, #ede9fe); border-radius: 14px; padding: 20px 22px; margin-bottom: 20px; }
+  .hbox h3 { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+  .hbox p { font-size: 13px; color: #334155; line-height: 1.65; margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">📖 Hướng dẫn sử dụng</div>
+    <div class="sb-sub">LearnHub Membership Site</div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">Bắt đầu</div>
+    <a class="sb-link active" href="#overview">🏠 Tổng quan hệ thống</a>
+    <a class="sb-link" href="#login">🔐 Đăng nhập & Tài khoản</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">Học viên</div>
+    <a class="sb-link" href="#dashboard">📊 Dashboard</a>
+    <a class="sb-link" href="#library">📚 Thư viện kiến thức</a>
+    <a class="sb-link" href="#lesson">📖 Đọc bài học</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">Quản trị (Admin)</div>
+    <a class="sb-link" href="#admin-login">👑 Đăng nhập Admin</a>
+    <a class="sb-link" href="#admin-content">📂 Quản lý nội dung</a>
+    <a class="sb-link" href="#admin-editor">✏️ Viết & chỉnh sửa bài</a>
+    <a class="sb-link" href="#admin-members">👥 Quản lý thành viên</a>
+    <a class="sb-link" href="#admin-settings">⚙️ Cài đặt giao diện</a>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">Tham khảo</div>
+    <a class="sb-link" href="#data-storage">💾 Lưu trữ dữ liệu</a>
+    <a class="sb-link" href="#shortcuts">⌨️ Phím tắt</a>
+    <a class="sb-link" href="#faq">❓ Câu hỏi thường gặp</a>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+  <div class="page-title">Hướng dẫn sử dụng LearnHub</div>
+  <p class="page-sub">Hướng dẫn đầy đủ từ A–Z: đăng nhập, học viên, quản lý nội dung, thành viên và cài đặt giao diện.</p>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div class="section" id="overview">
+    <div class="section-title">🏠 Tổng quan hệ thống</div>
+    <p class="section-desc">LearnHub là nền tảng học tập dạng membership — chạy hoàn toàn từ một file HTML duy nhất, không cần server hay backend. Dữ liệu lưu trong localStorage của trình duyệt.</p>
+
+    <div class="hbox">
+      <h3>Cách chạy hệ thống</h3>
+      <p>Mở file <strong>membership-site.html</strong> trong trình duyệt (Chrome/Edge/Firefox) — không cần cài đặt gì thêm. Để dùng nhiều người trên cùng URL, deploy lên Vercel hoặc Netlify bằng cách kéo thả file vào giao diện deploy.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🔐</div>
+        <div class="feat-name">Đăng nhập / Đăng ký</div>
+        <div class="feat-desc">Tạo tài khoản, đăng nhập bằng email + mật khẩu. Admin có menu riêng.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📚</div>
+        <div class="feat-name">Thư viện kiến thức</div>
+        <div class="feat-desc">Duyệt toàn bộ nội dung, lọc theo trạng thái học, mở từng chủ đề.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📖</div>
+        <div class="feat-name">Đọc bài học</div>
+        <div class="feat-desc">Mở bài, đánh dấu hoàn thành, xem bài phụ, theo dõi tiến độ.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📂</div>
+        <div class="feat-name">Quản lý nội dung</div>
+        <div class="feat-desc">Cây Topic → Khóa học → Chương → Bài học. CRUD đầy đủ, kéo thả đổi thứ tự.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✏️</div>
+        <div class="feat-name">Editor bài học</div>
+        <div class="feat-desc">Toolbar định dạng, chèn ảnh/video YouTube, bảng, callout, HTML tùy chỉnh.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚙️</div>
+        <div class="feat-name">Cài đặt giao diện</div>
+        <div class="feat-desc">Tên web, logo, màu sắc, font, dark mode, SEO, popup marketing.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:8px;">
+      <div class="card-title">🗂️ Cấu trúc nội dung 4 cấp</div>
+      <div class="tree-demo">
+        <div class="lvl0">📁 Topic (Danh mục)  — ví dụ: Marketing, Kinh Doanh</div>
+        <div class="lvl1">📘 Khóa học  — ví dụ: Marketing Cơ Bản</div>
+        <div class="lvl2">📑 Chương  — ví dụ: Chương 1 · Nền tảng Marketing</div>
+        <div class="lvl3">📄 Bài học  — ví dụ: Marketing Mix 4P</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== LOGIN ===== -->
+  <div class="section" id="login">
+    <div class="section-title">🔐 Đăng nhập &amp; Tài khoản</div>
+    <p class="section-desc">Tất cả tài khoản được lưu trong localStorage của trình duyệt. Không cần xác thực email thật.</p>
+
+    <div class="card">
+      <div class="card-title">👤 Đăng nhập thành viên (demo)</div>
+      <div class="card-body">
+        <p style="margin:0 0 12px;">Dùng bất kỳ email nào + mật khẩu ít nhất 6 ký tự. Nếu email chưa tồn tại, hệ thống tự tạo tài khoản mới.</p>
+        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
+          <div style="margin-bottom:8px;"><span class="cred-label">Email:</span><span class="cred">hoclam@gmail.com</span> <span style="font-size:12px;color:#94a3b8;">(bất kỳ)</span></div>
+          <div><span class="cred-label">Mật khẩu:</span><span class="cred">123456</span> <span style="font-size:12px;color:#94a3b8;">(tối thiểu 6 ký tự)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👑 Đăng nhập Admin</div>
+      <div class="card-body">
+        <p style="margin:0 0 12px;">Tài khoản admin mặc định được tạo tự động khi khởi động:</p>
+        <div style="background:#faf5ff;border-radius:10px;padding:14px 16px;border:1px solid #ede9fe;">
+          <div style="margin-bottom:8px;"><span class="cred-label">Email:</span><span class="cred">admin@learnhub.com</span></div>
+          <div><span class="cred-label">Mật khẩu:</span><span class="cred">admin123</span></div>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;color:#64748b;">Sau khi đăng nhập với tài khoản admin, sidebar sẽ hiện thêm mục <strong>Quản trị</strong> ở phía dưới.</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Chọn tab Đăng nhập hoặc Tạo tài khoản</div>
+          <div class="step-desc">Trên màn hình chào, chọn tab phù hợp. Tab "Đăng nhập" dành cho tài khoản đã có, "Tạo tài khoản" để đăng ký mới.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Nhập email và mật khẩu</div>
+          <div class="step-desc">Mật khẩu tối thiểu 6 ký tự. Nhấn Enter hoặc bấm nút Đăng nhập.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Vào Dashboard</div>
+          <div class="step-desc">Hệ thống tự chuyển sang trang Dashboard. Phiên đăng nhập được lưu tạm trong tab (sessionStorage) — đóng tab là phải đăng nhập lại.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="section" id="dashboard">
+    <div class="section-title">📊 Dashboard (Trang chủ học viên)</div>
+    <p class="section-desc">Sau khi đăng nhập, học viên thấy trang Dashboard với tổng quan tiến độ và nội dung đang học.</p>
+
+    <div class="card">
+      <div class="card-title">Các thành phần trên Dashboard</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Thành phần</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Banner "Tiếp tục học"</strong></td><td>Hiện bài học đang học dở, bấm để tiếp tục vào khóa học đó.</td></tr>
+            <tr><td><strong>4 ô thống kê</strong></td><td>Kiến thức đang học · Bài đã hoàn thành · Thời gian học · Nội dung đã lưu.</td></tr>
+            <tr><td><strong>Kiến thức đang học</strong></td><td>4 khóa học gần đây nhất, bấm vào card để mở chi tiết.</td></tr>
+            <tr><td><strong>Hoạt động gần đây</strong></td><td>Lịch sử hoạt động: bài đã hoàn thành, bài đang học...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout blue">
+      <strong>💡 Sidebar điều hướng:</strong> Bên trái có menu với các mục Tổng quan (Dashboard + Thư viện + các link tùy chỉnh) và Danh mục để lọc theo chủ đề.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== LIBRARY ===== -->
+  <div class="section" id="library">
+    <div class="section-title">📚 Thư viện kiến thức</div>
+    <p class="section-desc">Xem toàn bộ nội dung, lọc theo tiến độ học.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Mở Thư viện</div>
+          <div class="step-desc">Bấm <strong>Thư viện kiến thức</strong> trên sidebar, hoặc bấm <em>Xem tất cả →</em> từ Dashboard.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Lọc nội dung</div>
+          <div class="step-desc">3 tab lọc: <strong>Tất cả</strong> · <strong>Đang học</strong> (đã học từ 1–99%) · <strong>Hoàn thành</strong> (100%). Số lượng hiển thị trong ngoặc mỗi tab.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Lọc theo danh mục</div>
+          <div class="step-desc">Bấm vào tên Danh mục trên sidebar (Marketing, Kinh Doanh...) để chỉ hiện nội dung của danh mục đó.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Mở khóa học</div>
+          <div class="step-desc">Bấm vào bất kỳ card nào để vào trang chi tiết khóa học, xem danh sách chương và bài học.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== LESSON ===== -->
+  <div class="section" id="lesson">
+    <div class="section-title">📖 Đọc bài học</div>
+    <p class="section-desc">Trong trang chi tiết khóa học, học viên thấy các chương và bài học bên trong.</p>
+
+    <div class="card">
+      <div class="card-title">Cách dùng trang chi tiết khóa học</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Hành động</th><th>Cách làm</th></tr></thead>
+          <tbody>
+            <tr><td>Mở/đóng chương</td><td>Bấm vào tiêu đề chương để expand/collapse danh sách bài.</td></tr>
+            <tr><td>Đọc bài học</td><td>Bấm vào tên bài → popup hiện nội dung bài đầy đủ.</td></tr>
+            <tr><td>Đánh dấu hoàn thành</td><td>Bấm nút <strong>Đánh dấu hoàn thành</strong> trong popup bài học, hoặc bấm dấu tròn bên trái tên bài.</td></tr>
+            <tr><td>Mở bài phụ</td><td>Nếu bài có mũi tên ▼ bên phải → bấm để mở rộng danh sách bài phụ.</td></tr>
+            <tr><td>Quay lại</td><td>Bấm <strong>Quay lại</strong> ở đầu trang hoặc dùng nút back trình duyệt.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <strong>✅ Thanh tiến độ:</strong> Cột phải trang khóa học hiện tiến độ từng chương và tổng tiến độ khóa học. Cập nhật ngay khi bạn đánh dấu bài hoàn thành.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== ADMIN LOGIN ===== -->
+  <div class="section" id="admin-login">
+    <div class="section-title">👑 Đăng nhập Admin</div>
+    <p class="section-desc">Tài khoản admin có toàn quyền quản lý nội dung, thành viên và giao diện.</p>
+
+    <div class="card">
+      <div class="card-title">Thông tin đăng nhập</div>
+      <div class="card-body">
+        <div style="background:#faf5ff;border-radius:10px;padding:16px 18px;border:1px solid #ede9fe;margin-bottom:14px;">
+          <div style="margin-bottom:10px;"><span class="cred-label">Email:</span><span class="cred">admin@learnhub.com</span></div>
+          <div><span class="cred-label">Mật khẩu:</span><span class="cred">admin123</span></div>
+        </div>
+        <p style="margin:0;font-size:13px;color:#64748b;">Tài khoản này được tạo tự động. Để tạo thêm admin, vào <em>Quản lý thành viên</em> → bấm nút <strong>Role</strong> bên cạnh thành viên muốn nâng quyền.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sau khi đăng nhập admin</div>
+      <div class="card-body">
+        <p style="margin:0 0 10px;">Sidebar hiện thêm mục <strong>Quản trị</strong> gồm 5 màn hình:</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+          <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;font-size:13px;"><strong>📊 Tổng quan Admin</strong> — thống kê nhanh</div>
+          <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;font-size:13px;"><strong>📂 Quản lý nội dung</strong> — CRUD cây nội dung</div>
+          <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;font-size:13px;"><strong>✏️ Viết bài mới</strong> — editor bài học</div>
+          <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;font-size:13px;"><strong>👥 Quản lý thành viên</strong> — CRUD + import/export</div>
+          <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;font-size:13px;grid-column:1/-1;"><strong>⚙️ Cài đặt giao diện</strong> — thương hiệu, màu, font, popup...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== ADMIN CONTENT ===== -->
+  <div class="section" id="admin-content">
+    <div class="section-title">📂 Quản lý nội dung</div>
+    <p class="section-desc">Màn hình chính để xây dựng cây nội dung: Topic → Khóa học → Chương → Bài học. Sidebar trái là cây cấu trúc, bên phải là form chỉnh sửa.</p>
+
+    <div class="hbox">
+      <h3>Cấu trúc 4 cấp</h3>
+      <p><strong>Topic</strong> (danh mục lớn) → <strong>Khóa học</strong> (nhóm nội dung) → <strong>Chương</strong> (phần trong khóa) → <strong>Bài học</strong> (đơn vị nhỏ nhất có thể viết nội dung)</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">➕ Thêm mới</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Muốn thêm</th><th>Cách làm</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pill blue">Topic mới</span></td>
+              <td>Bấm nút <strong>+ Thêm topic mới</strong> trên đầu trang, hoặc bấm nút <kbd class="kbd">+</kbd> góc trên phải cây nội dung. Điền tên, chọn icon emoji, chọn màu HEX.</td>
+            </tr>
+            <tr>
+              <td><span class="pill purple">Khóa học mới</span></td>
+              <td>Chọn một Topic trên cây → bấm <strong>+ Thêm khóa</strong> trong form bên phải, hoặc bấm dấu <kbd class="kbd">+</kbd> bên cạnh tên topic trên cây.</td>
+            </tr>
+            <tr>
+              <td><span class="pill green">Chương mới</span></td>
+              <td>Chọn Khóa học → bấm <strong>+ Thêm chương</strong>. Nhập tên chương vào hộp thoại.</td>
+            </tr>
+            <tr>
+              <td><span class="pill" style="background:#fef3c7;color:#92400e;">Bài học mới</span></td>
+              <td>Chọn Chương → bấm <strong>+ Thêm bài học</strong>. Nhập tên bài. Hệ thống tự chuyển sang editor để viết nội dung.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✏️ Chỉnh sửa &amp; Xóa</div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Bấm vào tên mục trên cây</div>
+              <div class="step-desc">Chọn Topic / Khóa học / Chương / Bài học trên cây bên trái → form chỉnh sửa hiện bên phải.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Sửa thông tin</div>
+              <div class="step-desc">Thay đổi tên, icon, mô tả, thời lượng... rồi bấm nút <strong>Lưu</strong> màu xanh lá ở cuối form.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Xóa</div>
+              <div class="step-desc">Bấm nút <strong>Xóa</strong> màu đỏ trong form. Hệ thống hỏi xác nhận trước khi xóa (xóa chương sẽ xóa tất cả bài bên trong).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔀 Kéo thả sắp xếp bài học</div>
+      <div class="card-body">
+        <p style="margin:0 0 10px;">Trong cây nội dung, có thể kéo thả bài học để đổi thứ tự trong cùng một chương:</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Mở chương cần sắp xếp</div>
+              <div class="step-desc">Bấm mũi tên ▶ để mở rộng chương, hiện các bài học bên trong.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Kéo bài bằng tay cầm ⠿⠿</div>
+              <div class="step-desc">Giữ chuột vào biểu tượng ⠿⠿ bên phải tên bài → kéo lên/xuống → thả vào vị trí mong muốn (đường xanh chỉ vị trí drop).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Lưu tự động</div>
+              <div class="step-desc">Vị trí mới được lưu ngay vào localStorage sau khi thả.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📥 Import bài học từ file CSV</div>
+      <div class="card-body">
+        <p style="margin:0 0 10px;">Bấm <strong>Import bài học từ file</strong> trên đầu trang, tải template CSV về, điền dữ liệu rồi upload lại:</p>
+        <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;font-family:'Fira Code',monospace;font-size:12px;color:#334155;">
+          topic, course, chapter, lesson_title, lesson_type, duration<br>
+          Marketing, Marketing Cơ Bản, Chương 1, Bài về SEO, doc, 15p<br>
+          Marketing, Digital Marketing A-Z, Chương 2, Video về Ads, video, 30p
+        </div>
+        <div class="callout amber" style="margin-top:12px;margin-bottom:0;">
+          <strong>⚠️ Lưu ý:</strong> File .xlsx cần export thành .csv trước khi import. Bài trùng tên trong cùng chương sẽ bị bỏ qua.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== EDITOR ===== -->
+  <div class="section" id="admin-editor">
+    <div class="section-title">✏️ Viết &amp; chỉnh sửa bài học</div>
+    <p class="section-desc">Editor rich text đầy đủ tính năng — chọn bài trên cây trái, viết nội dung bên phải.</p>
+
+    <div class="card">
+      <div class="card-title">Cách mở bài để sửa</div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">A</div>
+            <div class="step-content">
+              <div class="step-title">Từ Quản lý nội dung</div>
+              <div class="step-desc">Chọn bài học trên cây → bấm <strong>Mở Editor</strong> trong form bên phải, hoặc bấm biểu tượng ✎ bên cạnh tên bài trên cây.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">B</div>
+            <div class="step-content">
+              <div class="step-title">Từ menu Viết bài mới</div>
+              <div class="step-desc">Bấm <em>Viết bài mới</em> trên sidebar → editor tự mở bài đang được chọn (hoặc bài đầu tiên nếu chưa chọn gì). Chọn bài khác trên cây trái.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🛠️ Thanh công cụ editor</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Nút / nhóm</th><th>Chức năng</th></tr></thead>
+          <tbody>
+            <tr><td>↩ Undo / ↪ Redo</td><td>Hoàn tác / làm lại thao tác cuối.</td></tr>
+            <tr><td>Bình thường / H1 / H2 / H3 / Trích dẫn / Code block</td><td>Định dạng đoạn văn. Chọn dòng trước rồi chọn kiểu.</td></tr>
+            <tr><td>Font · Cỡ chữ</td><td>Đổi font và kích thước chữ cho đoạn được chọn.</td></tr>
+            <tr><td><strong>B</strong> · <em>I</em> · <u>U</u> · <s>S</s> · Màu chữ · Màu nền</td><td>Định dạng ký tự: đậm, nghiêng, gạch chân, gạch ngang, màu.</td></tr>
+            <tr><td>Căn lề: ≡ / ⊣ / ⊢ / ☰</td><td>Căn trái · giữa · phải · đều hai bên.</td></tr>
+            <tr><td>• Bullet · 1. Number · → Indent · ← Outdent</td><td>Danh sách có dấu chấm, đánh số, thụt lề.</td></tr>
+            <tr><td>🔲 Toggle</td><td>Chèn khối có thể thu gọn / mở rộng (accordion).</td></tr>
+            <tr><td>□ Box</td><td>Chèn khung nội dung (textbox).</td></tr>
+            <tr><td>💡 Note · ⚠ Warn</td><td>Chèn callout "Ghi chú" hoặc "Lưu ý quan trọng".</td></tr>
+            <tr><td>🖼 Ảnh</td><td>Chèn ảnh qua URL hoặc upload từ máy (base64).</td></tr>
+            <tr><td>▶ Video</td><td>Nhập URL YouTube → tự nhúng iframe.</td></tr>
+            <tr><td>&lt;/&gt; HTML</td><td>Chèn HTML tùy chỉnh — dạng block hoặc trực tiếp.</td></tr>
+            <tr><td>— Divider</td><td>Chèn đường kẻ ngang phân cách.</td></tr>
+            <tr><td>😀 Emoji</td><td>Chèn emoji nhanh từ picker.</td></tr>
+            <tr><td>🔗 Link</td><td>Tạo liên kết cho đoạn văn bản đang chọn.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💾 Lưu bài</div>
+      <div class="card-body">
+        <p style="margin:0 0 12px;">Có 2 cách lưu:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#f0fdf4;border-radius:10px;padding:12px 14px;">
+            <strong style="font-size:13px;color:#15803d;">Bấm nút Lưu</strong>
+            <p style="font-size:12px;color:#166534;margin:6px 0 0;">Nút màu xanh lá ở hàng meta trên cùng editor.</p>
+          </div>
+          <div style="background:#f0f9ff;border-radius:10px;padding:12px 14px;">
+            <strong style="font-size:13px;color:#0369a1;"><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">S</kbd></strong>
+            <p style="font-size:12px;color:#075985;margin:6px 0 0;">Phím tắt khi con trỏ đang ở trong editor. Dùng ⌘S trên macOS.</p>
+          </div>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;color:#64748b;">Ngoài nội dung, hãy điền đầy đủ <strong>Tiêu đề</strong>, <strong>Loại</strong> (Video/Tài liệu/Quiz) và <strong>Thời lượng</strong> trên hàng meta trước khi lưu.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👁️ Xem trước</div>
+      <div class="card-body">
+        <p style="margin:0;">Bấm <strong>Xem trước</strong> ở thanh footer dưới editor → popup hiện bài học đúng như học viên thấy, bao gồm render HTML tùy chỉnh.</p>
+      </div>
+    </div>
+
+    <div class="callout blue">
+      <strong>💡 Dán bảng từ Excel / Google Sheets:</strong> Copy bảng Markdown (dòng phân cách bằng |) rồi dán thẳng vào editor — hệ thống tự nhận và chuyển thành bảng HTML chuẩn.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== MEMBERS ===== -->
+  <div class="section" id="admin-members">
+    <div class="section-title">👥 Quản lý thành viên</div>
+    <p class="section-desc">Xem, thêm, xóa thành viên; phân quyền admin; import/export CSV.</p>
+
+    <div class="card">
+      <div class="card-title">Các thao tác chính</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Thao tác</th><th>Cách thực hiện</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pill blue">Thêm 1 thành viên</span></td>
+              <td>Bấm <strong>+ Thêm 1 thành viên</strong> → điền tên, email, mật khẩu, chọn vai trò → <strong>Thêm thành viên</strong>.</td>
+            </tr>
+            <tr>
+              <td><span class="pill purple">Đổi quyền Admin</span></td>
+              <td>Bấm nút <strong>Role</strong> bên cạnh thành viên để chuyển giữa Member ↔ Admin. Tài khoản <em>admin@learnhub.com</em> luôn là admin, không thể hạ quyền.</td>
+            </tr>
+            <tr>
+              <td><span class="pill red">Xóa thành viên</span></td>
+              <td>Bấm <strong>Xóa</strong> bên cạnh thành viên → xác nhận. Không thể xóa tài khoản đang đăng nhập.</td>
+            </tr>
+            <tr>
+              <td><span class="pill green">Import CSV</span></td>
+              <td>Bấm <strong>Import CSV/Excel</strong> → tải template → điền dữ liệu → upload. Email trùng sẽ bị bỏ qua.</td>
+            </tr>
+            <tr>
+              <td><span class="pill" style="background:#fef3c7;color:#92400e;">Xuất CSV</span></td>
+              <td>Bấm <strong>Xuất CSV</strong> → tải về file danh sách toàn bộ thành viên.</td>
+            </tr>
+            <tr>
+              <td>🔍 Tìm kiếm</td>
+              <td>Gõ vào ô Search để lọc theo tên hoặc email ngay lập tức.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📄 Định dạng file CSV import</div>
+      <div class="card-body">
+        <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;font-family:'Fira Code',monospace;font-size:12px;color:#334155;">
+          name, email, password, role<br>
+          Nguyễn Văn A, a@email.com, 123456, member<br>
+          Trần Thị B, b@email.com, abcdef, admin
+        </div>
+        <p style="margin:10px 0 0;font-size:13px;color:#64748b;">Cột <code>role</code>: dùng <strong>member</strong> hoặc <strong>admin</strong>. Mật khẩu trống hoặc dưới 6 ký tự sẽ được đặt mặc định là <code>123456</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="section" id="admin-settings">
+    <div class="section-title">⚙️ Cài đặt giao diện</div>
+    <p class="section-desc">Tùy chỉnh thương hiệu, màu sắc, font chữ, SEO, banner thông báo, popup marketing và link Tổng quan.</p>
+
+    <div class="card">
+      <div class="card-title">🎨 Thương hiệu &amp; Giao diện</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Trường</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tên web</strong></td><td>Hiển thị ở sidebar, trang đăng nhập và tiêu đề trình duyệt.</td></tr>
+            <tr><td><strong>Dòng mô tả</strong></td><td>Tagline nhỏ bên dưới tên web.</td></tr>
+            <tr><td><strong>Logo</strong></td><td>URL ảnh hoặc upload file — hiện trên trang đăng nhập và sidebar.</td></tr>
+            <tr><td><strong>Hiển thị tên web ở sidebar</strong></td><td>Toggle — ẩn/hiện tên chữ khi đã có logo.</td></tr>
+            <tr><td><strong>Favicon</strong></td><td>Nhập emoji (ví dụ: 📚) hoặc URL ảnh .ico/.png — hiện trên tab trình duyệt.</td></tr>
+            <tr><td><strong>Màu primary / secondary</strong></td><td>Color picker — ảnh hưởng toàn bộ gradient, nút, nav, progress bar.</td></tr>
+            <tr><td><strong>Font heading / body</strong></td><td>Chọn trong 5 font có sẵn: Inter · Arial · Georgia · Times New Roman · Fira Code.</td></tr>
+            <tr><td><strong>Dark mode</strong></td><td>Toggle bật/tắt giao diện tối.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📢 Banner thông báo</div>
+      <div class="card-body">
+        <p style="margin:0 0 10px;">Thanh thông báo hiện ngay phía trên dashboard khi học viên đăng nhập.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Bật "Bật banner đầu trang"</div>
+              <div class="step-desc">Toggle này kiểm soát ẩn/hiện toàn bộ banner.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Nhập nội dung và link</div>
+              <div class="step-desc">Điền thông báo (ví dụ: "Lớp live tối nay 20:00!") và URL liên kết nếu có.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Chọn màu nền</div>
+              <div class="step-desc">Color picker → gradient từ màu chọn đến màu secondary.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 Popup marketing</div>
+      <div class="card-body">
+        <p style="margin:0 0 14px;">Popup hiện cho học viên sau khi đăng nhập, có thể kèm ảnh và nút CTA.</p>
+        <table class="gtable">
+          <thead><tr><th>Trường</th><th>Mô tả</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bật Popup</strong></td><td>Toggle ẩn/hiện popup.</td></tr>
+            <tr><td><strong>Nhãn nhỏ</strong></td><td>Text nhỏ trên tiêu đề (kicker), ví dụ: "Ưu đãi".</td></tr>
+            <tr><td><strong>Ảnh banner</strong></td><td>URL hoặc upload — hiện trên cùng popup, tỉ lệ 16:7.</td></tr>
+            <tr><td><strong>Tiêu đề popup</strong></td><td>Tiêu đề lớn, màu đen, font đậm.</td></tr>
+            <tr><td><strong>Nội dung popup</strong></td><td>Đoạn mô tả bên dưới tiêu đề.</td></tr>
+            <tr><td><strong>Text nút CTA</strong></td><td>Text trên nút hành động, ví dụ: "Mua ngay".</td></tr>
+            <tr><td><strong>URL CTA</strong></td><td>URL khi bấm nút — để trống thì không hiện nút.</td></tr>
+            <tr><td><strong>Tần suất</strong></td><td><em>Mỗi phiên 1 lần</em> (đóng tab là reset) hoặc <em>Luôn hiện khi đăng nhập</em>.</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:12px 0 0;font-size:13px;color:#64748b;">Bấm <strong>Xem thử popup</strong> để preview trước khi lưu.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔗 Link trong mục Tổng quan</div>
+      <div class="card-body">
+        <p style="margin:0 0 14px;">Thêm link tùy chỉnh vào sidebar mục Tổng quan (ví dụ: link Facebook Group, Telegram, tài liệu...).</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Điền form Link mới</div>
+              <div class="step-desc">Nhập Tên link, Icon (emoji), URL và cách mở (tab mới / cùng tab). Bấm <strong>Thêm link</strong>.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Sắp xếp thứ tự</div>
+              <div class="step-desc">Trong danh sách link bên dưới, bấm ↑ ↓ để đổi thứ tự hiển thị trên sidebar.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Sửa hoặc Xóa</div>
+              <div class="step-desc">Bấm ✎ để sửa thông tin link, bấm × để xóa.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <strong>⚠️ Lưu ý:</strong> Bấm <strong>Lưu cài đặt giao diện</strong> để áp dụng thay đổi thương hiệu/giao diện. Bấm <strong>Lưu Marketing</strong> để lưu popup/push/affiliate. Hai nút này độc lập nhau.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== DATA STORAGE ===== -->
+  <div class="section" id="data-storage">
+    <div class="section-title">💾 Lưu trữ dữ liệu</div>
+    <p class="section-desc">Toàn bộ dữ liệu lưu trong localStorage của trình duyệt — không cần server, không cần internet (sau lần đầu load).</p>
+
+    <div class="card">
+      <div class="card-title">Các key localStorage</div>
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Key</th><th>Nội dung</th><th>Xóa thì sao?</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="cred" style="font-size:12px;">lh_users</span></td>
+              <td>Danh sách tài khoản thành viên (tên, email, pass, role)</td>
+              <td>Mất toàn bộ tài khoản — phải đăng ký lại. Admin mặc định được tạo lại khi load trang.</td>
+            </tr>
+            <tr>
+              <td><span class="cred" style="font-size:12px;">lh_content</span></td>
+              <td>Toàn bộ cây nội dung: topic, khóa học, chương, bài học và nội dung đã viết</td>
+              <td>Mất toàn bộ nội dung đã tạo — khôi phục về dữ liệu demo mặc định.</td>
+            </tr>
+            <tr>
+              <td><span class="cred" style="font-size:12px;">lh_site_settings</span></td>
+              <td>Cài đặt giao diện: tên web, logo, màu, font, popup...</td>
+              <td>Về giao diện mặc định (LearnHub, màu xanh).</td>
+            </tr>
+            <tr>
+              <td><span class="cred" style="font-size:12px;">lh_progress</span></td>
+              <td>Tiến độ học của từng người (đang dùng)</td>
+              <td>Mất tiến độ đã học.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout purple">
+      <strong>💡 Backup dữ liệu:</strong> Mở DevTools (F12) → Console → chạy <code style="font-family:monospace;background:#e9d5ff;padding:1px 5px;border-radius:4px;">JSON.stringify(localStorage)</code> để copy toàn bộ dữ liệu. Dán lại bằng <code style="font-family:monospace;background:#e9d5ff;padding:1px 5px;border-radius:4px;">Object.entries(JSON.parse(data)).forEach(([k,v])=>localStorage.setItem(k,v))</code>.
+    </div>
+
+    <div class="callout amber">
+      <strong>⚠️ Lưu ý quan trọng:</strong> Dữ liệu chỉ tồn tại trên trình duyệt của máy đó. Xóa cache trình duyệt = mất dữ liệu. Để dùng chung nhiều người, deploy file lên Vercel/Netlify — mỗi người dùng trình duyệt riêng sẽ có localStorage riêng.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== SHORTCUTS ===== -->
+  <div class="section" id="shortcuts">
+    <div class="section-title">⌨️ Phím tắt</div>
+    <p class="section-desc">Các phím tắt giúp thao tác nhanh hơn trong trình duyệt.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <table class="gtable">
+          <thead><tr><th>Phím</th><th>Chức năng</th><th>Context</th></tr></thead>
+          <tbody>
+            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">S</kbd></td><td>Lưu bài học đang chỉnh sửa</td><td>Editor (con trỏ trong vùng soạn thảo)</td></tr>
+            <tr><td><kbd class="kbd">Enter</kbd></td><td>Submit form đăng nhập / đăng ký</td><td>Trang đăng nhập</td></tr>
+            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Z</kbd></td><td>Undo trong editor</td><td>Editor</td></tr>
+            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">B</kbd></td><td>In đậm đoạn đang chọn</td><td>Editor</td></tr>
+            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">I</kbd></td><td>In nghiêng đoạn đang chọn</td><td>Editor</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== FAQ ===== -->
+  <div class="section" id="faq">
+    <div class="section-title">❓ Câu hỏi thường gặp</div>
+
+    <div class="card">
+      <div class="card-title">Đổi tên web từ "LearnHub" thành tên khác như thế nào?</div>
+      <div class="card-body">Vào <strong>Cài đặt giao diện</strong> → mục Thương hiệu → đổi <em>Tên web</em> → bấm <strong>Lưu cài đặt giao diện</strong>. Tên mới áp dụng ngay cho sidebar, trang đăng nhập và tiêu đề tab trình duyệt.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tôi đã tạo nội dung nhưng sau khi xóa cache thì mất hết?</div>
+      <div class="card-body">Đúng — dữ liệu lưu trong localStorage và bị xóa khi clear browser data. Nên backup định kỳ bằng cách copy nội dung localStorage (xem mục Backup ở trên), hoặc deploy lên hosting để có URL cố định và không vô tình xóa cache.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Có thể deploy file này lên Vercel không?</div>
+      <div class="card-body">Có. Đổi tên file thành <strong>index.html</strong>, kéo thả vào <a href="https://vercel.com" target="_blank" style="color:#0ea5e9;text-decoration:underline;">vercel.com</a> → deploy ngay, được URL công khai. Người dùng mỗi trình duyệt sẽ có dữ liệu localStorage riêng.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Quên mật khẩu admin thì làm sao?</div>
+      <div class="card-body">Mở DevTools (F12) → Console → chạy: <code style="font-family:monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;">const u=JSON.parse(localStorage.lh_users); u.find(x=>x.email==='admin@learnhub.com').pass='admin123'; localStorage.lh_users=JSON.stringify(u);</code> rồi tải lại trang.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Nội dung bài viết được lưu ở đâu?</div>
+      <div class="card-body">Trong key <code style="font-family:monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;">lh_content</code> của localStorage — dạng JSON, trường <code>content</code> bên trong mỗi lesson lưu HTML của bài viết đó.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Học viên có thể tự đăng ký không?</div>
+      <div class="card-body">Có — tab "Tạo tài khoản" trên màn hình đăng nhập cho phép tự đăng ký bằng tên + email + mật khẩu. Tài khoản tạo mới luôn là Member (không phải Admin) trừ khi admin nâng quyền sau.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sao tôi chỉnh màu primary nhưng một số chỗ không đổi?</div>
+      <div class="card-body">Một vài màu được hardcode trực tiếp trong HTML tĩnh (ví dụ: gradient trên trang auth). Sau khi <strong>Lưu cài đặt giao diện</strong>, tải lại trang (F5) để áp dụng đầy đủ.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:40px 0 20px;color:#94a3b8;font-size:13px;">
+    LearnHub Membership Site · Hướng dẫn sử dụng · Cập nhật tháng 6/2026
+  </div>
+
+</div>
+
+<!-- Back to top button -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Về đầu trang">↑</button>
+
+<script>
+// Sidebar active link on scroll
+const sections = document.querySelectorAll('.section[id]');
+const links = document.querySelectorAll('.sb-link[href^="#"]');
+const backTop = document.getElementById('back-top');
+
+function onScroll() {
+  const scrollY = window.scrollY;
+  backTop.classList.toggle('show', scrollY > 300);
+  let current = '';
+  sections.forEach(sec => {
+    if (scrollY >= sec.offsetTop - 80) current = sec.id;
+  });
+  links.forEach(link => {
+    const matches = link.getAttribute('href') === '#' + current;
+    link.classList.toggle('active', matches);
+  });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Smooth scroll for sidebar links
+links.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
