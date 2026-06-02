@@ -572,7 +572,7 @@
     <!-- ===== ADMIN CONTENT VIEW ===== -->
     <div id="view-admin-content" style="display:none">
       <div class="vwrap">
-        <div class="admin-topbar"><div class="page-header" style="margin-bottom:0;"><h2>Qu&#7843;n l&#253; n&#7897;i dung</h2><p>S&#7917;a c&#226;y Topic &rarr; Kh&#243;a h&#7885;c &rarr; Ch&#432;&#417;ng &rarr; B&#224;i h&#7885;c.</p></div><div class="admin-actions"><button class="btn bblue" onclick="promptAddTopic()">+ Th&#234;m topic m&#7899;i</button><button class="btn bgray" onclick="openLessonImportModal()">&#128229; Import b&#224;i h&#7885;c t&#7915; file</button></div></div>
+        <div class="admin-topbar"><div class="page-header" style="margin-bottom:0;"><h2>Qu&#7843;n l&#253; n&#7897;i dung</h2><p>S&#7917;a c&#226;y Topic &rarr; Kh&#243;a h&#7885;c &rarr; Ch&#432;&#417;ng &rarr; B&#224;i h&#7885;c.</p></div><div class="admin-actions"><button class="btn bblue" onclick="promptAddTopic()">+ Th&#234;m topic m&#7899;i</button><button class="btn bgreen" onclick="openOutlineModal()">&#128459; D&#225;n m&#7909;c l&#7909;c nhanh</button><button class="btn bgray" onclick="openLessonImportModal()">&#128229; Import b&#224;i h&#7885;c t&#7915; file</button></div></div>
         <div class="admin-split"><div class="admin-tree" id="admin-content-tree"></div><div class="admin-form" id="admin-content-form"></div></div>
       </div>
     </div>
@@ -642,6 +642,13 @@
 
 <!-- Lesson import modal -->
 <div class="modal" id="lesson-import-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Import b&#224;i h&#7885;c t&#7915; file</h3><button class="close-x" onclick="closeLessonImportModal()">&times;</button></div><div class="dropzone" onclick="document.getElementById('lesson-import-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDropFile(event,'lesson')">CSV columns: topic, course, chapter, lesson_title, lesson_type, duration. File .xlsx c&#7847;n export th&#224;nh CSV tr&#432;&#7899;c.<input id="lesson-import-file" type="file" accept=".csv,.xlsx" style="display:none" onchange="handleLessonImportFile(this.files[0])"></div><div style="display:flex;gap:8px;margin:14px 0;"><button class="btn bgray" onclick="downloadLessonTemplate()">T&#7843;i template CSV</button><button class="btn bgreen" id="lesson-import-confirm" onclick="confirmImportLessons()" style="display:none">Import 0 b&#224;i h&#7885;c</button></div><div id="lesson-import-result" style="font-size:13px;color:#64748b;margin-bottom:10px;"></div><div id="lesson-import-preview"></div></div></div>
+
+<!-- Outline builder modal -->
+<div class="modal" id="outline-modal" style="display:none"><div class="modal-card" style="width:min(860px,96vw);"><div class="modal-head"><h3>&#128459; D&#225;n m&#7909;c l&#7909;c nhanh</h3><button class="close-x" onclick="closeOutlineModal()">&times;</button></div>
+<div style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:10px;">D&#225;n c&#7843; c&#7845;u tr&#250;c theo c&#7845;p th&#7909;t: <b>#</b> Topic &middot; <b>##</b> Kh&#243;a h&#7885;c &middot; <b>###</b> Ch&#432;&#417;ng &middot; <b>-</b> B&#224;i h&#7885;c. B&#224;i c&#243; th&#7875; th&#234;m <code>| video | 20p</code>. Ch&#7841;y l&#7841;i kh&#244;ng nh&#226;n &#273;&#244;i &mdash; ch&#7881; th&#234;m ph&#7847;n thi&#7871;u.</div>
+<textarea id="outline-input" class="fi" style="min-height:300px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.6;white-space:pre;" placeholder="# Marketing &amp; B&#225;n H&#224;ng&#10;## Digital Marketing A-Z&#10;### N&#7873;n t&#7843;ng Digital Marketing&#10;- T&#7893;ng quan Digital Marketing 2026&#10;- Customer Journey | video | 20p&#10;### SEO &amp; Content&#10;- Nghi&#234;n c&#7913;u t&#7915; kh&#243;a" oninput="renderOutlinePreview()"></textarea>
+<div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;"><button class="btn bgray" onclick="loadCurrentOutline()">&#11015; T&#7843;i m&#7909;c l&#7909;c hi&#7879;n t&#7841;i</button><button class="btn bgray" onclick="loadExampleOutline()">&#128221; D&#225;n v&#237; d&#7909; m&#7851;u</button><button class="btn bgreen" id="outline-build-btn" onclick="buildFromOutline()">&#127959; D&#7921;ng c&#7845;u tr&#250;c</button></div>
+<div id="outline-preview" style="font-size:13px;color:#334155;"></div></div></div>
 
 <!-- Image modal -->
 <div class="modal" id="image-modal" style="display:none"><div class="modal-card" style="width:min(560px,96vw);"><div class="modal-head"><h3>Ch&#232;n &#7843;nh</h3><button class="close-x" onclick="closeImageModal()">&times;</button></div><div class="form-row"><label>URL &#7843;nh</label><input id="image-url" class="fi" placeholder="https://..."></div><div style="display:flex;gap:8px;margin-bottom:14px;"><button class="btn bblue" onclick="insertImageFromURL()">Ch&#232;n URL</button><button class="btn bgray" onclick="document.getElementById('image-upload').click()">Upload &#7843;nh</button><input id="image-upload" type="file" accept="image/*" style="display:none" onchange="handleImageUpload(this.files[0])"></div></div></div>
@@ -2356,6 +2363,133 @@ function findOrCreateTopicByName(name){ let cat=DATA.categories.find(c=>String(c
 function findOrCreateCourseByName(cat,name){ cat.courses=cat.courses||[]; let course=cat.courses.find(c=>String(c.name).toLowerCase()===name.toLowerCase()); if(!course){ course={id:newId('course',name),name,desc:'Khóa học import từ file',icon:'📘',level:'Cơ bản',duration:'1h',lessons_total:0,chapters:[]}; cat.courses.push(course); } return course; }
 function findOrCreateChapterByName(course,title){ course.chapters=course.chapters||[]; let ch=course.chapters.find(x=>String(x.title).toLowerCase()===title.toLowerCase()); if(!ch){ ch={id:newId('chap',title),title,desc:'0 bài học',lessons:[]}; course.chapters.push(ch); } return ch; }
 function downloadLessonTemplate(){ downloadFile('lesson-import-template.csv','topic,course,chapter,lesson_title,lesson_type,duration\nMarketing,Marketing Cơ Bản,Chương 1,Bài mới về SEO,doc,15p\nMarketing,Digital Marketing A-Z,Chương 2,Video về Ads,video,30p','text/csv'); }
+
+// ===== Outline builder (dán mục lục nhanh) =====
+function splitLeadingIcon(text){
+  const m=String(text||'').match(/^(\p{Extended_Pictographic}️?)\s+(.*)$/u);
+  if(m) return { icon:m[1], name:cleanText(m[2]) };
+  return { icon:'', name:cleanText(text) };
+}
+function parseOutline(text){
+  const ops=[]; const warnings=[]; const stats={topics:0,courses:0,chapters:0,lessons:0};
+  let hasTopic=false, hasCourse=false, hasChapter=false;
+  (String(text||'').split(/\r?\n/)).forEach((raw,idx)=>{
+    const line=raw.trim();
+    if(!line) return;
+    if(line.startsWith('###')){
+      const title=cleanText(line.replace(/^#{3}\s*/,''));
+      if(!title) return;
+      if(!hasCourse){ warnings.push(`Dòng ${idx+1}: chương "${title}" chưa có khóa học cha — bỏ qua.`); return; }
+      ops.push({kind:'chapter',title}); hasChapter=true; stats.chapters++;
+    } else if(line.startsWith('##')){
+      const parsed=splitLeadingIcon(cleanText(line.replace(/^#{2}\s*/,'')));
+      if(!parsed.name) return;
+      if(!hasTopic){ warnings.push(`Dòng ${idx+1}: khóa học "${parsed.name}" chưa có topic cha — bỏ qua.`); return; }
+      ops.push({kind:'course',name:parsed.name,icon:parsed.icon}); hasCourse=true; hasChapter=false; stats.courses++;
+    } else if(line.startsWith('#')){
+      const parsed=splitLeadingIcon(cleanText(line.replace(/^#\s*/,'')));
+      if(!parsed.name) return;
+      ops.push({kind:'topic',name:parsed.name,icon:parsed.icon}); hasTopic=true; hasCourse=false; hasChapter=false; stats.topics++;
+    } else {
+      const body=cleanText(line.replace(/^[-*+]\s*/,''));
+      if(!body) return;
+      const parts=body.split('|').map(x=>cleanText(x));
+      const title=parts[0];
+      if(!title) return;
+      if(!hasChapter){ warnings.push(`Dòng ${idx+1}: bài "${title}" chưa có chương cha — bỏ qua.`); return; }
+      let type=(parts[1]||'doc').toLowerCase(); if(!['video','doc','quiz'].includes(type)) type='doc';
+      const duration=parts[2]||'15p';
+      ops.push({kind:'lesson',title,type,duration}); stats.lessons++;
+    }
+  });
+  return {ops,stats,warnings};
+}
+function renderOutlinePreview(){
+  const host=byId('outline-preview'); if(!host) return;
+  const text=byId('outline-input').value;
+  if(!cleanText(text)){ host.innerHTML='<div class="tree-empty" style="background:#f8fafc;border-radius:12px;">Dán mục lục vào ô trên để xem trước.</div>'; return; }
+  const {stats,warnings}=parseOutline(text);
+  const chip=(n,label,bg,col)=>`<span style="display:inline-flex;align-items:center;gap:5px;background:${bg};color:${col};font-weight:800;font-size:12px;padding:4px 10px;border-radius:999px;margin-right:6px;">${n} ${label}</span>`;
+  let html=`<div style="margin-bottom:10px;">${chip(stats.topics,'topic','#e0f2fe','#0284c7')}${chip(stats.courses,'khóa','#ede9fe','#7c3aed')}${chip(stats.chapters,'chương','#dcfce7','#15803d')}${chip(stats.lessons,'bài','#fef3c7','#92400e')}</div>`;
+  if(warnings.length) html+=`<div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:10px 12px;color:#9a3412;font-size:12px;line-height:1.6;">${warnings.slice(0,8).map(esc).join('<br>')}${warnings.length>8?`<br>… và ${warnings.length-8} cảnh báo khác`:''}</div>`;
+  host.innerHTML=html;
+}
+function buildFromOutline(){
+  const text=byId('outline-input').value;
+  const {ops,warnings}=parseOutline(text);
+  if(!ops.length){ showToast('Mục lục trống hoặc không hợp lệ',true); return; }
+  let curCat=null,curCourse=null,curChap=null;
+  let nT=0,nC=0,nCh=0,nL=0,skip=0; let last=null;
+  ops.forEach(op=>{
+    if(op.kind==='topic'){
+      const existed=DATA.categories.some(c=>String(c.name).toLowerCase()===op.name.toLowerCase());
+      curCat=findOrCreateTopicByName(op.name); curCourse=null; curChap=null;
+      if(!existed){ nT++; if(op.icon) curCat.icon=op.icon; }
+      last={kind:'topic',catId:curCat.id};
+    } else if(op.kind==='course'){
+      if(!curCat) return;
+      const existed=(curCat.courses||[]).some(c=>String(c.name).toLowerCase()===op.name.toLowerCase());
+      curCourse=findOrCreateCourseByName(curCat,op.name); curChap=null;
+      if(!existed){ nC++; if(op.icon) curCourse.icon=op.icon; curCourse.desc=''; }
+      last={kind:'course',catId:curCat.id,courseId:curCourse.id};
+    } else if(op.kind==='chapter'){
+      if(!curCourse) return;
+      const existed=(curCourse.chapters||[]).some(x=>String(x.title).toLowerCase()===op.title.toLowerCase());
+      curChap=findOrCreateChapterByName(curCourse,op.title);
+      if(!existed) nCh++;
+      last={kind:'chapter',catId:curCat.id,courseId:curCourse.id,chapId:curChap.id};
+    } else if(op.kind==='lesson'){
+      if(!curChap) return;
+      curChap.lessons=curChap.lessons||[];
+      if(curChap.lessons.some(l=>String(l.title).toLowerCase()===op.title.toLowerCase())){ skip++; return; }
+      const lesson={id:newId('lesson',op.title),title:op.title,type:op.type,duration:op.duration,done:false,subs:[],content:'<p>Nội dung bài học...</p>',status:'draft'};
+      curChap.lessons.push(lesson); nL++;
+      last={kind:'lesson',catId:curCat.id,courseId:curCourse.id,chapId:curChap.id,lessonId:lesson.id};
+    }
+  });
+  if(last) state.adminSelection=last;
+  saveContentToStorage(); buildCategorySidebar(); refreshContentUI();
+  closeOutlineModal();
+  showToast(`Đã tạo ${nT} topic · ${nC} khóa · ${nCh} chương · ${nL} bài (nháp)${skip?` · bỏ qua ${skip} bài trùng`:''}`);
+}
+function loadCurrentOutline(){
+  const lines=[];
+  DATA.categories.forEach(cat=>{
+    lines.push(`# ${cat.icon?cat.icon+' ':''}${cat.name}`);
+    (cat.courses||[]).forEach(course=>{
+      lines.push(`## ${course.icon?course.icon+' ':''}${course.name}`);
+      (course.chapters||[]).forEach(ch=>{
+        lines.push(`### ${ch.title}`);
+        (ch.lessons||[]).forEach(l=>{
+          const meta=(l.type&&l.type!=='doc')||l.duration?` | ${l.type||'doc'} | ${l.duration||'15p'}`:'';
+          lines.push(`- ${l.title}${meta}`);
+        });
+      });
+    });
+  });
+  byId('outline-input').value=lines.join('\n');
+  renderOutlinePreview();
+}
+function loadExampleOutline(){
+  byId('outline-input').value=[
+    '# 📈 Marketing & Bán Hàng',
+    '## 🚀 Digital Marketing A-Z',
+    '### Nền tảng Digital Marketing',
+    '- Tổng quan Digital Marketing 2026',
+    '- Hành trình khách hàng (Customer Journey) | doc | 20p',
+    '- Video giới thiệu kênh | video | 8p',
+    '### SEO & Content Marketing',
+    '- Nghiên cứu từ khóa | doc | 25p',
+    '- Viết content chuẩn SEO',
+    '## 🛒 Bán Hàng Online',
+    '### Tư duy bán hàng online',
+    '- Tâm lý mua hàng online',
+    '- Chọn sản phẩm & ngách | doc | 20p'
+  ].join('\n');
+  renderOutlinePreview();
+}
+function openOutlineModal(){ byId('outline-modal').style.display='flex'; byId('outline-input').value=''; renderOutlinePreview(); setTimeout(()=>byId('outline-input').focus(),0); }
+function closeOutlineModal(){ byId('outline-modal').style.display='none'; }
 function parseCSV(text){
   const rows=[]; let row=[], cell='', quoted=false;
   const src=String(text||'').replace(/^\ufeff/,'');
