@@ -674,9 +674,9 @@
 // Để trống => app chạy offline bằng localStorage như cũ.
 // ============================================================
 const LH_CLOUD = {
-  url: '',          // VD: https://abcdxyz.supabase.co
-  anonKey: '',      // Public anon key (Settings > API)
-  adminEmails: ['admin@learnhub.com']  // Email luôn được coi là admin
+  url: 'https://zvlmihzgzrowbzolzsln.supabase.co',
+  anonKey: 'sb_publishable_ZRd0qmzwq-mGQf_7CygJUQ_jzPYZkOd',
+  adminEmails: ['dieppreme@gmail.com']  // Email luôn được coi là admin
 };
 let SB = null;
 function cloudConfigured(){ return !!(LH_CLOUD.url && LH_CLOUD.anonKey && window.supabase && window.supabase.createClient); }
