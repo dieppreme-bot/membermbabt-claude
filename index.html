@@ -711,7 +711,7 @@ const LH_BOOT_HASH = String(window.location.hash || '');
 const LH_BOOT_SEARCH = String(window.location.search || '');
 let lhRecoveryMode = false;
 function cloudConfigured(){ return !!(LH_CLOUD.url && LH_CLOUD.anonKey && window.supabase && window.supabase.createClient); }
-function getSB(){ if(!SB && cloudConfigured()){ try{ SB = window.supabase.createClient(LH_CLOUD.url, LH_CLOUD.anonKey); }catch(e){ console.warn('Supabase init failed', e); SB=null; } } return SB; }
+function getSB(){ if(!SB && cloudConfigured()){ try{ SB = window.supabase.createClient(LH_CLOUD.url, LH_CLOUD.anonKey, {auth:{flowType:'implicit'}}); SB.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY'){ lhRecoveryMode=true; showResetPasswordForm(); } }); }catch(e){ console.warn('Supabase init failed', e); SB=null; } } return SB; }
 function cloudEnabled(){ return !!getSB(); }
 function isAdminEmail(email){ return LH_CLOUD.adminEmails.map(e=>String(e).toLowerCase()).includes(String(email||'').toLowerCase()); }
 // --- Key-Value store (content + settings) ---
@@ -1485,8 +1485,7 @@ async function bootCloud(){
   await cloudPullSettings();
   try{ const _ta=await cloudLoadKV('tier_access'); if(_ta&&typeof _ta==='object') state.tierAccess=_ta; }catch(e){}
   try{
-    const sb=getSB();
-    if(!_recoveryHooked){ _recoveryHooked=true; sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY'){ lhRecoveryMode=true; showResetPasswordForm(); } }); }
+    const sb=getSB(); // getSB đã đăng ký hook PASSWORD_RECOVERY ngay khi tạo client
     // Phát hiện link đặt lại mật khẩu từ URL GỐC đã lưu (Supabase có thể đã xóa hash)
     const isRecovery = LH_BOOT_HASH.includes('type=recovery') || /[?&]type=recovery/.test(LH_BOOT_SEARCH);
     if (isRecovery){ lhRecoveryMode=true; showResetPasswordForm(); return; }
