@@ -8,6 +8,7 @@
 <title>LearnHub — Nền tảng học tập</title>
 <link id="site-favicon" rel="icon" href="">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
   * { font-family: var(--font-body, 'Inter', sans-serif); box-sizing: border-box; }
@@ -667,6 +668,41 @@
 <div class="emoji-pop" id="emoji-pop"></div>
 
 <script>
+// ============================================================
+// CẤU HÌNH SUPABASE (CLOUD)
+// Điền 2 giá trị dưới đây SAU KHI tạo project Supabase.
+// Để trống => app chạy offline bằng localStorage như cũ.
+// ============================================================
+const LH_CLOUD = {
+  url: '',          // VD: https://abcdxyz.supabase.co
+  anonKey: '',      // Public anon key (Settings > API)
+  adminEmails: ['admin@learnhub.com']  // Email luôn được coi là admin
+};
+let SB = null;
+function cloudConfigured(){ return !!(LH_CLOUD.url && LH_CLOUD.anonKey && window.supabase && window.supabase.createClient); }
+function getSB(){ if(!SB && cloudConfigured()){ try{ SB = window.supabase.createClient(LH_CLOUD.url, LH_CLOUD.anonKey); }catch(e){ console.warn('Supabase init failed', e); SB=null; } } return SB; }
+function cloudEnabled(){ return !!getSB(); }
+function isAdminEmail(email){ return LH_CLOUD.adminEmails.map(e=>String(e).toLowerCase()).includes(String(email||'').toLowerCase()); }
+// --- Key-Value store (content + settings) ---
+async function cloudLoadKV(key){ const sb=getSB(); if(!sb) return null; try{ const {data,error}=await sb.from('app_kv').select('value').eq('key',key).maybeSingle(); if(error){ console.warn('cloudLoadKV',key,error.message); return null; } return data?data.value:null; }catch(e){ console.warn('cloudLoadKV',e); return null; } }
+async function cloudSaveKV(key,value){ const sb=getSB(); if(!sb) return false; try{ const {error}=await sb.from('app_kv').upsert({key,value,updated_at:new Date().toISOString()}); if(error){ console.warn('cloudSaveKV',key,error.message); return false; } return true; }catch(e){ console.warn('cloudSaveKV',e); return false; } }
+let _cloudContentTimer=null;
+function cloudQueueContent(){ if(!cloudEnabled()) return; clearTimeout(_cloudContentTimer); _cloudContentTimer=setTimeout(()=>{ if(isAdminUser(state.user)) cloudSaveKV('content',DATA); },800); }
+function cloudQueueSettings(){ if(!cloudEnabled()) return; if(isAdminUser(state.user)) cloudSaveKV('settings',state.siteSettings); }
+async function cloudPullContent(){ const c=await cloudLoadKV('content'); if(c&&Array.isArray(c.categories)){ DATA=c; syncAllCourseMeta(); return true; } return false; }
+async function cloudPullSettings(){ const s=await cloudLoadKV('settings'); if(s&&typeof s==='object'){ state.siteSettings=normalizeSiteSettings(s); applySiteSettings(); return true; } return false; }
+// --- Auth ---
+function cloudAuthMsg(e){ const m=String(e&&e.message||e||''); if(/Invalid login/i.test(m)) return 'Email hoặc mật khẩu không đúng'; if(/already registered|already been/i.test(m)) return 'Email đã được đăng ký'; if(/confirm/i.test(m)) return 'Vui lòng kiểm tra email để xác nhận tài khoản'; return m||'Lỗi xác thực'; }
+async function cloudUserToAppUser(authUser){ const sb=getSB(); let role='member', pname=''; try{ const {data:prof}=await sb.from('profiles').select('role,name').eq('id',authUser.id).maybeSingle(); if(prof){ role=prof.role||'member'; pname=prof.name||''; } }catch(e){} const email=authUser.email||''; const isAdmin = role==='admin' || isAdminEmail(email); return { id:authUser.id, name:pname||(authUser.user_metadata&&authUser.user_metadata.name)||email.split('@')[0], email, role, isAdmin }; }
+async function cloudSignIn(email,pass){ const sb=getSB(); const {data,error}=await sb.auth.signInWithPassword({email,password:pass}); if(error) throw error; return data.user; }
+async function cloudSignUp(name,email,pass){ const sb=getSB(); const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}}); if(error) throw error; return data; }
+async function cloudSignOut(){ const sb=getSB(); if(sb) try{ await sb.auth.signOut(); }catch(e){} }
+// --- Members (admin) ---
+async function cloudListMembers(){ const sb=getSB(); if(!sb) return []; try{ const {data,error}=await sb.from('profiles').select('id,name,email,role,created_at').order('created_at',{ascending:true}); if(error){ console.warn('cloudListMembers',error.message); return []; } return (data||[]).map(p=>({id:p.id,name:p.name||(p.email||'').split('@')[0],email:p.email,role:p.role,isAdmin:(p.role==='admin')||isAdminEmail(p.email),createdAt:p.created_at})); }catch(e){ console.warn(e); return []; } }
+async function cloudSetRole(email,role){ const sb=getSB(); const {error}=await sb.from('profiles').update({role}).eq('email',email); if(error){ showToast('Không đổi được vai trò: '+error.message,true); return false; } return true; }
+async function cloudDeleteProfile(email){ const sb=getSB(); const {error}=await sb.from('profiles').delete().eq('email',email); if(error){ showToast('Không xóa được: '+error.message,true); return false; } return true; }
+async function cloudAddMember(name,email,pass,role){ const tmp=window.supabase.createClient(LH_CLOUD.url,LH_CLOUD.anonKey,{auth:{persistSession:false,storageKey:'lh_tmp_'+Date.now(),autoRefreshToken:false}}); const {error}=await tmp.auth.signUp({email,password:pass,options:{data:{name}}}); if(error) throw error; if(role==='admin'){ try{ await getSB().from('profiles').update({role:'admin'}).eq('email',email); }catch(e){} } }
+
 // ============================================================
 // DATA
 // ============================================================
@@ -1378,12 +1414,26 @@ document.addEventListener('keydown', e => {
 // Init
 window.addEventListener('load', () => {
   ensureAdminBoot();
-  // Check saved session
+  if (cloudEnabled()) { bootCloud(); return; }
+  // Offline mode: restore session from sessionStorage
   const saved = sessionStorage.getItem('lh_user');
   if (saved) {
     try { loginSuccess(JSON.parse(saved)); return; } catch(e) {}
   }
 });
+async function bootCloud(){
+  // Public branding for the login screen
+  await cloudPullSettings();
+  try{
+    const sb=getSB();
+    const { data } = await sb.auth.getSession();
+    if (data && data.session && data.session.user){
+      const user = await cloudUserToAppUser(data.session.user);
+      await cloudPullContent();
+      loginSuccess(user);
+    }
+  }catch(e){ console.warn('bootCloud', e); }
+}
 
 // ============================================================
 
@@ -1489,6 +1539,7 @@ function saveSiteSettings(){
   state.siteSettings=normalizeSiteSettings(state.siteSettings);
   localStorage.setItem('lh_site_settings', JSON.stringify(state.siteSettings));
   applySiteSettings();
+  cloudQueueSettings();
 }
 function fontValue(name){
   const map={
@@ -1584,15 +1635,19 @@ function maybeShowMarketingPopup(settings=null){
 }
 function closeMarketingPopup(){ const modal=byId('marketing-popup-modal'); if(modal) modal.style.display='none'; }
 function loadContentFromStorage(){ const raw=localStorage.getItem('lh_content'); if(!raw) return; try{ const saved=JSON.parse(raw); if(saved && Array.isArray(saved.categories)) DATA=saved; }catch(e){ console.warn('Cannot read lh_content', e); } }
-function saveContentToStorage(){ syncAllCourseMeta(); localStorage.setItem('lh_content', JSON.stringify(DATA)); }
+function saveContentToStorage(){ syncAllCourseMeta(); localStorage.setItem('lh_content', JSON.stringify(DATA)); cloudQueueContent(); }
 function seedAdminUser(){ const users=getUsers(); const email='admin@learnhub.com'; const admin=users.find(u=>String(u.email).toLowerCase()===email); if(admin){ admin.name=admin.name||'Admin'; admin.pass='admin123'; admin.isAdmin=true; admin.createdAt=admin.createdAt||nowISO(); } else users.push({name:'Admin',email,pass:'admin123',isAdmin:true,createdAt:nowISO()}); saveUsers(users); }
-function ensureAdminBoot(){ if(lhBooted) return; state.siteSettings=loadSiteSettings(); applySiteSettings(); loadContentFromStorage(); syncAllCourseMeta(); seedAdminUser(); lhBooted=true; }
+function ensureAdminBoot(){ if(lhBooted) return; state.siteSettings=loadSiteSettings(); applySiteSettings(); loadContentFromStorage(); syncAllCourseMeta(); if(!cloudEnabled()) seedAdminUser(); lhBooted=true; }
 function updateAdminNav(){ const nav=byId('admin-nav'); if(nav) nav.style.display=isAdminUser(state.user)?'block':'none'; const role=byId('sidebar-role'); if(role) role.textContent=isAdminUser(state.user)?'Quản trị viên':'Học viên'; }
 
-function doLogin(){ ensureAdminBoot(); const email=byId('login-email').value.trim().toLowerCase(); const pass=byId('login-pass').value; if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); let user=users.find(u=>String(u.email).toLowerCase()===email); if(!user){ user={name:email.split('@')[0],email,pass,isAdmin:email==='admin@learnhub.com',createdAt:nowISO()}; users.push(user); saveUsers(users); } else if(user.pass!==pass){ showToast('Mật khẩu không đúng',true); return; } if(email==='admin@learnhub.com' && !user.isAdmin){ user.isAdmin=true; saveUsers(users); } loginSuccess(user); }
-function doRegister(){ ensureAdminBoot(); const name=byId('reg-name').value.trim(), email=byId('reg-email').value.trim().toLowerCase(), pass=byId('reg-pass').value; if(!name){showToast('Vui lòng nhập tên',true);return;} if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); if(users.find(u=>String(u.email).toLowerCase()===email)){showToast('Email đã được sử dụng',true);return;} const user={name,email,pass,isAdmin:false,createdAt:nowISO()}; users.push(user); saveUsers(users); loginSuccess(user); }
+async function doLogin(){ ensureAdminBoot(); const email=byId('login-email').value.trim().toLowerCase(); const pass=byId('login-pass').value; if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;}
+  if(cloudEnabled()){ showToast('Đang đăng nhập...'); try{ const au=await cloudSignIn(email,pass); const user=await cloudUserToAppUser(au); await cloudPullContent(); await cloudPullSettings(); loginSuccess(user); }catch(e){ showToast(cloudAuthMsg(e),true); } return; }
+  const users=getUsers(); let user=users.find(u=>String(u.email).toLowerCase()===email); if(!user){ user={name:email.split('@')[0],email,pass,isAdmin:email==='admin@learnhub.com',createdAt:nowISO()}; users.push(user); saveUsers(users); } else if(user.pass!==pass){ showToast('Mật khẩu không đúng',true); return; } if(email==='admin@learnhub.com' && !user.isAdmin){ user.isAdmin=true; saveUsers(users); } loginSuccess(user); }
+async function doRegister(){ ensureAdminBoot(); const name=byId('reg-name').value.trim(), email=byId('reg-email').value.trim().toLowerCase(), pass=byId('reg-pass').value; if(!name){showToast('Vui lòng nhập tên',true);return;} if(!email){showToast('Vui lòng nhập email',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;}
+  if(cloudEnabled()){ showToast('Đang tạo tài khoản...'); try{ const res=await cloudSignUp(name,email,pass); if(res&&res.session){ const user=await cloudUserToAppUser(res.user); await cloudPullContent(); await cloudPullSettings(); loginSuccess(user); } else { showToast('Đã gửi email xác nhận. Kiểm tra hộp thư rồi đăng nhập.'); switchTab('login'); } }catch(e){ showToast(cloudAuthMsg(e),true); } return; }
+  const users=getUsers(); if(users.find(u=>String(u.email).toLowerCase()===email)){showToast('Email đã được sử dụng',true);return;} const user={name,email,pass,isAdmin:false,createdAt:nowISO()}; users.push(user); saveUsers(users); loginSuccess(user); }
 function loginSuccess(user){ ensureAdminBoot(); state.user=user; sessionStorage.setItem('lh_user', JSON.stringify(user)); byId('auth-page').style.display='none'; byId('app').style.display='flex'; const init=(user.name||user.email||'U').charAt(0).toUpperCase(); byId('sidebar-avatar').textContent=init; byId('topbar-avatar').textContent=init; byId('sidebar-name').textContent=user.name||user.email; byId('topbar-name').textContent=user.name||user.email; const hr=new Date().getHours(); const greet=hr<12?'Chào buổi sáng':hr<17?'Chào buổi chiều':'Chào buổi tối'; byId('dash-greeting').textContent=greet+', '+(user.name||user.email).split(' ').pop()+'!'; updateAdminNav(); buildCategorySidebar(); renderDashboard(); showView('dashboard'); showToast('Chào mừng '+(user.name||user.email)+'!'); maybeShowMarketingPopup(); }
-function doLogout(){ state.user=null; sessionStorage.removeItem('lh_user'); byId('app').style.display='none'; byId('auth-page').style.display='flex'; updateAdminNav(); }
+function doLogout(){ if(cloudEnabled()) cloudSignOut(); state.user=null; sessionStorage.removeItem('lh_user'); byId('app').style.display='none'; byId('auth-page').style.display='flex'; updateAdminNav(); }
 function showView(view){ ensureAdminBoot(); if(view.startsWith('admin') && !isAdminUser(state.user)){ showToast('Cần quyền admin để truy cập',true); view='dashboard'; } state.prevView=state.view; state.view=view; ADMIN_VIEW_IDS.forEach(v=>{ const el=byId('view-'+v); if(el) el.style.display=v===view?'block':'none'; }); updateActiveNav(view); if(view==='library') renderLibrary(state.activeCat); if(view==='admin-dash') renderAdminDash(); if(view==='admin-content') renderAdminContent(); if(view==='admin-members') renderAdminMembers(); if(view==='admin-editor') renderEditor(); if(view==='admin-settings') renderAdminSettings(); }
 function updateActiveNav(view){ document.querySelectorAll('.nav-item,.ni').forEach(el=>el.classList.remove('active')); const nav=byId('nav-'+view); if(nav) nav.classList.add('active'); }
 function openLibrary(){
@@ -1777,7 +1832,8 @@ function treeDragEnd(event){
 function formatDate(iso){ if(!iso)return ''; const d=new Date(iso); return Number.isNaN(d.getTime())?iso:d.toLocaleDateString('vi-VN'); }
 function rolePill(u){ return `<span class="role-pill ${isAdminUser(u)?'role-admin':'role-member'}">${isAdminUser(u)?'Admin':'Member'}</span>`; }
 function renderAdminDash(){
-  const users=getUsers();
+  if(cloudEnabled() && !state._cloudMembers){ cloudListMembers().then(m=>{ state._cloudMembers=m; if(state.view==='admin-dash') renderAdminDash(); }); }
+  const users=cloudEnabled()?(state._cloudMembers||[]):getUsers();
   const topics=DATA.categories.length;
   const courses=DATA.categories.reduce((s,cat)=>s+(cat.courses||[]).length,0);
   const lessons=DATA.categories.reduce((s,cat)=>s+(cat.courses||[]).reduce((a,c)=>a+countCourseLessons(c),0),0);
@@ -1939,16 +1995,33 @@ function promptAddTopic(){ const name=prompt('Tên topic mới'); if(!name)retur
 function promptAddCourse(catId){ const name=prompt('Tên khóa học mới'); if(!name)return; addCourse(catId,{name:name.trim(),desc:'Mô tả khóa học mới',icon:'📘',level:'Cơ bản',duration:'1h',chapters:[]}); }
 function promptAddChapter(catId,courseId){ const title=prompt('Tên chương mới'); if(!title)return; addChapter(catId,courseId,title.trim()); }
 function promptAddLesson(catId,courseId,chapId){ const title=prompt('Tên bài học mới'); if(!title)return; const lesson=addLesson(catId,courseId,chapId,{title:title.trim(),type:'doc',duration:'15p'}); if(lesson&&state.view==='admin-editor') openLessonEditor(catId,courseId,chapId,lesson.id); }
+function membersTableHTML(users){
+  return `<table class="table"><thead><tr><th>#</th><th>Avatar</th><th>Tên</th><th>Email</th><th>Vai trò</th><th>Ngày tạo</th><th>Hành động</th></tr></thead><tbody>${users.map((u,i)=>`<tr><td>${i+1}</td><td><div class="avatar" style="width:32px;height:32px;font-size:12px;">${esc((u.name||u.email||'U').charAt(0).toUpperCase())}</div></td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${rolePill(u)}</td><td>${formatDate(u.createdAt)}</td><td><button class="tree-btn" onclick="toggleMemberRole('${jsStr(u.email)}')">Role</button> <button class="tree-btn" onclick="deleteMember('${jsStr(u.email)}')">Xóa</button></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:28px;">Không có thành viên.</td></tr>`}</tbody></table>`;
+}
 function renderAdminMembers(){
   const q=(byId('member-search')?.value||'').toLowerCase();
+  if(cloudEnabled()){ renderAdminMembersCloud(q); return; }
   const users=getUsers().filter(u=>!q||String(u.name||'').toLowerCase().includes(q)||String(u.email||'').toLowerCase().includes(q));
-  byId('members-table-wrap').innerHTML=`<table class="table"><thead><tr><th>#</th><th>Avatar</th><th>Tên</th><th>Email</th><th>Vai trò</th><th>Ngày tạo</th><th>Hành động</th></tr></thead><tbody>${users.map((u,i)=>`<tr><td>${i+1}</td><td><div class="avatar" style="width:32px;height:32px;font-size:12px;">${esc((u.name||u.email||'U').charAt(0).toUpperCase())}</div></td><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${rolePill(u)}</td><td>${formatDate(u.createdAt)}</td><td><button class="tree-btn" onclick="toggleMemberRole('${jsStr(u.email)}')">Role</button> <button class="tree-btn" onclick="deleteMember('${jsStr(u.email)}')">Xóa</button></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:28px;">Không có thành viên.</td></tr>`}</tbody></table>`;
+  byId('members-table-wrap').innerHTML=membersTableHTML(users);
 }
+async function renderAdminMembersCloud(q){
+  const wrap=byId('members-table-wrap'); if(!wrap) return;
+  if(!state._cloudMembers){ wrap.innerHTML='<div style="padding:24px;color:#94a3b8;">Đang tải thành viên từ Supabase...</div>'; state._cloudMembers=await cloudListMembers(); }
+  const users=(state._cloudMembers||[]).filter(u=>!q||String(u.name||'').toLowerCase().includes(q)||String(u.email||'').toLowerCase().includes(q));
+  wrap.innerHTML=membersTableHTML(users);
+}
+async function reloadCloudMembers(){ state._cloudMembers=await cloudListMembers(); renderAdminMembers(); }
 function openMemberModal(){ byId('member-modal').style.display='flex'; ['member-name','member-email','member-pass'].forEach(id=>byId(id).value=''); byId('member-role').value='member'; }
 function closeMemberModal(){ byId('member-modal').style.display='none'; }
-function addMemberFromModal(){ const name=byId('member-name').value.trim(),email=byId('member-email').value.trim().toLowerCase(),pass=byId('member-pass').value,role=byId('member-role').value; if(!name||!email){showToast('Nhập tên và email',true);return;} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email không hợp lệ',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;} const users=getUsers(); if(users.some(u=>String(u.email).toLowerCase()===email)){showToast('Email đã tồn tại',true);return;} users.push({name,email,pass,isAdmin:role==='admin',createdAt:nowISO()}); saveUsers(users); closeMemberModal(); renderAdminMembers(); showToast('Đã thêm thành viên'); }
-function deleteMember(email){ if(state.user&&String(state.user.email).toLowerCase()===String(email).toLowerCase()){showToast('Không thể xóa tài khoản đang đăng nhập',true);return;} if(!confirm('Xóa thành viên này?'))return; saveUsers(getUsers().filter(u=>String(u.email).toLowerCase()!==String(email).toLowerCase())); renderAdminMembers(); }
-function toggleMemberRole(email){ const users=getUsers(); const u=users.find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); if(!u)return; u.isAdmin=!isAdminUser(u); if(String(u.email).toLowerCase()==='admin@learnhub.com')u.isAdmin=true; saveUsers(users); renderAdminMembers(); }
+async function addMemberFromModal(){ const name=byId('member-name').value.trim(),email=byId('member-email').value.trim().toLowerCase(),pass=byId('member-pass').value,role=byId('member-role').value; if(!name||!email){showToast('Nhập tên và email',true);return;} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email không hợp lệ',true);return;} if(pass.length<6){showToast('Mật khẩu tối thiểu 6 ký tự',true);return;}
+  if(cloudEnabled()){ showToast('Đang tạo thành viên...'); try{ await cloudAddMember(name,email,pass,role); closeMemberModal(); await reloadCloudMembers(); showToast('Đã thêm thành viên (có thể cần xác nhận email)'); }catch(e){ showToast(cloudAuthMsg(e),true); } return; }
+  const users=getUsers(); if(users.some(u=>String(u.email).toLowerCase()===email)){showToast('Email đã tồn tại',true);return;} users.push({name,email,pass,isAdmin:role==='admin',createdAt:nowISO()}); saveUsers(users); closeMemberModal(); renderAdminMembers(); showToast('Đã thêm thành viên'); }
+async function deleteMember(email){ if(state.user&&String(state.user.email).toLowerCase()===String(email).toLowerCase()){showToast('Không thể xóa tài khoản đang đăng nhập',true);return;} if(!confirm('Xóa thành viên này?'))return;
+  if(cloudEnabled()){ const ok=await cloudDeleteProfile(email); if(ok){ await reloadCloudMembers(); showToast('Đã xóa hồ sơ thành viên'); } return; }
+  saveUsers(getUsers().filter(u=>String(u.email).toLowerCase()!==String(email).toLowerCase())); renderAdminMembers(); }
+async function toggleMemberRole(email){
+  if(cloudEnabled()){ const m=(state._cloudMembers||[]).find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); const next=(m&&m.isAdmin)?'member':'admin'; const ok=await cloudSetRole(email,next); if(ok){ await reloadCloudMembers(); showToast('Đã đổi vai trò'); } return; }
+  const users=getUsers(); const u=users.find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); if(!u)return; u.isAdmin=!isAdminUser(u); if(String(u.email).toLowerCase()==='admin@learnhub.com')u.isAdmin=true; saveUsers(users); renderAdminMembers(); }
 function openMemberImportModal(){ state.memberImportRows=[]; byId('member-import-modal').style.display='flex'; byId('member-import-preview').innerHTML=''; byId('member-import-result').textContent=''; byId('member-import-confirm').style.display='none'; }
 function closeMemberImportModal(){ byId('member-import-modal').style.display='none'; }
 function handleMemberImportFile(file){ if(!file)return; if(file.name.toLowerCase().endsWith('.xlsx')){byId('member-import-result').textContent='File .xlsx: hãy export thành CSV trước khi import.';return;} const reader=new FileReader(); reader.onload=e=>parseMemberCSV(e.target.result); reader.readAsText(file,'utf-8'); }

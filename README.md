@@ -6,6 +6,11 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![HTML](https://img.shields.io/badge/HTML-single--file-orange)
 ![No Build](https://img.shields.io/badge/build-none%20required-brightgreen)
+![Database](https://img.shields.io/badge/database-Supabase%20optional-3ECF8E)
+
+> 💾 **Muốn dữ liệu dùng chung trên server (đăng nhập thật, quản lý tập trung)?**
+> Xem **[SETUP-SUPABASE.md](SETUP-SUPABASE.md)** — bật Supabase bằng cách dán 2 khóa API, không cần build.
+> Chưa cấu hình thì app vẫn chạy offline bằng localStorage như bình thường.
 
 ---
 
