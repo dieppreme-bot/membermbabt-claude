@@ -387,7 +387,8 @@
         <input id="login-pass" type="password" class="form-input" placeholder="••••••••">
       </div>
       <button class="btn-primary" onclick="doLogin()">Đăng nhập</button>
-      <p style="text-align:center; margin-top:16px; font-size:13px; color:#94a3b8;">Demo: dùng email bất kỳ + mật khẩu 123456</p>
+      <p style="text-align:center; margin-top:14px; font-size:13px;"><a href="#" onclick="event.preventDefault();openForgotPassword()" style="color:var(--primary,#0ea5e9); text-decoration:none; font-weight:600;">Quên mật khẩu?</a></p>
+      <p id="login-hint" style="text-align:center; margin-top:6px; font-size:12px; color:#94a3b8;"></p>
     </div>
 
     <!-- Register form -->
@@ -633,6 +634,12 @@
 </div>
 
 <!-- Toast -->
+<!-- Forgot password modal -->
+<div class="modal" id="forgot-modal" style="display:none"><div class="modal-card" style="width:min(440px,96vw);"><div class="modal-head"><h3>Qu&#234;n m&#7853;t kh&#7849;u</h3><button class="close-x" onclick="closeForgotPassword()">&times;</button></div><p style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:12px;">Nh&#7853;p email t&#224;i kho&#7843;n. Ch&#250;ng t&#244;i s&#7869; g&#7917;i li&#234;n k&#7871;t &#273;&#7863;t l&#7841;i m&#7853;t kh&#7849;u v&#7873; email c&#7911;a b&#7841;n.</p><div class="form-row"><label>Email</label><input id="forgot-email" class="fi" type="email" placeholder="email@example.com"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;"><button class="btn bgray" onclick="closeForgotPassword()">H&#7911;y</button><button class="btn bblue" onclick="submitForgotPassword()">G&#7917;i li&#234;n k&#7871;t</button></div></div></div>
+
+<!-- Reset password modal (after clicking email link) -->
+<div class="modal" id="reset-modal" style="display:none"><div class="modal-card" style="width:min(440px,96vw);"><div class="modal-head"><h3>&#272;&#7863;t m&#7853;t kh&#7849;u m&#7899;i</h3></div><p style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:12px;">Nh&#7853;p m&#7853;t kh&#7849;u m&#7899;i cho t&#224;i kho&#7843;n c&#7911;a b&#7841;n (t&#7889;i thi&#7875;u 6 k&#253; t&#7921;).</p><div class="form-row"><label>M&#7853;t kh&#7849;u m&#7899;i</label><input id="reset-pass" class="fi" type="password" placeholder="M&#7853;t kh&#7849;u m&#7899;i"></div><div class="form-row"><label>Nh&#7853;p l&#7841;i m&#7853;t kh&#7849;u</label><input id="reset-pass2" class="fi" type="password" placeholder="Nh&#7853;p l&#7841;i"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;"><button class="btn bgreen" onclick="submitResetPassword()">L&#432;u m&#7853;t kh&#7849;u</button></div></div></div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Member modal -->
@@ -702,6 +709,12 @@ async function cloudListMembers(){ const sb=getSB(); if(!sb) return []; try{ con
 async function cloudSetRole(email,role){ const sb=getSB(); const {error}=await sb.from('profiles').update({role}).eq('email',email); if(error){ showToast('Không đổi được vai trò: '+error.message,true); return false; } return true; }
 async function cloudDeleteProfile(email){ const sb=getSB(); const {error}=await sb.from('profiles').delete().eq('email',email); if(error){ showToast('Không xóa được: '+error.message,true); return false; } return true; }
 async function cloudAddMember(name,email,pass,role){ const tmp=window.supabase.createClient(LH_CLOUD.url,LH_CLOUD.anonKey,{auth:{persistSession:false,storageKey:'lh_tmp_'+Date.now(),autoRefreshToken:false}}); const {error}=await tmp.auth.signUp({email,password:pass,options:{data:{name}}}); if(error) throw error; if(role==='admin'){ try{ await getSB().from('profiles').update({role:'admin'}).eq('email',email); }catch(e){} } }
+// --- Forgot / reset password ---
+function openForgotPassword(){ if(!cloudEnabled()){ showToast('Tính năng này cần bật chế độ cloud (Supabase)',true); return; } const m=byId('forgot-modal'); if(m){ m.style.display='flex'; const f=byId('forgot-email'); if(f){ f.value=byId('login-email')?.value||''; setTimeout(()=>f.focus(),0); } } }
+function closeForgotPassword(){ const m=byId('forgot-modal'); if(m) m.style.display='none'; }
+async function submitForgotPassword(){ const email=(byId('forgot-email').value||'').trim().toLowerCase(); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showToast('Email không hợp lệ',true); return; } try{ const redirectTo=location.origin+location.pathname; const {error}=await getSB().auth.resetPasswordForEmail(email,{redirectTo}); if(error) throw error; closeForgotPassword(); showToast('Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.'); }catch(e){ showToast(cloudAuthMsg(e),true); } }
+function showResetPasswordForm(){ const m=byId('reset-modal'); if(m){ byId('auth-page').style.display='flex'; byId('app').style.display='none'; m.style.display='flex'; byId('reset-pass').value=''; byId('reset-pass2').value=''; setTimeout(()=>byId('reset-pass').focus(),0); } }
+async function submitResetPassword(){ const p1=byId('reset-pass').value, p2=byId('reset-pass2').value; if(p1.length<6){ showToast('Mật khẩu tối thiểu 6 ký tự',true); return; } if(p1!==p2){ showToast('Hai mật khẩu không khớp',true); return; } try{ const {error}=await getSB().auth.updateUser({password:p1}); if(error) throw error; byId('reset-modal').style.display='none'; try{ await getSB().auth.signOut(); }catch(e){} showToast('Đã đổi mật khẩu! Đăng nhập lại bằng mật khẩu mới.'); switchTab('login'); }catch(e){ showToast(cloudAuthMsg(e),true); } }
 
 // ============================================================
 // DATA
@@ -1414,6 +1427,7 @@ document.addEventListener('keydown', e => {
 // Init
 window.addEventListener('load', () => {
   ensureAdminBoot();
+  setLoginHint();
   if (cloudEnabled()) { bootCloud(); return; }
   // Offline mode: restore session from sessionStorage
   const saved = sessionStorage.getItem('lh_user');
@@ -1421,12 +1435,18 @@ window.addEventListener('load', () => {
     try { loginSuccess(JSON.parse(saved)); return; } catch(e) {}
   }
 });
+function setLoginHint(){ const h=byId('login-hint'); if(!h) return; h.textContent = cloudEnabled() ? 'Đăng nhập bằng tài khoản đã đăng ký.' : 'Demo: dùng email bất kỳ + mật khẩu 123456'; }
+let _recoveryHooked=false;
 async function bootCloud(){
   // Public branding for the login screen
   await cloudPullSettings();
   try{
     const sb=getSB();
+    if(!_recoveryHooked){ _recoveryHooked=true; sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showResetPasswordForm(); }); }
+    const hash=String(location.hash||'');
+    const isRecovery = hash.includes('type=recovery');
     const { data } = await sb.auth.getSession();
+    if (isRecovery){ showResetPasswordForm(); return; }
     if (data && data.session && data.session.user){
       const user = await cloudUserToAppUser(data.session.user);
       await cloudPullContent();
