@@ -1299,7 +1299,13 @@ function htmlToPlainText(html) {
 }
 
 function hasUsefulLessonContent(html) {
-  const text = htmlToPlainText(html).toLowerCase();
+  if (!html) return false;
+  // Có media/nhúng (video YouTube, ảnh, bảng, callout, toggle...) → coi là có nội dung,
+  // kể cả khi không có chữ nào (vd bài chỉ gồm 1 video).
+  const host = document.createElement('div');
+  host.innerHTML = html;
+  if (host.querySelector('iframe,img,video,audio,table,hr,.ed-video,.ed-html,.ed-callout,.ed-toggle,.ed-textbox')) return true;
+  const text = htmlToPlainText(html).toLowerCase().trim();
   if (!text) return false;
   return !['nội dung bài học...', 'noi dung bai hoc...', 'nội dung bên trong...', 'noi dung ben trong...'].includes(text);
 }
