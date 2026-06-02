@@ -487,46 +487,11 @@
         <p>Tiếp tục hành trình học tập của bạn hôm nay.</p>
       </div>
 
-      <!-- Continue learning banner -->
-      <div class="continue-card">
-        <div class="continue-info">
-          <h3>Tiếp tục học: Digital Marketing A-Z</h3>
-          <p>Chương 2 — Bài 2.3: Chiến lược Content Marketing</p>
-          <div class="continue-progress">
-            <div class="continue-progress-bar"><div class="continue-progress-bar-fill" style="width:42%"></div></div>
-            <p>42% hoàn thành · Còn 5 bài nữa trong chương này</p>
-          </div>
-        </div>
-        <button class="continue-btn" onclick="openCourse('mkt','dm-az')">Tiếp tục →</button>
-      </div>
+      <!-- Continue learning banner (dynamic) -->
+      <div id="continue-card-host"></div>
 
-      <!-- Stats -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#e0f2fe;">📚</div>
-          <div class="stat-value">8</div>
-          <div class="stat-label">Kiến thức đang học</div>
-          <div class="stat-change" style="color:#0ea5e9;">↑ 2 nhóm mới tháng này</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#dcfce7;">✅</div>
-          <div class="stat-value">47</div>
-          <div class="stat-label">Bài học hoàn thành</div>
-          <div class="stat-change" style="color:#10b981;">↑ 12 bài tuần này</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#fef3c7;">⏱</div>
-          <div class="stat-value">24h</div>
-          <div class="stat-label">Thời gian học tổng</div>
-          <div class="stat-change" style="color:#f59e0b;">3.2h trung bình/tuần</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#f3e8ff;">⭐</div>
-          <div class="stat-value">3</div>
-          <div class="stat-label">Nhóm nội dung đã lưu</div>
-          <div class="stat-change" style="color:#7c3aed;">1 nhóm sắp hoàn thành</div>
-        </div>
-      </div>
+      <!-- Stats (dynamic) -->
+      <div class="stats-grid" id="dash-stats"></div>
 
       <!-- Two column -->
       <div class="two-col">
@@ -620,7 +585,7 @@
           <div class="editor-main">
             <div id="ed-breadcrumb" style="font-size:13px;color:#64748b;margin-bottom:12px;">Ch&#7885;n b&#224;i h&#7885;c &#273;&#7875; ch&#7881;nh s&#7917;a</div>
             <div class="editor-meta"><input id="ed-title" placeholder="Ti&#234;u &#273;&#7873; b&#224;i h&#7885;c..." class="fi" style="font-size:18px;font-weight:700;"><select id="ed-type" class="fi"><option value="video">Video</option><option value="doc">T&#224;i li&#7879;u</option><option value="quiz">Quiz</option></select><input id="ed-duration" placeholder="Th&#7901;i l&#432;&#7907;ng (VD: 20p)" class="fi"><button onclick="saveLesson()" class="btn bgreen">&#128190; L&#432;u</button></div>
-            <div class="edwrap"><div class="edtb" id="editor-toolbar"><div class="edgrp"><button title="Undo" onclick="edCmd('undo')">&#8617;</button><button title="Redo" onclick="edCmd('redo')">&#8618;</button></div><div class="edgrp"><select title="&#272;o&#7841;n v&#259;n" onchange="formatBlock(this.value); this.value='p';"><option value="p">B&#236;nh th&#432;&#7901;ng</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Tr&#237;ch d&#7851;n</option><option value="pre">Code block</option></select></div><div class="edgrp"><select title="Font" onchange="edCmd('fontName', this.value)"><option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Fira Code</option></select><select title="C&#7905; ch&#7919;" onchange="setFontSize(this.value)"><option>12</option><option>14</option><option selected>15</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option></select></div><div class="edgrp"><button title="Bold" onclick="edCmd('bold')">B</button><button title="Italic" onclick="edCmd('italic')"><i>I</i></button><button title="Underline" onclick="edCmd('underline')"><u>U</u></button><button title="Strike" onclick="edCmd('strikeThrough')"><s>S</s></button><input title="M&#224;u ch&#7919;" type="color" onchange="edCmd('foreColor', this.value)"><input title="M&#224;u n&#7873;n" type="color" value="#fff59d" onchange="edCmd('backColor', this.value)"></div><div class="edgrp"><button title="Tr&#225;i" onclick="edCmd('justifyLeft')">&#8801;</button><button title="Gi&#7919;a" onclick="edCmd('justifyCenter')">&#8803;</button><button title="Ph&#7843;i" onclick="edCmd('justifyRight')">&#8801;</button><button title="&#272;&#7873;u" onclick="edCmd('justifyFull')">&#9776;</button></div><div class="edgrp"><button title="Bullet list" onclick="edCmd('insertUnorderedList')">&bull;</button><button title="Number list" onclick="edCmd('insertOrderedList')">1.</button><button title="Indent" onclick="edCmd('indent')">&rarr;</button><button title="Outdent" onclick="edCmd('outdent')">&larr;</button></div><div class="edgrp"><button title="Toggle" onclick="insertToggle()">&#128317;</button><button title="Box nội dung" onclick="insertTextBox()">&#9635;</button><button title="Callout ghi chú" onclick="insertCallout('note')">&#128161;</button><button title="Callout cảnh báo" onclick="insertCallout('warn')">&#9888;</button><button title="&#7842;nh" onclick="openImageModal()">&#128444;</button><button title="Video YouTube" onclick="insertVideoPrompt()">&#9654;</button><button title="HTML" onclick="openHTMLModal()">&lt;/&gt;</button><button title="Divider" onclick="insertHTMLAtCursor('<hr><p><br></p>')">&mdash;</button><button title="Emoji/Icon" onclick="toggleEmojiPicker(this)">&#128512;</button><button title="Link" onclick="insertLinkPrompt()">&#128279;</button></div></div><div id="edcontent" contenteditable="true"></div><div class="edfooter"><span id="ed-wordcount" style="font-size:12px;color:#94a3b8;">0 t&#7915;</span><button onclick="previewLesson()" class="btn bgray">&#128065; Xem tr&#432;&#7899;c</button></div></div>
+            <div class="edwrap"><div class="edtb" id="editor-toolbar"><div class="edgrp"><button title="Undo" onclick="edCmd('undo')">&#8617;</button><button title="Redo" onclick="edCmd('redo')">&#8618;</button></div><div class="edgrp"><select title="&#272;o&#7841;n v&#259;n" onchange="formatBlock(this.value); this.value='p';"><option value="p">B&#236;nh th&#432;&#7901;ng</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Tr&#237;ch d&#7851;n</option><option value="pre">Code block</option></select></div><div class="edgrp"><select title="Font" onchange="edCmd('fontName', this.value)"><option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Fira Code</option></select><select title="C&#7905; ch&#7919;" onchange="setFontSize(this.value)"><option>12</option><option>14</option><option selected>15</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option></select></div><div class="edgrp"><button title="Bold" onclick="edCmd('bold')">B</button><button title="Italic" onclick="edCmd('italic')"><i>I</i></button><button title="Underline" onclick="edCmd('underline')"><u>U</u></button><button title="Strike" onclick="edCmd('strikeThrough')"><s>S</s></button><input title="M&#224;u ch&#7919;" type="color" onchange="edCmd('foreColor', this.value)"><input title="M&#224;u n&#7873;n" type="color" value="#fff59d" onchange="edCmd('backColor', this.value)"></div><div class="edgrp"><button title="Tr&#225;i" onclick="edCmd('justifyLeft')">&#8801;</button><button title="Gi&#7919;a" onclick="edCmd('justifyCenter')">&#8803;</button><button title="Ph&#7843;i" onclick="edCmd('justifyRight')">&#8801;</button><button title="&#272;&#7873;u" onclick="edCmd('justifyFull')">&#9776;</button></div><div class="edgrp"><button title="Bullet list" onclick="edCmd('insertUnorderedList')">&bull;</button><button title="Number list" onclick="edCmd('insertOrderedList')">1.</button><button title="Indent" onclick="edCmd('indent')">&rarr;</button><button title="Outdent" onclick="edCmd('outdent')">&larr;</button></div><div class="edgrp"><button title="Toggle" onclick="insertToggle()">&#128317;</button><button title="Box nội dung" onclick="insertTextBox()">&#9635;</button><button title="Callout ghi chú" onclick="insertCallout('note')">&#128161;</button><button title="Callout cảnh báo" onclick="insertCallout('warn')">&#9888;</button><button title="&#7842;nh" onclick="openImageModal()">&#128444;</button><button title="Video YouTube" onclick="insertVideoPrompt()">&#9654;</button><button title="HTML" onclick="openHTMLModal()">&lt;/&gt;</button><button title="Divider" onclick="insertHTMLAtCursor('<hr><p><br></p>')">&mdash;</button><button title="Emoji/Icon" onclick="toggleEmojiPicker(this)">&#128512;</button><button title="Link" onclick="insertLinkPrompt()">&#128279;</button></div></div><div id="edcontent" contenteditable="true"></div><div class="edfooter"><div style="display:flex;align-items:center;gap:14px;"><span id="ed-wordcount" style="font-size:12px;color:#94a3b8;">0 t&#7915;</span><span id="ed-autosave-info" style="font-size:12px;color:#94a3b8;"></span></div><div style="display:flex;align-items:center;gap:8px;"><button id="ed-status-toggle" onclick="toggleEditorLessonStatus()" class="btn bgray">&#9210; Tr&#7841;ng th&#225;i</button><button onclick="previewLesson()" class="btn bgray">&#128065; Xem tr&#432;&#7899;c</button></div></div></div>
           </div>
         </div>
       </div>
@@ -701,278 +666,92 @@
 let DATA = {
   categories: [
     {
-      id: 'mkt',
-      name: 'Marketing',
-      icon: '📈',
-      color: '#0ea5e9',
-      bg: '#e0f2fe',
+      id: 'marketing', name: 'Marketing & Bán Hàng', icon: '📈', color: '#0ea5e9', bg: '#e0f2fe',
       gradient: 'linear-gradient(135deg,#0ea5e9,#38bdf8)',
       courses: [
         {
-          id: 'mkt-basics',
-          name: 'Marketing Cơ Bản',
-          desc: 'Nền tảng marketing từ A-Z dành cho người mới bắt đầu. Hiểu bản chất marketing, phân tích thị trường và xây dựng chiến lược.',
-          icon: '📊',
-          level: 'Cơ bản',
-          duration: '12h 30p',
-          lessons_total: 28,
+          id: 'dm-az', name: 'Digital Marketing A-Z', desc: 'Lộ trình digital marketing toàn diện: SEO, quảng cáo, email và đo lường hiệu quả.', icon: '🚀', level: 'Trung cấp', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'c1', title: 'Nền tảng Marketing', desc: '4 bài học · 2h 10p',
-              lessons: [
-                { id: 'l1', title: 'Marketing là gì? Tại sao cần Marketing?', type: 'video', duration: '18p', done: true, subs: [
-                  { id: 's1', title: 'Định nghĩa và lịch sử Marketing', done: true, duration: '6p' },
-                  { id: 's2', title: 'Vai trò của Marketing trong doanh nghiệp', done: true, duration: '7p' },
-                  { id: 's3', title: 'Các lầm tưởng phổ biến về Marketing', done: false, duration: '5p' },
-                ]},
-                { id: 'l2', title: 'Phân tích thị trường và khách hàng mục tiêu', type: 'video', duration: '24p', done: true, subs: [] },
-                { id: 'l3', title: 'Marketing Mix 4P — Công thức vàng', type: 'doc', duration: '30p', done: false, subs: [
-                  { id: 's4', title: 'Product — Sản phẩm', done: false, duration: '8p' },
-                  { id: 's5', title: 'Price — Định giá chiến lược', done: false, duration: '10p' },
-                  { id: 's6', title: 'Place — Kênh phân phối', done: false, duration: '7p' },
-                  { id: 's7', title: 'Promotion — Truyền thông marketing', done: false, duration: '5p' },
-                ]},
-                { id: 'l4', title: 'Quiz: Kiểm tra kiến thức chương 1', type: 'quiz', duration: '15p', done: false, subs: [] },
-              ]
-            },
-            {
-              id: 'c2', title: 'Nghiên cứu thị trường', desc: '5 bài học · 3h 20p',
-              lessons: [
-                { id: 'l5', title: 'Phương pháp nghiên cứu định tính', type: 'video', duration: '22p', done: false, subs: [] },
-                { id: 'l6', title: 'Phương pháp nghiên cứu định lượng', type: 'video', duration: '28p', done: false, subs: [] },
-                { id: 'l7', title: 'Phân tích đối thủ cạnh tranh — SWOT', type: 'doc', duration: '35p', done: false, subs: [
-                  { id: 's8', title: 'Xác định đối thủ trực tiếp và gián tiếp', done: false, duration: '10p' },
-                  { id: 's9', title: 'Ma trận SWOT thực tế', done: false, duration: '15p' },
-                  { id: 's10', title: 'Phân tích 5 lực lượng Porter', done: false, duration: '10p' },
-                ]},
-                { id: 'l8', title: 'Xây dựng Buyer Persona', type: 'doc', duration: '40p', done: false, subs: [] },
-                { id: 'l9', title: 'Case Study: Nghiên cứu thị trường thực tế', type: 'video', duration: '55p', done: false, subs: [] },
-              ]
-            },
-            {
-              id: 'c3', title: 'Chiến lược thương hiệu', desc: '4 bài học · 2h 50p',
-              lessons: [
-                { id: 'l10', title: 'Brand Identity — Nhận diện thương hiệu', type: 'video', duration: '30p', done: false, subs: [] },
-                { id: 'l11', title: 'Brand Story — Kể chuyện thương hiệu', type: 'video', duration: '25p', done: false, subs: [] },
-                { id: 'l12', title: 'Positioning — Định vị thương hiệu', type: 'doc', duration: '45p', done: false, subs: [
-                  { id: 's11', title: 'Perceptual Map — Bản đồ nhận thức', done: false, duration: '15p' },
-                  { id: 's12', title: 'Unique Selling Proposition (USP)', done: false, duration: '20p' },
-                ]},
-                { id: 'l13', title: 'Quiz: Chiến lược thương hiệu', type: 'quiz', duration: '20p', done: false, subs: [] },
-              ]
-            },
+            { id: 'dm-c1', title: 'Nền tảng Digital Marketing', desc: '0 bài học', lessons: [] },
+            { id: 'dm-c2', title: 'SEO & Content Marketing', desc: '0 bài học', lessons: [] },
+            { id: 'dm-c3', title: 'Facebook & Instagram Ads', desc: '0 bài học', lessons: [] },
+            { id: 'dm-c4', title: 'Google Ads', desc: '0 bài học', lessons: [] },
+            { id: 'dm-c5', title: 'Email Marketing', desc: '0 bài học', lessons: [] },
+            { id: 'dm-c6', title: 'Analytics & Đo lường', desc: '0 bài học', lessons: [] }
           ]
         },
         {
-          id: 'dm-az',
-          name: 'Digital Marketing A-Z',
-          desc: 'Toàn bộ kỹ năng digital marketing: SEO, Facebook Ads, Google Ads, Email Marketing và Analytics.',
-          icon: '🚀',
-          level: 'Trung cấp',
-          duration: '20h 45p',
-          lessons_total: 52,
+          id: 'sell-online', name: 'Bán Hàng Online', desc: 'Quy trình bán hàng online từ thu hút khách đến chốt đơn và chăm sóc sau bán.', icon: '🛒', level: 'Cơ bản', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'dc1', title: 'Nền tảng Digital Marketing', desc: '3 bài học · 1h 30p',
-              lessons: [
-                { id: 'dl1', title: 'Tổng quan Digital Marketing năm 2025', type: 'video', duration: '20p', done: true, subs: [] },
-                { id: 'dl2', title: 'Customer Journey trong môi trường số', type: 'doc', duration: '35p', done: true, subs: [
-                  { id: 'ds1', title: 'Awareness — Nhận biết', done: true, duration: '8p' },
-                  { id: 'ds2', title: 'Consideration — Cân nhắc', done: true, duration: '10p' },
-                  { id: 'ds3', title: 'Decision — Quyết định mua', done: false, duration: '8p' },
-                  { id: 'ds4', title: 'Retention — Giữ chân khách hàng', done: false, duration: '9p' },
-                ]},
-                { id: 'dl3', title: 'KPIs và đo lường hiệu quả', type: 'doc', duration: '35p', done: false, subs: [] },
-              ]
-            },
-            {
-              id: 'dc2', title: 'Content Marketing', desc: '6 bài học · 4h 20p',
-              lessons: [
-                { id: 'dl4', title: 'Content Strategy — Chiến lược nội dung', type: 'video', duration: '40p', done: false, subs: [] },
-                { id: 'dl5', title: 'SEO Copywriting — Viết content chuẩn SEO', type: 'video', duration: '50p', done: false, subs: [] },
-                { id: 'dl6', title: 'Video Marketing và YouTube Strategy', type: 'video', duration: '45p', done: false, subs: [] },
-                { id: 'dl7', title: 'Social Media Content — Facebook, Instagram, TikTok', type: 'doc', duration: '60p', done: false, subs: [
-                  { id: 'ds5', title: 'Facebook Content Strategy', done: false, duration: '15p' },
-                  { id: 'ds6', title: 'Instagram Reels & Stories', done: false, duration: '18p' },
-                  { id: 'ds7', title: 'TikTok Algorithm & Growth', done: false, duration: '22p' },
-                  { id: 'ds8', title: 'Content Calendar Planning', done: false, duration: '5p' },
-                ]},
-                { id: 'dl8', title: 'Email Marketing Automation', type: 'video', duration: '55p', done: false, subs: [] },
-                { id: 'dl9', title: 'Quiz: Content Marketing', type: 'quiz', duration: '20p', done: false, subs: [] },
-              ]
-            },
-            {
-              id: 'dc3', title: 'Facebook & Instagram Ads', desc: '8 bài học · 5h 10p',
-              lessons: [
-                { id: 'dl10', title: 'Cài đặt Facebook Business Manager', type: 'video', duration: '25p', done: false, subs: [] },
-                { id: 'dl11', title: 'Facebook Pixel và Conversion API', type: 'doc', duration: '40p', done: false, subs: [] },
-                { id: 'dl12', title: 'Cấu trúc chiến dịch quảng cáo', type: 'video', duration: '35p', done: false, subs: [
-                  { id: 'ds9', title: 'Campaign — Mục tiêu chiến dịch', done: false, duration: '8p' },
-                  { id: 'ds10', title: 'Ad Set — Nhắm đối tượng', done: false, duration: '15p' },
-                  { id: 'ds11', title: 'Ad — Sáng tạo quảng cáo', done: false, duration: '12p' },
-                ]},
-                { id: 'dl13', title: 'Retargeting và Lookalike Audience', type: 'video', duration: '45p', done: false, subs: [] },
-              ]
-            },
+            { id: 'so-c1', title: 'Tư duy bán hàng online', desc: '0 bài học', lessons: [] },
+            { id: 'so-c2', title: 'Xây dựng phễu bán hàng', desc: '0 bài học', lessons: [] },
+            { id: 'so-c3', title: 'Kỹ thuật chốt đơn', desc: '0 bài học', lessons: [] },
+            { id: 'so-c4', title: 'Chăm sóc khách hàng', desc: '0 bài học', lessons: [] }
           ]
         },
         {
-          id: 'social',
-          name: 'Social Media Marketing',
-          desc: 'Xây dựng thương hiệu cá nhân và doanh nghiệp trên mạng xã hội: TikTok, Facebook, Instagram.',
-          icon: '📱',
-          level: 'Cơ bản',
-          duration: '8h 20p',
-          lessons_total: 22,
+          id: 'copywriting', name: 'Copywriting & Content', desc: 'Viết nội dung bán hàng và content mạng xã hội thu hút, chuyển đổi cao.', icon: '✍️', level: 'Cơ bản', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'sc1', title: 'TikTok Marketing', desc: '5 bài học · 3h',
-              lessons: [
-                { id: 'sl1', title: 'Thuật toán TikTok hoạt động như thế nào', type: 'video', duration: '30p', done: false, subs: [] },
-                { id: 'sl2', title: 'Tạo nội dung viral trên TikTok', type: 'video', duration: '45p', done: false, subs: [] },
-              ]
-            },
+            { id: 'cw-c1', title: 'Công thức copywriting', desc: '0 bài học', lessons: [] },
+            { id: 'cw-c2', title: 'Content mạng xã hội', desc: '0 bài học', lessons: [] },
+            { id: 'cw-c3', title: 'Landing page bán hàng', desc: '0 bài học', lessons: [] }
           ]
-        },
+        }
       ]
     },
     {
-      id: 'biz',
-      name: 'Kinh Doanh',
-      icon: '💼',
-      color: '#8b5cf6',
-      bg: '#ede9fe',
+      id: 'business', name: 'Kinh Doanh & Khởi Nghiệp', icon: '💼', color: '#8b5cf6', bg: '#ede9fe',
       gradient: 'linear-gradient(135deg,#8b5cf6,#a78bfa)',
       courses: [
         {
-          id: 'startup',
-          name: 'Khởi nghiệp từ A-Z',
-          desc: 'Từ ý tưởng đến doanh nghiệp: validate ý tưởng, lên kế hoạch kinh doanh, gọi vốn và scale.',
-          icon: '🏢',
-          level: 'Trung cấp',
-          duration: '16h',
-          lessons_total: 38,
+          id: 'startup', name: 'Khởi Nghiệp Từ A-Z', desc: 'Từ ý tưởng đến doanh nghiệp: validate, mô hình kinh doanh, tài chính và mở rộng.', icon: '🏢', level: 'Trung cấp', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'bc1', title: 'Ý tưởng và Validation', desc: '5 bài học · 3h 30p',
-              lessons: [
-                { id: 'bl1', title: 'Cách tìm ý tưởng kinh doanh tốt', type: 'video', duration: '35p', done: false, subs: [] },
-                { id: 'bl2', title: 'Validate ý tưởng không cần tiền', type: 'video', duration: '40p', done: false, subs: [
-                  { id: 'bs1', title: 'Customer Discovery Interview', done: false, duration: '15p' },
-                  { id: 'bs2', title: 'Landing Page Test', done: false, duration: '12p' },
-                  { id: 'bs3', title: 'Smoke Test và Concierge MVP', done: false, duration: '13p' },
-                ]},
-                { id: 'bl3', title: 'Business Model Canvas', type: 'doc', duration: '50p', done: false, subs: [] },
-              ]
-            },
-            {
-              id: 'bc2', title: 'Kế hoạch kinh doanh', desc: '4 bài học · 3h',
-              lessons: [
-                { id: 'bl4', title: 'Viết Business Plan chuyên nghiệp', type: 'doc', duration: '60p', done: false, subs: [] },
-                { id: 'bl5', title: 'Financial Projection — Dự báo tài chính', type: 'doc', duration: '45p', done: false, subs: [] },
-              ]
-            },
+            { id: 'su-c1', title: 'Tìm & validate ý tưởng', desc: '0 bài học', lessons: [] },
+            { id: 'su-c2', title: 'Business Model Canvas', desc: '0 bài học', lessons: [] },
+            { id: 'su-c3', title: 'Tài chính khởi nghiệp', desc: '0 bài học', lessons: [] },
+            { id: 'su-c4', title: 'Tăng trưởng & Scale', desc: '0 bài học', lessons: [] }
           ]
         },
         {
-          id: 'sales-skills',
-          name: 'Kỹ năng bán hàng',
-          desc: 'Thành thạo nghệ thuật bán hàng: từ tiếp cận, thuyết phục đến chốt đơn và xử lý từ chối.',
-          icon: '🤝',
-          level: 'Cơ bản',
-          duration: '10h',
-          lessons_total: 25,
+          id: 'operations', name: 'Quản Lý Vận Hành', desc: 'Xây dựng hệ thống vận hành: nhân sự, quy trình và đo lường hiệu quả.', icon: '⚙️', level: 'Trung cấp', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'sc1b', title: 'Tư duy người bán hàng', desc: '3 bài học · 2h',
-              lessons: [
-                { id: 'sl1b', title: 'Mindset người bán hàng thành công', type: 'video', duration: '30p', done: false, subs: [] },
-                { id: 'sl2b', title: 'Hiểu tâm lý khách hàng', type: 'video', duration: '40p', done: false, subs: [] },
-              ]
-            },
+            { id: 'op-c1', title: 'Quản lý nhân sự', desc: '0 bài học', lessons: [] },
+            { id: 'op-c2', title: 'Quy trình & hệ thống', desc: '0 bài học', lessons: [] },
+            { id: 'op-c3', title: 'KPI & đo lường', desc: '0 bài học', lessons: [] }
           ]
-        },
+        }
       ]
     },
     {
-      id: 'fin',
-      name: 'Tài Chính',
-      icon: '💰',
-      color: '#10b981',
-      bg: '#dcfce7',
+      id: 'skills', name: 'Kỹ Năng Kinh Doanh', icon: '🧠', color: '#10b981', bg: '#dcfce7',
       gradient: 'linear-gradient(135deg,#10b981,#34d399)',
       courses: [
         {
-          id: 'personal-fin',
-          name: 'Tài chính cá nhân',
-          desc: 'Quản lý tiền bạc thông minh: ngân sách, tiết kiệm, đầu tư và xây dựng tự do tài chính.',
-          icon: '💳',
-          level: 'Cơ bản',
-          duration: '9h',
-          lessons_total: 20,
+          id: 'negotiation', name: 'Đàm Phán & Chốt Sale', desc: 'Nắm tâm lý khách hàng, kỹ thuật đàm phán và xử lý từ chối để chốt sale.', icon: '🤝', level: 'Cơ bản', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'fc1', title: 'Nền tảng tài chính cá nhân', desc: '4 bài học · 2h 30p',
-              lessons: [
-                { id: 'fl1', title: 'Tại sao 90% người Việt không giàu được', type: 'video', duration: '25p', done: false, subs: [] },
-                { id: 'fl2', title: 'Quy tắc 50-30-20 trong quản lý ngân sách', type: 'doc', duration: '30p', done: false, subs: [
-                  { id: 'fs1', title: '50% cho nhu cầu thiết yếu', done: false, duration: '8p' },
-                  { id: 'fs2', title: '30% cho nhu cầu cá nhân', done: false, duration: '8p' },
-                  { id: 'fs3', title: '20% cho tiết kiệm và đầu tư', done: false, duration: '14p' },
-                ]},
-                { id: 'fl3', title: 'Thoát bẫy nợ và lãi suất', type: 'video', duration: '35p', done: false, subs: [] },
-              ]
-            },
+            { id: 'ng-c1', title: 'Tâm lý khách hàng', desc: '0 bài học', lessons: [] },
+            { id: 'ng-c2', title: 'Kỹ thuật đàm phán', desc: '0 bài học', lessons: [] },
+            { id: 'ng-c3', title: 'Xử lý từ chối', desc: '0 bài học', lessons: [] }
           ]
         },
         {
-          id: 'invest',
-          name: 'Đầu tư cơ bản',
-          desc: 'Từ chứng khoán, trái phiếu đến bất động sản: hiểu và bắt đầu đầu tư an toàn.',
-          icon: '📉',
-          level: 'Trung cấp',
-          duration: '14h',
-          lessons_total: 35,
+          id: 'personal-brand', name: 'Thương Hiệu Cá Nhân', desc: 'Xây dựng thương hiệu cá nhân và mạng lưới quan hệ trong kinh doanh.', icon: '🌟', level: 'Cơ bản', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'ic1', title: 'Nguyên lý đầu tư', desc: '4 bài học · 2h 20p',
-              lessons: [
-                { id: 'il1', title: 'Risk và Return — Rủi ro và lợi nhuận', type: 'video', duration: '30p', done: false, subs: [] },
-                { id: 'il2', title: 'Đa dạng hóa danh mục đầu tư', type: 'doc', duration: '40p', done: false, subs: [] },
-              ]
-            },
+            { id: 'pb-c1', title: 'Nền tảng Personal Brand', desc: '0 bài học', lessons: [] },
+            { id: 'pb-c2', title: 'LinkedIn & mạng xã hội', desc: '0 bài học', lessons: [] },
+            { id: 'pb-c3', title: 'Mạng lưới quan hệ', desc: '0 bài học', lessons: [] }
           ]
         },
-      ]
-    },
-    {
-      id: 'mindset',
-      name: 'Tư Duy & Kỹ Năng',
-      icon: '🧠',
-      color: '#f59e0b',
-      bg: '#fef3c7',
-      gradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)',
-      courses: [
         {
-          id: 'productivity',
-          name: 'Năng suất & Quản lý thời gian',
-          desc: 'Làm việc thông minh hơn: GTD, Deep Work, Pomodoro và xây dựng hệ thống làm việc hiệu quả.',
-          icon: '⚡',
-          level: 'Cơ bản',
-          duration: '6h',
-          lessons_total: 15,
+          id: 'productivity', name: 'Tư Duy & Năng Suất', desc: 'Làm việc hiệu quả với Deep Work, GTD và quản lý thời gian.', icon: '🧠', level: 'Cơ bản', duration: '—', lessons_total: 0,
           chapters: [
-            {
-              id: 'pc1', title: 'Hệ thống năng suất', desc: '4 bài học · 2h 30p',
-              lessons: [
-                { id: 'pl1', title: 'Deep Work — Làm việc tập trung sâu', type: 'video', duration: '35p', done: false, subs: [] },
-                { id: 'pl2', title: 'Getting Things Done (GTD)', type: 'doc', duration: '45p', done: false, subs: [] },
-              ]
-            },
+            { id: 'pr-c1', title: 'Deep Work', desc: '0 bài học', lessons: [] },
+            { id: 'pr-c2', title: 'Getting Things Done (GTD)', desc: '0 bài học', lessons: [] },
+            { id: 'pr-c3', title: 'Quản lý thời gian', desc: '0 bài học', lessons: [] }
           ]
-        },
+        }
       ]
-    },
+    }
   ]
 };
 
@@ -1134,10 +913,17 @@ function filterLib(f) {
 // ============================================================
 // RENDER FUNCTIONS
 // ============================================================
+function publishedLessonStats(course) {
+  let total = 0, done = 0;
+  (course.chapters || []).forEach(ch => (ch.lessons || []).forEach(l => {
+    if (l.status === 'draft') return;
+    total++; if (l.done) done++;
+  }));
+  return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+}
 function getCourseProgress(catId, courseId) {
-  // Simulated progress
-  const map = { 'mkt/mkt-basics': 65, 'mkt/dm-az': 42, 'mkt/social': 10, 'biz/startup': 28, 'fin/personal-fin': 80, 'fin/invest': 5 };
-  return map[catId + '/' + courseId] || 0;
+  const c = findCourse(catId, courseId);
+  return c ? publishedLessonStats(c).pct : 0;
 }
 
 function collectCourseEntries(cats = DATA.categories) {
@@ -1151,43 +937,69 @@ function collectCourseEntries(cats = DATA.categories) {
 }
 
 function renderDashboard() {
-  // Recent courses
+  // Dynamic stats from real data (published lessons only)
+  let topics = DATA.categories.length;
+  let coursesCount = 0, pubLessons = 0, doneLessons = 0;
+  DATA.categories.forEach(cat => (cat.courses || []).forEach(course => {
+    coursesCount++;
+    const st = publishedLessonStats(course);
+    pubLessons += st.total; doneLessons += st.done;
+  }));
+  const statsHost = document.getElementById('dash-stats');
+  if (statsHost) statsHost.innerHTML = [
+    ['📚', coursesCount, 'Khóa học', '#e0f2fe', '#0ea5e9'],
+    ['📝', pubLessons, 'Bài học đã xuất bản', '#dcfce7', '#10b981'],
+    ['✅', doneLessons, 'Bài đã hoàn thành', '#fef3c7', '#f59e0b'],
+    ['🗂️', topics, 'Chủ đề nội dung', '#f3e8ff', '#7c3aed'],
+  ].map(s => `<div class="stat-card"><div class="stat-icon" style="background:${s[3]};">${s[0]}</div><div class="stat-value">${s[1]}</div><div class="stat-label">${s[2]}</div></div>`).join('');
+
+  // Continue learning card — first course with published lessons not yet 100%
+  const entries = collectCourseEntries();
+  const host = document.getElementById('continue-card-host');
+  if (host) {
+    const withLessons = entries.filter(x => publishedLessonStats(x.course).total > 0);
+    const pick = withLessons.find(x => x.pct < 100) || withLessons[0];
+    if (pick) {
+      host.innerHTML = `<div class="continue-card">
+        <div class="continue-info">
+          <h3>${pick.pct > 0 ? 'Tiếp tục học' : 'Bắt đầu học'}: ${esc(pick.course.name)}</h3>
+          <p>${esc(pick.cat.name)} · ${esc(pick.course.level || '')}</p>
+          <div class="continue-progress">
+            <div class="continue-progress-bar"><div class="continue-progress-bar-fill" style="width:${pick.pct}%"></div></div>
+            <p>${pick.pct}% hoàn thành</p>
+          </div>
+        </div>
+        <button class="continue-btn" onclick="openCourse('${pick.cat.id}','${pick.course.id}')">${pick.pct > 0 ? 'Tiếp tục →' : 'Vào học →'}</button>
+      </div>`;
+    } else {
+      host.innerHTML = `<div class="continue-card"><div class="continue-info"><h3>Chào mừng bạn! 👋</h3><p>Nội dung đang được cập nhật. Khám phá thư viện kiến thức ngay.</p></div><button class="continue-btn" onclick="openLibrary()">Xem thư viện →</button></div>`;
+    }
+  }
+
+  // Recent courses — those with most published lessons
   const container = document.getElementById('recent-courses');
-  const recentIds = [['mkt','dm-az'],['mkt','mkt-basics'],['biz','startup'],['fin','personal-fin']];
-  const preferred = recentIds.map(([cid, courseid]) => {
-    const cat = DATA.categories.find(c => c.id === cid);
-    const course = cat?.courses?.find(c => c.id === courseid);
-    return cat && course ? { cat, course, pct: getCourseProgress(cid, courseid) } : null;
-  }).filter(Boolean);
-  const seen = new Set(preferred.map(x => `${x.cat.id}/${x.course.id}`));
-  const fallback = collectCourseEntries().filter(x => !seen.has(`${x.cat.id}/${x.course.id}`));
-  const recent = [...preferred, ...fallback].slice(0, 4);
+  const recent = [...entries].sort((a, b) => publishedLessonStats(b.course).total - publishedLessonStats(a.course).total).slice(0, 4);
   container.innerHTML = recent.length
     ? recent.map(x => courseCardHTML(x.cat, x.course, x.pct)).join('')
     : '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">Chưa có khóa học nào.</div>';
 
-  // Activity
-  const acts = [
-    { icon: '✅', bg: '#dcfce7', text: 'Hoàn thành bài: Customer Journey trong môi trường số', time: '2 giờ trước' },
-    { icon: '▶️', bg: '#e0f2fe', text: 'Đang học: Digital Marketing A-Z', time: '3 giờ trước' },
-    { icon: '⭐', bg: '#fef3c7', text: 'Hoàn thành module: Marketing Cơ Bản — Module 1', time: 'Hôm qua' },
-    { icon: '📝', bg: '#f3e8ff', text: 'Làm quiz: Nền tảng Marketing — Đạt 85/100', time: '2 ngày trước' },
-    { icon: '🆕', bg: '#e0f2fe', text: 'Đăng ký nhóm nội dung: Đầu tư cơ bản...', time: '3 ngày trước' },
-  ];
-  document.getElementById('activity-list').innerHTML = acts.map(a => `
-    <div class="activity-item">
-      <div class="act-icon" style="background:${a.bg};">${a.icon}</div>
-      <div class="act-info">
-        <p>${a.text}</p>
-        <span>${a.time}</span>
-      </div>
-    </div>`).join('');
+  // Activity — recently completed published lessons (real data)
+  const completed = [];
+  DATA.categories.forEach(cat => (cat.courses || []).forEach(course => (course.chapters || []).forEach(ch => (ch.lessons || []).forEach(l => {
+    if (l.status !== 'draft' && l.done) completed.push({ cat, course, lesson: l });
+  }))));
+  const actHost = document.getElementById('activity-list');
+  if (actHost) {
+    actHost.innerHTML = completed.length
+      ? completed.slice(0, 6).map(a => `<div class="activity-item"><div class="act-icon" style="background:#dcfce7;">✅</div><div class="act-info"><p>Hoàn thành: ${esc(a.lesson.title)}</p><span>${esc(a.course.name)}</span></div></div>`).join('')
+      : '<div style="text-align:center;padding:30px;color:#94a3b8;font-size:13px;">Chưa có hoạt động. Hãy bắt đầu học bài đầu tiên!</div>';
+  }
 }
 
 function courseCardHTML(cat, course, pct) {
   if (!cat || !course) return '';
-  const avatarColors = ['#0ea5e9','#8b5cf6','#10b981','#f59e0b','#ef4444'];
-  const avHTML = [0,1,2].map((_, i) => `<div class="av" style="background:${avatarColors[i % avatarColors.length]};">${String.fromCharCode(65+i)}</div>`).join('');
+  const st = publishedLessonStats(course);
+  const chapterCount = (course.chapters || []).length;
   return `<div class="course-card" onclick="openCourse('${cat.id}','${course.id}')">
     <div class="course-icon" style="background:${cat.bg};">${course.icon}</div>
     <div class="course-name">${esc(course.name)}</div>
@@ -1198,8 +1010,8 @@ function courseCardHTML(cat, course, pct) {
     <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
     <div class="progress-text"><span>Tiến độ</span><strong>${pct}%</strong></div>
     <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px;">
-      <div class="member-avatars">${avHTML}<div class="av" style="background:#94a3b8; font-size:9px;">+5</div></div>
-      <span style="font-size:11px; color:#94a3b8;">${course.lessons_total || countCourseLessons(course)} bài học</span>
+      <span style="font-size:11px; color:#94a3b8;">${chapterCount} chương</span>
+      <span style="font-size:11px; color:#94a3b8;">${st.total} bài học</span>
     </div>
   </div>`;
 }
@@ -1230,11 +1042,12 @@ function renderLibrary(catId) {
 }
 
 function renderCourseDetail(cat, course) {
-  // Header
-  const pct = getCourseProgress(cat.id, course.id);
-  const totalLessons = course.lessons_total || countCourseLessons(course);
+  // Header — count only published lessons for student view
+  const st = publishedLessonStats(course);
+  const pct = st.pct;
+  const totalLessons = st.total;
   const chapters = course.chapters || [];
-  const doneCount = Math.round(totalLessons * pct / 100);
+  const doneCount = st.done;
   document.getElementById('course-header').innerHTML = `
     <div class="course-detail-icon" style="background:${cat.bg};">${course.icon}</div>
     <div class="course-detail-info" style="flex:1;">
@@ -1262,7 +1075,7 @@ function renderCourseDetail(cat, course) {
   const chapColors = [cat.color, '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
   document.getElementById('chapters-list').innerHTML = chapters.length ? chapters.map((chap, ci) => {
     const col = chapColors[ci % chapColors.length];
-    const lessonsHTML = (chap.lessons || []).map(lesson => lessonHTML(lesson)).join('');
+    const lessonsHTML = (chap.lessons || []).filter(lesson => lesson.status !== 'draft').map(lesson => lessonHTML(lesson)).join('');
     return `<div class="chapter-block">
       <div class="chapter-header" onclick="toggleChapter(this)">
         <div class="chapter-num" style="background:${col};">${ci+1}</div>
@@ -1606,7 +1419,7 @@ const DEFAULT_SITE_SETTINGS = {
   popupFrequency: 'session',
   overviewLinks: []
 };
-Object.assign(state, { adminSelection:null, editingLesson:null, readerLesson:null, adminOpen:{}, adminTreeQuery:'', editorTreeQuery:'', memberImportRows:[], lessonImportRows:[], editorRange:null, lessonDrag:null, siteSettings:null, editingOverviewLink:null });
+Object.assign(state, { adminSelection:null, editingLesson:null, readerLesson:null, adminOpen:{}, adminTreeQuery:'', editorTreeQuery:'', memberImportRows:[], lessonImportRows:[], editorRange:null, lessonDrag:null, siteSettings:null, editingOverviewLink:null, editorDirty:false });
 
 function byId(id){ return document.getElementById(id); }
 function esc(v){ return String(v ?? '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
@@ -1864,7 +1677,7 @@ function addLesson(catId,courseId,chapId,lessonData){
   const ch=findChapter(catId,courseId,chapId); if(!ch)return null;
   const title=cleanText(lessonData.title)||'Bài học mới';
   ch.lessons=ch.lessons||[];
-  const lesson={id:newId('lesson',title),title,type:'doc',duration:'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>',...lessonData,title};
+  const lesson={id:newId('lesson',title),title,type:'doc',duration:'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>',status:'published',...lessonData,title};
   ch.lessons.push(lesson); state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId:lesson.id}; refreshContentUI(); return lesson;
 }
 function editLesson(catId,courseId,chapId,lessonId,fields){ const lesson=findLesson(catId,courseId,chapId,lessonId); if(!lesson)return; Object.assign(lesson,fields); refreshContentUI(); }
@@ -2042,8 +1855,11 @@ function adminChapterHTML(cat,course,ch,q,parentMatch){
 }
 function adminLessonHTML(cat,course,ch,l){
   const active=state.adminSelection?.kind==='lesson'&&state.adminSelection.lessonId===l.id;
-  const icon=l.type==='video'?'▶':l.type==='quiz'?'✎':'📄';
-  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="adminSelect('lesson','${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">${icon}</div><div class="tree-main"><span class="tree-title">${esc(l.title)}</span><span class="tree-sub">${esc(l.type||'doc')} · ${esc(l.duration||'')}</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span><button class="tree-btn" title="Mở editor" onclick="event.stopPropagation();openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')">✎</button><button class="tree-btn" title="Xóa" onclick="event.stopPropagation();deleteLesson('${cat.id}','${course.id}','${ch.id}','${l.id}')">×</button></div></div></div>`;
+  const isDraft=l.status==='draft';
+  const icon=isDraft?'📝':(l.type==='video'?'▶':l.type==='quiz'?'✎':'📄');
+  const draftBadge=isDraft?'<span style="display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle;">NHÁP</span>':'';
+  const titleStyle=isDraft?'style="color:#94a3b8;"':'';
+  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="adminSelect('lesson','${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">${icon}</div><div class="tree-main"><span class="tree-title" ${titleStyle}>${esc(l.title)}${draftBadge}</span><span class="tree-sub">${esc(l.type||'doc')} · ${esc(l.duration||'')}</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span><button class="tree-btn" title="Nhân bản" onclick="event.stopPropagation();duplicateLesson('${cat.id}','${course.id}','${ch.id}','${l.id}')">📋</button><button class="tree-btn" title="Mở editor" onclick="event.stopPropagation();openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')">✎</button><button class="tree-btn" title="Xóa" onclick="event.stopPropagation();deleteLesson('${cat.id}','${course.id}','${ch.id}','${l.id}')">×</button></div></div></div>`;
 }
 function adminSelect(kind,catId,courseId,chapId,lessonId){ state.adminSelection={kind,catId,courseId,chapId,lessonId}; openAdminSelectionPath(); renderAdminContent(); }
 function editorTreeStats(){ const lessons=DATA.categories.reduce((sum,cat)=>sum+(cat.courses||[]).reduce((courseSum,course)=>courseSum+countCourseLessons(course),0),0); return `${lessons} bài có thể sửa`; }
@@ -2096,7 +1912,10 @@ function editorChapterHTML(cat,course,ch,q,parentMatch){
 }
 function editorLessonHTML(cat,course,ch,l){
   const active=editorPathActive('lesson',{lessonId:l.id});
-  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">✎</div><div class="tree-main"><span class="tree-title">${esc(l.title)}</span><span class="tree-sub">${esc(l.duration||'')} · click để sửa</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span></div></div></div>`;
+  const isDraft=l.status==='draft';
+  const draftBadge=isDraft?'<span style="display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle;">NHÁP</span>':'';
+  const titleStyle=isDraft?'style="color:#94a3b8;"':'';
+  return `<div class="tree-node tree-lesson"><div class="tree-row ${active?'active':''}" ${lessonDragAttrs(cat.id,course.id,ch.id,l.id)} onclick="openLessonEditor('${cat.id}','${course.id}','${ch.id}','${l.id}')" title="${esc(l.title)}"><span class="tree-chevron empty"></span><div class="tree-ico">${isDraft?'📝':'✎'}</div><div class="tree-main"><span class="tree-title" ${titleStyle}>${esc(l.title)}${draftBadge}</span><span class="tree-sub">${esc(l.duration||'')} · click để sửa</span></div><div class="tree-actions"><span class="tree-drag-handle" title="Kéo để đổi vị trí">&#8942;&#8942;</span></div></div></div>`;
 }
 function renderAdminForm(){ const sel=state.adminSelection,box=byId('admin-content-form'); if(!sel){box.innerHTML='<div style="color:#94a3b8;padding:20px;text-align:center;">Chọn hoặc tạo topic để bắt đầu.</div>';return;} if(sel.kind==='topic')return renderTopicForm(sel); if(sel.kind==='course')return renderCourseForm(sel); if(sel.kind==='chapter')return renderChapterForm(sel); if(sel.kind==='lesson')return renderLessonForm(sel); }
 function renderTopicForm(sel){ const cat=findCat(sel.catId); if(!cat)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa topic</h3><div class="form-grid"><div class="form-row"><label>Tên topic</label><input id="adm-topic-name" class="fi" value="${esc(cat.name)}"></div><div class="form-row"><label>Icon</label><input id="adm-topic-icon" class="fi" value="${esc(cat.icon)}"></div><div class="form-row"><label>Màu</label><input id="adm-topic-color" class="fi" type="color" value="${esc(cat.color)}"></div></div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn bgreen" onclick="saveTopicForm('${cat.id}')">Lưu topic</button><button class="btn bblue" onclick="promptAddCourse('${cat.id}')">+ Thêm khóa</button><button class="btn bred" onclick="deleteTopic('${cat.id}')">Xóa topic</button></div>`; }
@@ -2105,7 +1924,9 @@ function renderCourseForm(sel){ const cat=findCat(sel.catId),course=findCourse(s
 function saveCourseForm(catId,courseId){ editCourse(catId,courseId,{name:byId('adm-course-name').value.trim(),icon:byId('adm-course-icon').value.trim(),level:byId('adm-course-level').value.trim(),duration:byId('adm-course-duration').value.trim(),desc:byId('adm-course-desc').value.trim()}); showToast('Đã lưu khóa học'); }
 function renderChapterForm(sel){ const ch=findChapter(sel.catId,sel.courseId,sel.chapId); if(!ch)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa chương</h3><div class="form-row"><label>Tiêu đề chương</label><input id="adm-ch-title" class="fi" value="${esc(ch.title)}"></div><div class="form-row"><label>Mô tả</label><input id="adm-ch-desc" class="fi" value="${esc(ch.desc||'')}"></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveChapterForm('${sel.catId}','${sel.courseId}','${sel.chapId}')">Lưu chương</button><button class="btn bblue" onclick="promptAddLesson('${sel.catId}','${sel.courseId}','${sel.chapId}')">+ Thêm bài học</button><button class="btn bred" onclick="deleteChapter('${sel.catId}','${sel.courseId}','${sel.chapId}')">Xóa chương</button></div><h4 style="font-size:14px;font-weight:800;margin-top:18px;">Bài học</h4><div class="mini-list">${(ch.lessons||[]).map(l=>`<div class="mini-item" onclick="adminSelect('lesson','${sel.catId}','${sel.courseId}','${sel.chapId}','${l.id}')"><span>${esc(l.title)}</span><span>${esc(l.type)} - ${esc(l.duration)}</span></div>`).join('')||'<div style="color:#94a3b8;font-size:13px;">Chưa có bài học.</div>'}</div>`; }
 function saveChapterForm(catId,courseId,chapId){ editChapter(catId,courseId,chapId,{title:byId('adm-ch-title').value.trim(),desc:byId('adm-ch-desc').value.trim()}); showToast('Đã lưu chương'); }
-function renderLessonForm(sel){ const l=findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId); if(!l)return; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa bài học</h3><div class="form-grid"><div class="form-row"><label>Tiêu đề</label><input id="adm-les-title" class="fi" value="${esc(l.title)}"></div><div class="form-row"><label>Loại</label><select id="adm-les-type" class="fi"><option value="video" ${l.type==='video'?'selected':''}>Video</option><option value="doc" ${l.type==='doc'?'selected':''}>Tài liệu</option><option value="quiz" ${l.type==='quiz'?'selected':''}>Quiz</option></select></div><div class="form-row"><label>Thời lượng</label><input id="adm-les-duration" class="fi" value="${esc(l.duration||'')}"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveLessonMetaForm('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Lưu metadata</button><button class="btn bblue" onclick="openLessonEditor('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Mở Editor</button><button class="btn bred" onclick="deleteLesson('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Xóa bài học</button></div>`; }
+function renderLessonForm(sel){ const l=findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId); if(!l)return; const isDraft=l.status==='draft'; const statusBox=`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:${isDraft?'#fffbeb':'#f0fdf4'};border:1px solid ${isDraft?'#fde68a':'#bbf7d0'};border-radius:12px;padding:12px 14px;margin-bottom:14px;"><div><div style="font-size:13px;font-weight:800;color:${isDraft?'#92400e':'#15803d'};">${isDraft?'📝 Đang là bản nháp':'✅ Đã xuất bản'}</div><div style="font-size:12px;color:#64748b;margin-top:2px;">${isDraft?'Học viên KHÔNG nhìn thấy bài này':'Học viên có thể xem bài này'}</div></div><button class="btn ${isDraft?'bgreen':'bgray'}" onclick="toggleLessonStatus('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">${isDraft?'Xuất bản ngay':'Chuyển về nháp'}</button></div>`; byId('admin-content-form').innerHTML=`<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">Sửa bài học</h3>${statusBox}<div class="form-grid"><div class="form-row"><label>Tiêu đề</label><input id="adm-les-title" class="fi" value="${esc(l.title)}"></div><div class="form-row"><label>Loại</label><select id="adm-les-type" class="fi"><option value="video" ${l.type==='video'?'selected':''}>Video</option><option value="doc" ${l.type==='doc'?'selected':''}>Tài liệu</option><option value="quiz" ${l.type==='quiz'?'selected':''}>Quiz</option></select></div><div class="form-row"><label>Thời lượng</label><input id="adm-les-duration" class="fi" value="${esc(l.duration||'')}"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgreen" onclick="saveLessonMetaForm('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Lưu metadata</button><button class="btn bblue" onclick="openLessonEditor('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Mở Editor</button><button class="btn bgray" onclick="duplicateLesson('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">📋 Nhân bản</button><button class="btn bred" onclick="deleteLesson('${sel.catId}','${sel.courseId}','${sel.chapId}','${sel.lessonId}')">Xóa bài học</button></div>`; }
+function toggleLessonStatus(catId,courseId,chapId,lessonId){ const l=findLesson(catId,courseId,chapId,lessonId); if(!l)return; l.status=(l.status==='draft')?'published':'draft'; refreshContentUI(); showToast(l.status==='draft'?'Đã chuyển về nháp':'Đã xuất bản bài học'); }
+function duplicateLesson(catId,courseId,chapId,lessonId){ const ch=findChapter(catId,courseId,chapId); const src=findLesson(catId,courseId,chapId,lessonId); if(!ch||!src)return; const copy={...JSON.parse(JSON.stringify(src)),id:newId('lesson',src.title),title:src.title+' (Bản sao)',done:false,status:'draft'}; const idx=(ch.lessons||[]).findIndex(l=>l.id===lessonId); ch.lessons.splice(idx+1,0,copy); state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId:copy.id}; refreshContentUI(); showToast('Đã nhân bản bài học (bản nháp)'); }
 function saveLessonMetaForm(catId,courseId,chapId,lessonId){ const title=byId('adm-les-title').value.trim(); if(!title){showToast('Tiêu đề bài học không được trống',true);return;} editLesson(catId,courseId,chapId,lessonId,{title,type:byId('adm-les-type').value,duration:byId('adm-les-duration').value.trim()}); showToast('Đã lưu bài học'); }
 function promptAddTopic(){ const name=prompt('Tên topic mới'); if(!name)return; const icon=prompt('Icon topic','📚')||'📚'; const color=prompt('Màu HEX','#0ea5e9')||'#0ea5e9'; addTopic(name.trim(),icon.trim(),color.trim()); }
 function promptAddCourse(catId){ const name=prompt('Tên khóa học mới'); if(!name)return; addCourse(catId,{name:name.trim(),desc:'Mô tả khóa học mới',icon:'📘',level:'Cơ bản',duration:'1h',chapters:[]}); }
@@ -2336,23 +2157,52 @@ function renderEditor(){
   byId('ed-title').value=lesson.title||''; byId('ed-type').value=lesson.type||'doc'; byId('ed-duration').value=lesson.duration||'';
   byId('edcontent').innerHTML=normalizeEditorHTML(lesson.content||'<p>N&#7897;i dung b&#224;i h&#7885;c...</p>');
   state.editorRange=null;
+  state.editorDirty=false;
+  const info=byId('ed-autosave-info'); if(info) info.textContent='';
+  updateEditorStatusButton();
   updateWordCount();
 }
-function saveLesson(){
-  if(!state.editingLesson){showToast('Chưa chọn bài học',true);return;}
+function updateEditorStatusButton(){
+  const btn=byId('ed-status-toggle'); if(!btn) return;
+  const sel=state.editingLesson; const lesson=sel&&findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId);
+  if(!lesson){ btn.style.display='none'; return; }
+  btn.style.display='inline-flex';
+  const isDraft=lesson.status==='draft';
+  btn.textContent=isDraft?'📝 Nháp → Xuất bản':'✅ Đã xuất bản';
+  btn.className='btn '+(isDraft?'bgreen':'bgray');
+  btn.title=isDraft?'Học viên chưa thấy bài này. Bấm để xuất bản.':'Học viên đã thấy bài này. Bấm để chuyển về nháp.';
+}
+function toggleEditorLessonStatus(){
+  const sel=state.editingLesson; if(!sel){showToast('Chưa chọn bài học',true);return;}
+  const lesson=findLesson(sel.catId,sel.courseId,sel.chapId,sel.lessonId); if(!lesson)return;
+  lesson.status=(lesson.status==='draft')?'published':'draft';
+  saveContentToStorage(); buildCategorySidebar(); renderEditorTree(); updateEditorStatusButton();
+  showToast(lesson.status==='draft'?'Đã chuyển về nháp':'Đã xuất bản bài học');
+}
+function saveLesson(silent){
+  if(!state.editingLesson){ if(!silent)showToast('Chưa chọn bài học',true); return false;}
   const {catId,courseId,chapId,lessonId}=state.editingLesson;
   const lesson=findLesson(catId,courseId,chapId,lessonId);
-  if(!lesson){showToast('Không tìm thấy bài học',true);return;}
+  if(!lesson){ if(!silent)showToast('Không tìm thấy bài học',true); return false;}
   const editor=byId('edcontent');
   normalizeEditorTables(editor);
   const title=byId('ed-title').value.trim();
-  if(!title){showToast('Tiêu đề bài học không được trống',true);return;}
+  if(!title){ if(!silent)showToast('Tiêu đề bài học không được trống',true); return false;}
   lesson.title=title;
   lesson.type=byId('ed-type').value;
   lesson.duration=byId('ed-duration').value.trim();
   lesson.content=normalizeEditorHTML(editor.innerHTML);
   state.adminSelection={kind:'lesson',catId,courseId,chapId,lessonId};
-  saveContentToStorage(); buildCategorySidebar(); renderEditorTree(); showToast('Đã lưu bài học!','ok');
+  state.editorDirty=false;
+  saveContentToStorage(); buildCategorySidebar(); renderEditorTree();
+  if(!silent) showToast('Đã lưu bài học!','ok');
+  return true;
+}
+function showAutoSaveInfo(time){ const info=byId('ed-autosave-info'); if(info){ info.textContent='💾 Tự lưu lúc '+time; info.style.color='#10b981'; } }
+function triggerAutoSave(){
+  if(!state.editingLesson||!state.editorDirty) return;
+  const ok=saveLesson(true);
+  if(ok) showAutoSaveInfo(new Date().toLocaleTimeString('vi-VN'));
 }
 function edCmd(cmd,value=null){
   restoreEditorSelection();
@@ -2501,7 +2351,7 @@ function openLessonImportModal(){ state.lessonImportRows=[]; byId('lesson-import
 function closeLessonImportModal(){ byId('lesson-import-modal').style.display='none'; }
 function handleLessonImportFile(file){ if(!file)return; if(file.name.toLowerCase().endsWith('.xlsx')){byId('lesson-import-result').textContent='File .xlsx: hãy export thành CSV trước khi import.';return;} const reader=new FileReader(); reader.onload=e=>parseLessonImportCSV(e.target.result); reader.readAsText(file,'utf-8'); }
 function parseLessonImportCSV(text){ const rows=parseCSV(text); if(rows.length<2){byId('lesson-import-result').textContent='CSV không có dữ liệu.';return;} const h=rows[0].map(x=>x.toLowerCase().trim()); state.lessonImportRows=rows.slice(1).map(r=>({topic:cleanText(r[h.indexOf('topic')]),course:cleanText(r[h.indexOf('course')]),chapter:cleanText(r[h.indexOf('chapter')]),title:cleanText(r[h.indexOf('lesson_title')]),type:cleanText(r[h.indexOf('lesson_type')]||'doc').toLowerCase(),duration:cleanText(r[h.indexOf('duration')])})).filter(r=>r.topic&&r.course&&r.chapter&&r.title); byId('lesson-import-confirm').style.display=state.lessonImportRows.length?'inline-flex':'none'; byId('lesson-import-confirm').textContent=`Import ${state.lessonImportRows.length} bài học`; byId('lesson-import-preview').innerHTML=state.lessonImportRows.length?`<table class="table"><thead><tr><th>Topic</th><th>Course</th><th>Chapter</th><th>Lesson</th><th>Type</th><th>Duration</th></tr></thead><tbody>${state.lessonImportRows.slice(0,20).map(r=>`<tr><td>${esc(r.topic)}</td><td>${esc(r.course)}</td><td>${esc(r.chapter)}</td><td>${esc(r.title)}</td><td>${esc(r.type)}</td><td>${esc(r.duration)}</td></tr>`).join('')}</tbody></table>`:''; }
-function confirmImportLessons(){ let imported=0,skipped=0,last=null; state.lessonImportRows.forEach(r=>{ const cat=findOrCreateTopicByName(r.topic); const course=findOrCreateCourseByName(cat,r.course); const ch=findOrCreateChapterByName(course,r.chapter); ch.lessons=ch.lessons||[]; if(ch.lessons.some(l=>String(l.title).toLowerCase()===r.title.toLowerCase())){skipped++;return;} const lesson={id:newId('lesson',r.title),title:r.title,type:['video','doc','quiz'].includes(r.type)?r.type:'doc',duration:r.duration||'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>'}; ch.lessons.push(lesson); last={catId:cat.id,courseId:course.id,chapId:ch.id,lessonId:lesson.id}; imported++; }); saveContentToStorage(); buildCategorySidebar(); if(last) state.adminSelection={kind:'lesson',...last}; renderAdminContent(); byId('lesson-import-result').textContent=`Đã import ${imported}, bỏ qua ${skipped} (bài trùng tên)`; }
+function confirmImportLessons(){ let imported=0,skipped=0,last=null; state.lessonImportRows.forEach(r=>{ const cat=findOrCreateTopicByName(r.topic); const course=findOrCreateCourseByName(cat,r.course); const ch=findOrCreateChapterByName(course,r.chapter); ch.lessons=ch.lessons||[]; if(ch.lessons.some(l=>String(l.title).toLowerCase()===r.title.toLowerCase())){skipped++;return;} const lesson={id:newId('lesson',r.title),title:r.title,type:['video','doc','quiz'].includes(r.type)?r.type:'doc',duration:r.duration||'15p',done:false,subs:[],content:'<p>Nội dung bài học...</p>',status:'draft'}; ch.lessons.push(lesson); last={catId:cat.id,courseId:course.id,chapId:ch.id,lessonId:lesson.id}; imported++; }); saveContentToStorage(); buildCategorySidebar(); if(last) state.adminSelection={kind:'lesson',...last}; renderAdminContent(); byId('lesson-import-result').textContent=`Đã import ${imported} bài (dạng NHÁP), bỏ qua ${skipped} (bài trùng tên). Vào editor để viết nội dung rồi Xuất bản.`; }
 function findOrCreateTopicByName(name){ let cat=DATA.categories.find(c=>String(c.name).toLowerCase()===name.toLowerCase()); if(!cat){ cat={id:newId('cat',name),name,icon:'📚',color:'#0ea5e9',bg:colorToSoftBg('#0ea5e9'),gradient:'linear-gradient(135deg,#0ea5e9,#38bdf8)',courses:[]}; DATA.categories.push(cat); } return cat; }
 function findOrCreateCourseByName(cat,name){ cat.courses=cat.courses||[]; let course=cat.courses.find(c=>String(c.name).toLowerCase()===name.toLowerCase()); if(!course){ course={id:newId('course',name),name,desc:'Khóa học import từ file',icon:'📘',level:'Cơ bản',duration:'1h',lessons_total:0,chapters:[]}; cat.courses.push(course); } return course; }
 function findOrCreateChapterByName(course,title){ course.chapters=course.chapters||[]; let ch=course.chapters.find(x=>String(x.title).toLowerCase()===title.toLowerCase()); if(!ch){ ch={id:newId('chap',title),title,desc:'0 bài học',lessons:[]}; course.chapters.push(ch); } return ch; }
@@ -2527,7 +2377,10 @@ function handleDropFile(event,target){ event.preventDefault(); event.currentTarg
 document.addEventListener('selectionchange',()=>{ const editor=byId('edcontent'); if(!editor)return; const sel=window.getSelection(); if(sel.rangeCount&&editor.contains(sel.anchorNode))saveEditorSelection(); });
 document.addEventListener('mousedown',e=>{ if(e.target.closest('#editor-toolbar')) saveEditorSelection(); if(e.target.closest('#editor-toolbar button')) e.preventDefault(); });
 document.addEventListener('click',e=>{ const pop=byId('emoji-pop'); if(pop&&pop.style.display==='grid'&&!pop.contains(e.target)&&!e.target.closest('#editor-toolbar'))pop.style.display='none'; });
-window.addEventListener('load',()=>{ ensureAdminBoot(); const editor=byId('edcontent'); if(editor){ editor.addEventListener('input',updateWordCount); editor.addEventListener('paste',handleEditorPaste); editor.addEventListener('keydown',handleEditorKeydown); } updateAdminNav(); });
+let autoSaveTimer=null;
+function scheduleAutoSave(){ clearTimeout(autoSaveTimer); autoSaveTimer=setTimeout(triggerAutoSave,30000); }
+window.addEventListener('load',()=>{ ensureAdminBoot(); const editor=byId('edcontent'); if(editor){ editor.addEventListener('input',()=>{ updateWordCount(); state.editorDirty=true; scheduleAutoSave(); }); editor.addEventListener('paste',handleEditorPaste); editor.addEventListener('keydown',handleEditorKeydown); } updateAdminNav(); });
+window.addEventListener('beforeunload',e=>{ if(state.editorDirty){ e.preventDefault(); e.returnValue='Bạn có nội dung chưa lưu. Rời trang ngay?'; return e.returnValue; } });
 
 </script>
 </body>
