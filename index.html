@@ -2454,12 +2454,53 @@ function normalizeEditorTables(root){
     if(!el.getAttribute('style')) el.removeAttribute('style');
   });
 }
+function cleanPastedHTML(html){
+  if(!html) return '';
+  // 1) Bỏ comment điều kiện của Office + mọi comment
+  html=html.replace(/<!--[\s\S]*?-->/g,'');
+  // 2) Bỏ thẻ namespace của Word/Office (o:p, w:, v:, m:, st1:...)
+  html=html.replace(/<\/?[a-z][\w-]*:[^>]*>/gi,'');
+  const host=document.createElement('div');
+  host.innerHTML=html;
+  // 3) Xóa hẳn các thẻ rác
+  host.querySelectorAll('script,style,meta,link,title,xml').forEach(el=>el.remove());
+  // 4) Làm sạch thuộc tính: chỉ giữ định dạng có ý nghĩa, bỏ font/size của Word
+  const KEEP=['color','text-align','font-weight','font-style','text-decoration','background','background-color'];
+  host.querySelectorAll('*').forEach(el=>{
+    ['class','lang','id','width','height','face','size','align','valign','border','cellpadding','cellspacing'].forEach(a=>el.removeAttribute(a));
+    const style=el.getAttribute('style')||'';
+    if(style){
+      const keep=[];
+      style.split(';').forEach(rule=>{
+        const i=rule.indexOf(':'); if(i<0) return;
+        const prop=rule.slice(0,i).trim().toLowerCase();
+        const val=rule.slice(i+1).trim();
+        if(!prop||!val||/^mso-/.test(prop)||!KEEP.includes(prop)) return;
+        if(prop==='font-weight'&&!/(bold|[6-9]00)/i.test(val)) return;
+        if(prop==='font-style'&&!/italic/i.test(val)) return;
+        if(prop==='text-decoration'&&!/underline|line-through/i.test(val)) return;
+        if((prop==='background'||prop==='background-color')&&/(transparent|white|#fff(fff)?\b)/i.test(val)) return;
+        if(prop==='color'&&/(window\w*|inherit|auto)/i.test(val)) return;
+        keep.push(prop+':'+val);
+      });
+      if(keep.length) el.setAttribute('style',keep.join(';')); else el.removeAttribute('style');
+    }
+  });
+  // 5) Gỡ thẻ <font>, giữ nội dung bên trong
+  host.querySelectorAll('font').forEach(f=>f.replaceWith(...f.childNodes));
+  // 6) Gỡ <span> không còn định dạng
+  host.querySelectorAll('span').forEach(s=>{ if(!s.getAttribute('style')) s.replaceWith(...s.childNodes); });
+  // 7) Bỏ đoạn rỗng do Word sinh ra
+  host.querySelectorAll('p,div').forEach(p=>{ if(!p.textContent.trim() && !p.querySelector('img,br,table,iframe')) p.remove(); });
+  normalizeEditorTables(host);
+  return host.innerHTML;
+}
 function handleEditorPaste(e){
   e.preventDefault(); saveEditorSelection();
   const text=e.clipboardData?.getData('text/plain')||'';
   const html=e.clipboardData?.getData('text/html')||'';
   if(text && looksLikeMarkdownTable(text)){ insertHTMLAtCursor(markdownToEditorHTML(text)); return; }
-  if(html){ insertHTMLAtCursor(html); return; }
+  if(html){ insertHTMLAtCursor(cleanPastedHTML(html)); return; }
   insertHTMLAtCursor(textToEditorHTML(text));
 }
 function handleEditorKeydown(e){
