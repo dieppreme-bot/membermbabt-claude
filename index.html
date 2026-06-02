@@ -706,6 +706,10 @@ const LH_CLOUD = {
   adminEmails: ['dieppreme@gmail.com']  // Email luôn được coi là admin
 };
 let SB = null;
+// Lưu URL gốc NGAY khi tải trang (trước khi Supabase tự xử lý & xóa hash recovery)
+const LH_BOOT_HASH = String(window.location.hash || '');
+const LH_BOOT_SEARCH = String(window.location.search || '');
+let lhRecoveryMode = false;
 function cloudConfigured(){ return !!(LH_CLOUD.url && LH_CLOUD.anonKey && window.supabase && window.supabase.createClient); }
 function getSB(){ if(!SB && cloudConfigured()){ try{ SB = window.supabase.createClient(LH_CLOUD.url, LH_CLOUD.anonKey); }catch(e){ console.warn('Supabase init failed', e); SB=null; } } return SB; }
 function cloudEnabled(){ return !!getSB(); }
@@ -733,8 +737,8 @@ async function cloudAddMember(name,email,pass,role,tier='level3'){ const tmp=win
 function openForgotPassword(){ if(!cloudEnabled()){ showToast('Tính năng này cần bật chế độ cloud (Supabase)',true); return; } const m=byId('forgot-modal'); if(m){ m.style.display='flex'; const f=byId('forgot-email'); if(f){ f.value=byId('login-email')?.value||''; setTimeout(()=>f.focus(),0); } } }
 function closeForgotPassword(){ const m=byId('forgot-modal'); if(m) m.style.display='none'; }
 async function submitForgotPassword(){ const email=(byId('forgot-email').value||'').trim().toLowerCase(); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showToast('Email không hợp lệ',true); return; } try{ const redirectTo=location.origin+location.pathname; const {error}=await getSB().auth.resetPasswordForEmail(email,{redirectTo}); if(error) throw error; closeForgotPassword(); showToast('Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.'); }catch(e){ showToast(cloudAuthMsg(e),true); } }
-function showResetPasswordForm(){ const m=byId('reset-modal'); if(m){ byId('auth-page').style.display='flex'; byId('app').style.display='none'; m.style.display='flex'; byId('reset-pass').value=''; byId('reset-pass2').value=''; setTimeout(()=>byId('reset-pass').focus(),0); } }
-async function submitResetPassword(){ const p1=byId('reset-pass').value, p2=byId('reset-pass2').value; if(p1.length<6){ showToast('Mật khẩu tối thiểu 6 ký tự',true); return; } if(p1!==p2){ showToast('Hai mật khẩu không khớp',true); return; } try{ const {error}=await getSB().auth.updateUser({password:p1}); if(error) throw error; byId('reset-modal').style.display='none'; try{ await getSB().auth.signOut(); }catch(e){} showToast('Đã đổi mật khẩu! Đăng nhập lại bằng mật khẩu mới.'); switchTab('login'); }catch(e){ showToast(cloudAuthMsg(e),true); } }
+function showResetPasswordForm(){ const m=byId('reset-modal'); if(m){ byId('auth-page').style.display='flex'; byId('app').style.display='none'; const pp=byId('pending-page'); if(pp) pp.style.display='none'; m.style.display='flex'; byId('reset-pass').value=''; byId('reset-pass2').value=''; setTimeout(()=>byId('reset-pass').focus(),0); } }
+async function submitResetPassword(){ const p1=byId('reset-pass').value, p2=byId('reset-pass2').value; if(p1.length<6){ showToast('Mật khẩu tối thiểu 6 ký tự',true); return; } if(p1!==p2){ showToast('Hai mật khẩu không khớp',true); return; } try{ const {error}=await getSB().auth.updateUser({password:p1}); if(error) throw error; byId('reset-modal').style.display='none'; try{ await getSB().auth.signOut(); }catch(e){} lhRecoveryMode=false; try{ history.replaceState(null,'',location.origin+location.pathname); }catch(e){} showToast('Đã đổi mật khẩu! Đăng nhập lại bằng mật khẩu mới.'); switchTab('login'); }catch(e){ showToast(cloudAuthMsg(e),true); } }
 
 // ============================================================
 // DATA
@@ -1482,11 +1486,13 @@ async function bootCloud(){
   try{ const _ta=await cloudLoadKV('tier_access'); if(_ta&&typeof _ta==='object') state.tierAccess=_ta; }catch(e){}
   try{
     const sb=getSB();
-    if(!_recoveryHooked){ _recoveryHooked=true; sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showResetPasswordForm(); }); }
-    const hash=String(location.hash||'');
-    const isRecovery = hash.includes('type=recovery');
+    if(!_recoveryHooked){ _recoveryHooked=true; sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY'){ lhRecoveryMode=true; showResetPasswordForm(); } }); }
+    // Phát hiện link đặt lại mật khẩu từ URL GỐC đã lưu (Supabase có thể đã xóa hash)
+    const isRecovery = LH_BOOT_HASH.includes('type=recovery') || /[?&]type=recovery/.test(LH_BOOT_SEARCH);
+    if (isRecovery){ lhRecoveryMode=true; showResetPasswordForm(); return; }
     const { data } = await sb.auth.getSession();
-    if (isRecovery){ showResetPasswordForm(); return; }
+    // Nếu đang ở chế độ đặt lại mật khẩu (sự kiện PASSWORD_RECOVERY) → KHÔNG tự đăng nhập
+    if (lhRecoveryMode){ showResetPasswordForm(); return; }
     if (data && data.session && data.session.user){
       const user = await cloudUserToAppUser(data.session.user);
       await cloudPullContent();
