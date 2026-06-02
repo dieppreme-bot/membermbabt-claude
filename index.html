@@ -2090,8 +2090,21 @@ async function deleteMember(email){ if(state.user&&String(state.user.email).toLo
   if(cloudEnabled()){ const ok=await cloudDeleteProfile(email); if(ok){ await reloadCloudMembers(); showToast('Đã xóa hồ sơ thành viên'); } return; }
   saveUsers(getUsers().filter(u=>String(u.email).toLowerCase()!==String(email).toLowerCase())); renderAdminMembers(); }
 async function toggleMemberRole(email){
-  if(cloudEnabled()){ const m=(state._cloudMembers||[]).find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); const next=(m&&m.isAdmin)?'member':'admin'; const ok=await cloudSetRole(email,next); if(ok){ await reloadCloudMembers(); showToast('Đã đổi vai trò'); } return; }
-  const users=getUsers(); const u=users.find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); if(!u)return; u.isAdmin=!isAdminUser(u); if(String(u.email).toLowerCase()==='admin@learnhub.com')u.isAdmin=true; saveUsers(users); renderAdminMembers(); }
+  if(cloudEnabled()){
+    const m=(state._cloudMembers||[]).find(x=>String(x.email).toLowerCase()===String(email).toLowerCase());
+    const next=(m&&m.isAdmin)?'member':'admin';
+    const isSelf=state.user&&String(state.user.email).toLowerCase()===String(email).toLowerCase();
+    let msg=next==='admin'
+      ? `⚠️ CẤP QUYỀN ADMIN cho:\n${email}\n\nAdmin có TOÀN QUYỀN: sửa/xóa nội dung, quản lý thành viên, đổi cài đặt. Bạn chắc chắn?`
+      : `Hạ vai trò xuống MEMBER cho:\n${email}\n\nTài khoản này sẽ MẤT quyền quản trị. Tiếp tục?`;
+    if(isSelf&&next==='member') msg=`⚠️ Bạn đang HẠ QUYỀN CHÍNH MÌNH xuống Member và sẽ MẤT quyền admin ngay lập tức!\n\n${email}\n\nThực sự muốn làm điều này?`;
+    if(!confirm(msg)) return;
+    const ok=await cloudSetRole(email,next); if(ok){ await reloadCloudMembers(); showToast('Đã đổi vai trò thành '+(next==='admin'?'Admin':'Member')); } return;
+  }
+  const users=getUsers(); const u=users.find(x=>String(x.email).toLowerCase()===String(email).toLowerCase()); if(!u)return;
+  const nextAdmin=!isAdminUser(u);
+  if(!confirm((nextAdmin?'⚠️ Cấp quyền ADMIN cho ':'Hạ xuống MEMBER cho ')+email+'?\n\n'+(nextAdmin?'Admin có toàn quyền quản trị.':'Tài khoản sẽ mất quyền quản trị.'))) return;
+  u.isAdmin=nextAdmin; if(String(u.email).toLowerCase()==='admin@learnhub.com')u.isAdmin=true; saveUsers(users); renderAdminMembers(); }
 function openMemberImportModal(){ state.memberImportRows=[]; byId('member-import-modal').style.display='flex'; byId('member-import-preview').innerHTML=''; byId('member-import-result').textContent=''; byId('member-import-confirm').style.display='none'; }
 function closeMemberImportModal(){ byId('member-import-modal').style.display='none'; }
 function handleMemberImportFile(file){ if(!file)return; if(file.name.toLowerCase().endsWith('.xlsx')){byId('member-import-result').textContent='File .xlsx: hãy export thành CSV trước khi import.';return;} const reader=new FileReader(); reader.onload=e=>parseMemberCSV(e.target.result); reader.readAsText(file,'utf-8'); }
