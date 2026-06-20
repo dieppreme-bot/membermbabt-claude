@@ -364,6 +364,39 @@
   @media (max-width: 760px) { #sidebar { position: static; width: 100%; min-height: auto; } #app { display: block; } #main { margin-left: 0; width: 100%; max-width: 100%; } .topbar, .vwrap { padding-left: 18px; padding-right: 18px; } .stats-grid, .form-grid, .editor-meta { grid-template-columns: 1fr; } .continue-card { flex-direction: column; align-items: flex-start; gap: 16px; } .continue-progress-bar { width: 100%; } }
 
   .hidden { display: none !important; }
+
+  /* ===== AI Features ===== */
+  .edgrp-smart { display: flex; align-items: center; gap: 4px; padding-right: 8px; border-right: 1px solid #e2e8f0; }
+  .edgrp-ai { display: flex; align-items: center; gap: 4px; }
+  .edtb .btn-smart { min-width: 34px; height: 34px; border: 1px solid #86efac; background: #f0fdf4; border-radius: 8px; cursor: pointer; font-size: 11.5px; font-weight: 600; color: #16a34a; padding: 0 8px; white-space: nowrap; line-height: 1; }
+  .edtb .btn-smart:hover { background: #dcfce7; border-color: #4ade80; }
+  .edtb .btn-ai { min-width: 34px; height: 34px; border: 1px solid #c4b5fd; background: #faf5ff; border-radius: 8px; cursor: pointer; font-size: 11.5px; font-weight: 600; color: #7c3aed; padding: 0 8px; white-space: nowrap; line-height: 1; }
+  .edtb .btn-ai:hover { background: #ede9fe; border-color: #a78bfa; }
+  .ai-modal-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+  .ai-modal-tab { padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; color: #64748b; border: 1px solid #e2e8f0; background: white; transition: all 0.18s; }
+  .ai-modal-tab.active { background: #7c3aed; color: white; border-color: #7c3aed; }
+  .ai-tab-content { display: none; }
+  .ai-tab-content.active { display: block; }
+  .seo-check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .seo-check-item .seo-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+  .seo-score-bar { height: 8px; border-radius: 100px; background: #f1f5f9; overflow: hidden; margin: 10px 0 4px; }
+  .seo-score-fill { height: 100%; border-radius: 100px; transition: width 0.5s; }
+  .ai-result-box { background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .ai-result-box h4 { font-size: 13px; font-weight: 700; color: #7c3aed; margin-bottom: 8px; }
+  .ai-result-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f3e8ff; font-size: 13px; color: #374151; }
+  .ai-result-item:last-child { border-bottom: 0; }
+  .ai-result-text { flex: 1; line-height: 1.5; }
+  .ai-generating { text-align: center; padding: 28px 0; color: #7c3aed; font-size: 13px; }
+  .ai-generating .spinner { display: block; width: 28px; height: 28px; border: 3px solid #e9d5ff; border-top-color: #7c3aed; border-radius: 50%; animation: aiSpin 0.8s linear infinite; margin: 0 auto 10px; }
+  @keyframes aiSpin { to { transform: rotate(360deg); } }
+  .settings-ai-section { background: linear-gradient(135deg, #faf5ff 0%, #f0fdf4 100%); border: 1.5px solid #e9d5ff; border-radius: 14px; padding: 20px 22px; }
+  .settings-ai-section h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .ai-provider-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+  .ai-provider-card { border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; cursor: pointer; text-align: center; transition: all 0.18s; background: white; }
+  .ai-provider-card:hover { border-color: #a78bfa; }
+  .ai-provider-card.active { border-color: #7c3aed; background: #faf5ff; }
+  .ai-provider-card .provider-icon { font-size: 22px; margin-bottom: 4px; }
+  .ai-provider-card .provider-name { font-size: 12px; font-weight: 700; color: #374151; }
 </style>
 </head>
 <body>
@@ -604,7 +637,7 @@
           <div class="editor-main">
             <div id="ed-breadcrumb" style="font-size:13px;color:#64748b;margin-bottom:12px;">Ch&#7885;n b&#224;i h&#7885;c &#273;&#7875; ch&#7881;nh s&#7917;a</div>
             <div class="editor-meta"><input id="ed-title" placeholder="Ti&#234;u &#273;&#7873; b&#224;i h&#7885;c..." class="fi" style="font-size:18px;font-weight:700;"><select id="ed-type" class="fi"><option value="video">Video</option><option value="doc">T&#224;i li&#7879;u</option><option value="quiz">Quiz</option></select><input id="ed-duration" placeholder="Th&#7901;i l&#432;&#7907;ng (VD: 20p)" class="fi"><button onclick="saveLesson()" class="btn bgreen">&#128190; L&#432;u</button></div>
-            <div class="edwrap"><div class="edtb" id="editor-toolbar"><div class="edgrp"><button title="Undo" onclick="edCmd('undo')">&#8617;</button><button title="Redo" onclick="edCmd('redo')">&#8618;</button></div><div class="edgrp"><select title="&#272;o&#7841;n v&#259;n" onchange="formatBlock(this.value); this.value='p';"><option value="p">B&#236;nh th&#432;&#7901;ng</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Tr&#237;ch d&#7851;n</option><option value="pre">Code block</option></select></div><div class="edgrp"><select title="Font" onchange="edCmd('fontName', this.value)"><option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Fira Code</option></select><select title="C&#7905; ch&#7919;" onchange="setFontSize(this.value)"><option>12</option><option>14</option><option selected>15</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option></select></div><div class="edgrp"><button title="Bold" onclick="edCmd('bold')">B</button><button title="Italic" onclick="edCmd('italic')"><i>I</i></button><button title="Underline" onclick="edCmd('underline')"><u>U</u></button><button title="Strike" onclick="edCmd('strikeThrough')"><s>S</s></button><input title="M&#224;u ch&#7919;" type="color" onchange="edCmd('foreColor', this.value)"><input title="M&#224;u n&#7873;n" type="color" value="#fff59d" onchange="edCmd('backColor', this.value)"></div><div class="edgrp"><button title="Tr&#225;i" onclick="edCmd('justifyLeft')">&#8801;</button><button title="Gi&#7919;a" onclick="edCmd('justifyCenter')">&#8803;</button><button title="Ph&#7843;i" onclick="edCmd('justifyRight')">&#8801;</button><button title="&#272;&#7873;u" onclick="edCmd('justifyFull')">&#9776;</button></div><div class="edgrp"><button title="Bullet list" onclick="edCmd('insertUnorderedList')">&bull;</button><button title="Number list" onclick="edCmd('insertOrderedList')">1.</button><button title="Indent" onclick="edCmd('indent')">&rarr;</button><button title="Outdent" onclick="edCmd('outdent')">&larr;</button></div><div class="edgrp"><button title="Toggle" onclick="insertToggle()">&#128317;</button><button title="Box nội dung" onclick="insertTextBox()">&#9635;</button><button title="Callout ghi chú" onclick="insertCallout('note')">&#128161;</button><button title="Callout cảnh báo" onclick="insertCallout('warn')">&#9888;</button><button title="&#7842;nh" onclick="openImageModal()">&#128444;</button><button title="Video YouTube" onclick="insertVideoPrompt()">&#9654;</button><button title="HTML" onclick="openHTMLModal()">&lt;/&gt;</button><button title="Divider" onclick="insertHTMLAtCursor('<hr><p><br></p>')">&mdash;</button><button title="Emoji/Icon" onclick="toggleEmojiPicker(this)">&#128512;</button><button title="Link" onclick="insertLinkPrompt()">&#128279;</button></div></div><div id="edcontent" contenteditable="true"></div><div class="edfooter"><div style="display:flex;align-items:center;gap:14px;"><span id="ed-wordcount" style="font-size:12px;color:#94a3b8;">0 t&#7915;</span><span id="ed-autosave-info" style="font-size:12px;color:#94a3b8;"></span></div><div style="display:flex;align-items:center;gap:8px;"><button id="ed-status-toggle" onclick="toggleEditorLessonStatus()" class="btn bgray">&#9210; Tr&#7841;ng th&#225;i</button><button onclick="previewLesson()" class="btn bgray">&#128065; Xem tr&#432;&#7899;c</button></div></div></div>
+            <div class="edwrap"><div class="edtb" id="editor-toolbar"><div class="edgrp"><button title="Undo" onclick="edCmd('undo')">&#8617;</button><button title="Redo" onclick="edCmd('redo')">&#8618;</button></div><div class="edgrp"><select title="&#272;o&#7841;n v&#259;n" onchange="formatBlock(this.value); this.value='p';"><option value="p">B&#236;nh th&#432;&#7901;ng</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Tr&#237;ch d&#7851;n</option><option value="pre">Code block</option></select></div><div class="edgrp"><select title="Font" onchange="edCmd('fontName', this.value)"><option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Fira Code</option></select><select title="C&#7905; ch&#7919;" onchange="setFontSize(this.value)"><option>12</option><option>14</option><option selected>15</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option></select></div><div class="edgrp"><button title="Bold" onclick="edCmd('bold')">B</button><button title="Italic" onclick="edCmd('italic')"><i>I</i></button><button title="Underline" onclick="edCmd('underline')"><u>U</u></button><button title="Strike" onclick="edCmd('strikeThrough')"><s>S</s></button><input title="M&#224;u ch&#7919;" type="color" onchange="edCmd('foreColor', this.value)"><input title="M&#224;u n&#7873;n" type="color" value="#fff59d" onchange="edCmd('backColor', this.value)"></div><div class="edgrp"><button title="Tr&#225;i" onclick="edCmd('justifyLeft')">&#8801;</button><button title="Gi&#7919;a" onclick="edCmd('justifyCenter')">&#8803;</button><button title="Ph&#7843;i" onclick="edCmd('justifyRight')">&#8801;</button><button title="&#272;&#7873;u" onclick="edCmd('justifyFull')">&#9776;</button></div><div class="edgrp"><button title="Bullet list" onclick="edCmd('insertUnorderedList')">&bull;</button><button title="Number list" onclick="edCmd('insertOrderedList')">1.</button><button title="Indent" onclick="edCmd('indent')">&rarr;</button><button title="Outdent" onclick="edCmd('outdent')">&larr;</button></div><div class="edgrp"><button title="Toggle" onclick="insertToggle()">&#128317;</button><button title="Box nội dung" onclick="insertTextBox()">&#9635;</button><button title="Callout ghi chú" onclick="insertCallout('note')">&#128161;</button><button title="Callout cảnh báo" onclick="insertCallout('warn')">&#9888;</button><button title="&#7842;nh" onclick="openImageModal()">&#128444;</button><button title="Video YouTube" onclick="insertVideoPrompt()">&#9654;</button><button title="HTML" onclick="openHTMLModal()">&lt;/&gt;</button><button title="Divider" onclick="insertHTMLAtCursor('<hr><p><br></p>')">&mdash;</button><button title="Emoji/Icon" onclick="toggleEmojiPicker(this)">&#128512;</button><button title="Link" onclick="insertLinkPrompt()">&#128279;</button></div><div class="edgrp-smart"><button class="btn-smart" title="D&#225;n text/HTML th&#244; v&#224; t&#7921; format" onclick="openSmartPasteModal()">&#128203; Smart Paste</button><button class="btn-smart" title="T&#7921; &#273;&#7897;ng format n&#7897;i dung &#273;ang c&#243;" onclick="autoFormatContent()">&#10024; Auto-Format</button><button class="btn-smart" title="T&#236;m URL &#7843;nh v&#224; embed t&#7921; &#273;&#7897;ng" onclick="fixImageLinks()">&#128444; Fix Images</button></div><div class="edgrp-ai"><button class="btn-ai" title="AI vi&#7871;t b&#224;i m&#7899;i" onclick="openAIModal('write')">&#129302; AI Vi&#7871;t B&#224;i</button><button class="btn-ai" title="Ki&#7875;m tra v&#224; t&#7889;i &#432;u SEO" onclick="openAIModal('seo')">&#128202; SEO Check</button></div></div><div id="edcontent" contenteditable="true"></div><div class="edfooter"><div style="display:flex;align-items:center;gap:14px;"><span id="ed-wordcount" style="font-size:12px;color:#94a3b8;">0 t&#7915;</span><span id="ed-autosave-info" style="font-size:12px;color:#94a3b8;"></span></div><div style="display:flex;align-items:center;gap:8px;"><button id="ed-status-toggle" onclick="toggleEditorLessonStatus()" class="btn bgray">&#9210; Tr&#7841;ng th&#225;i</button><button onclick="previewLesson()" class="btn bgray">&#128065; Xem tr&#432;&#7899;c</button></div></div></div>
           </div>
         </div>
       </div>
@@ -647,6 +680,9 @@
           <h3 style="font-size:18px;font-weight:800;margin-bottom:14px;">&#128273; Phân quyền theo cấp</h3>
           <div id="settings-tier-form"></div>
         </div>
+        <div class="admin-form" style="margin-top:20px;">
+          <div id="settings-ai-form"></div>
+        </div>
       </div>
     </div>
 
@@ -684,6 +720,12 @@
 
 <!-- HTML insert modal -->
 <div class="modal" id="html-modal" style="display:none"><div class="modal-card" style="width:min(760px,96vw);"><div class="modal-head"><h3>Ch&#232;n HTML</h3><button class="close-x" onclick="closeHTMLModal()">&times;</button></div><div class="form-row"><label>M&#227; HTML</label><textarea id="html-code" class="fi" style="min-height:220px;font-family:'Fira Code',monospace;" placeholder="<div class='box'>Nội dung...</div>"></textarea></div><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;"><span style="font-size:12px;color:#64748b;line-height:1.5;">Block HTML sẽ hiển thị như code trong editor và render thật khi xem trước. Chèn trực tiếp sẽ đưa HTML vào bài ngay.</span><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bgray" onclick="closeHTMLModal()">Hủy</button><button class="btn bblue" onclick="insertHTMLFromModal('block')">Chèn block HTML</button><button class="btn bgreen" onclick="insertHTMLFromModal('direct')">Chèn trực tiếp</button></div></div></div></div>
+
+<!-- Smart Paste modal -->
+<div class="modal" id="smart-paste-modal" style="display:none"><div class="modal-card" style="width:min(760px,96vw);"><div class="modal-head"><h3>&#128203; Smart Paste — Dán nội dung thô</h3><button class="close-x" onclick="closeSmartPasteModal()">&times;</button></div><p style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:12px;">Dán text hoặc HTML từ ChatGPT, Word, Google Docs,... AI sẽ tự nhận diện tiêu đề H1/H2/H3, embed ảnh từ URL link và làm sạch giao diện.</p><div class="form-row"><label>Nội dung cần paste</label><textarea id="smart-paste-input" class="fi" style="min-height:260px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.6;" placeholder="Dán nội dung vào đây — text thô, markdown, hoặc HTML từ ChatGPT..."></textarea></div><div style="display:flex;gap:16px;margin:12px 0;flex-wrap:wrap;align-items:center;"><label style="font-size:13px;color:#334155;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="sp-detect-headings" checked> Nhận diện tiêu đề H1/H2/H3</label><label style="font-size:13px;color:#334155;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="sp-embed-images" checked> Embed ảnh từ URL</label><label style="font-size:13px;color:#334155;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="sp-clean-html" checked> Làm sạch HTML lạ</label></div><div style="display:flex;justify-content:flex-end;gap:8px;"><button class="btn bgray" onclick="closeSmartPasteModal()">Hủy</button><button class="btn bgreen" onclick="doSmartPaste()">&#10024; Paste &amp; Format</button></div></div></div>
+
+<!-- AI Write / SEO modal -->
+<div class="modal" id="ai-modal" style="display:none"><div class="modal-card" style="width:min(720px,96vw);max-height:90vh;overflow-y:auto;"><div class="modal-head"><h3>&#129302; AI Content Assistant</h3><button class="close-x" onclick="closeAIModal()">&times;</button></div><div class="ai-modal-tabs"><button class="ai-modal-tab active" id="aitab-write" onclick="switchAITab('write')">&#9997;&#65039; Viết bài</button><button class="ai-modal-tab" id="aitab-seo" onclick="switchAITab('seo')">&#128202; SEO Check</button></div><div class="ai-tab-content active" id="aitabcontent-write"><div class="form-row"><label>Chủ đề / Tiêu đề bài</label><input id="ai-write-topic" class="fi" placeholder="VD: Cách xây dựng phễu marketing hiệu quả..."></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="form-row"><label>Loại nội dung</label><select id="ai-write-type" class="fi"><option value="tutorial">Hướng dẫn từng bước</option><option value="guide">Tổng quan &amp; Chiến lược</option><option value="analysis">Phân tích chuyên sâu</option><option value="casestudy">Case Study thực tế</option><option value="review">Review &amp; Đánh giá</option></select></div><div class="form-row"><label>Phong cách viết</label><select id="ai-write-style" class="fi"><option value="professional">Chuyên nghiệp</option><option value="friendly">Thân thiện, dễ hiểu</option><option value="academic">Học thuật</option><option value="practical">Thực chiến, súc tích</option></select></div></div><div class="form-row"><label>Từ khoá SEO <span style="color:#94a3b8;font-weight:400;">(không bắt buộc)</span></label><input id="ai-write-keywords" class="fi" placeholder="VD: marketing, bán hàng online, phễu bán hàng"></div><div class="form-row"><label>Tham khảo bài có sẵn <span style="color:#94a3b8;font-weight:400;">(để AI học phong cách)</span></label><select id="ai-write-ref" class="fi"><option value="">— Không tham khảo —</option></select></div><div id="ai-write-result"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;"><button class="btn bgray" onclick="closeAIModal()">Đóng</button><button class="btn bblue" style="background:linear-gradient(90deg,#7c3aed,#2563eb);border:none;color:white;" onclick="doAIWrite()">&#9654; Tạo nội dung</button></div></div><div class="ai-tab-content" id="aitabcontent-seo"><div id="seo-auto-results"></div><div id="seo-ai-results"></div><div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;"><button class="btn bgray" onclick="closeAIModal()">Đóng</button><button class="btn bblue" onclick="runSEOCheck()">&#128269; Chấm điểm SEO</button><button class="btn bblue" style="background:linear-gradient(90deg,#7c3aed,#2563eb);border:none;color:white;" onclick="doSEOAI()">&#129302; Tối ưu với AI</button></div></div></div></div>
 
 <!-- Lesson preview modal -->
 <div class="modal preview-modal" id="lesson-preview-modal" style="display:none"><div class="modal-card"><div class="modal-head"><h3>Xem tr&#432;&#7899;c b&#224;i h&#7885;c</h3><button class="close-x" onclick="closePreviewLesson()">&times;</button></div><div class="preview-body" id="lesson-preview-body"></div></div></div>
@@ -1552,7 +1594,11 @@ const DEFAULT_SITE_SETTINGS = {
   popupCtaText: 'Xem ngay',
   popupUrl: '',
   popupFrequency: 'session',
-  overviewLinks: []
+  overviewLinks: [],
+  aiProvider: 'openai',
+  aiApiKey: '',
+  aiModel: '',
+  aiEndpoint: ''
 };
 Object.assign(state, { adminSelection:null, editingLesson:null, readerLesson:null, adminOpen:{}, adminTreeQuery:'', editorTreeQuery:'', memberImportRows:[], lessonImportRows:[], editorRange:null, lessonDrag:null, siteSettings:null, editingOverviewLink:null, editorDirty:false });
 
@@ -1615,6 +1661,10 @@ function normalizeSiteSettings(raw){
   s.popupCtaText=cleanText(s.popupCtaText)||DEFAULT_SITE_SETTINGS.popupCtaText;
   s.popupUrl=cleanText(s.popupUrl);
   s.popupFrequency=['always','session'].includes(s.popupFrequency)?s.popupFrequency:DEFAULT_SITE_SETTINGS.popupFrequency;
+  s.aiProvider=['claude','openai','custom'].includes(s.aiProvider)?s.aiProvider:'openai';
+  s.aiApiKey=cleanText(s.aiApiKey);
+  s.aiModel=cleanText(s.aiModel);
+  s.aiEndpoint=cleanText(s.aiEndpoint);
   s.overviewLinks=Array.isArray(s.overviewLinks)?s.overviewLinks.map((link,i)=>({
     id: cleanText(link.id)||newId('link',link.name||i),
     name: cleanText(link.name),
@@ -2147,6 +2197,7 @@ function renderAdminSettings(){
   renderOverviewLinksAdmin();
   renderMarketingSettings();
   renderTierAccessSettings();
+  renderAISettings();
 }
 function fontOptions(selected){
   return ['Inter','Arial','Georgia','Times New Roman','Fira Code'].map(font=>`<option value="${esc(font)}" ${selected===font?'selected':''}>${esc(font)}</option>`).join('');
@@ -2747,6 +2798,319 @@ let autoSaveTimer=null;
 function scheduleAutoSave(){ clearTimeout(autoSaveTimer); autoSaveTimer=setTimeout(triggerAutoSave,30000); }
 window.addEventListener('load',()=>{ ensureAdminBoot(); const editor=byId('edcontent'); if(editor){ editor.addEventListener('input',()=>{ updateWordCount(); state.editorDirty=true; scheduleAutoSave(); }); editor.addEventListener('paste',handleEditorPaste); editor.addEventListener('keydown',handleEditorKeydown); } updateAdminNav(); });
 window.addEventListener('beforeunload',e=>{ if(state.editorDirty){ e.preventDefault(); e.returnValue='Bạn có nội dung chưa lưu. Rời trang ngay?'; return e.returnValue; } });
+
+// ============================================================
+// AI SETTINGS
+// ============================================================
+function renderAISettings(){
+  const host=byId('settings-ai-form'); if(!host) return;
+  const s=getSiteSettings();
+  const provOpts=[
+    {val:'openai',icon:'🤖',name:'OpenAI / ChatGPT',placeholder:'sk-...'},
+    {val:'claude',icon:'✦',name:'Claude (Anthropic)',placeholder:'sk-ant-...'},
+    {val:'custom',icon:'⚡',name:'Custom / Foza',placeholder:'sk-...'}
+  ];
+  const cards=provOpts.map(p=>`<div class="ai-provider-card${s.aiProvider===p.val?' active':''}" onclick="selectAIProvider('${p.val}')"><div class="provider-icon">${p.icon}</div><div class="provider-name">${p.name}</div></div>`).join('');
+  const selProv=provOpts.find(p=>p.val===s.aiProvider)||provOpts[0];
+  const modelDefault=s.aiProvider==='claude'?'claude-sonnet-4-6':s.aiProvider==='openai'?'gpt-4o':'';
+  host.innerHTML=`<div class="settings-ai-section"><h3>⚡ AI Settings</h3><p style="font-size:13px;color:#64748b;margin-bottom:14px;">Cấu hình AI để dùng tính năng Viết Bài &amp; SEO Optimizer trong editor.</p><div class="ai-provider-cards">${cards}</div><div class="form-row"><label>API Key</label><input id="ai-api-key" class="fi" type="password" value="${esc(s.aiApiKey)}" placeholder="${esc(selProv.placeholder)}"></div><div class="form-row"><label>Model <span style="color:#94a3b8;font-weight:400;">(để trống dùng mặc định)</span></label><input id="ai-model" class="fi" value="${esc(s.aiModel)}" placeholder="${esc(modelDefault)}"></div>${s.aiProvider==='custom'?`<div class="form-row"><label>Endpoint URL</label><input id="ai-endpoint" class="fi" value="${esc(s.aiEndpoint)}" placeholder="https://api.your-provider.com/v1/chat/completions"></div>`:'<input id="ai-endpoint" type="hidden" value="">'}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;"><button class="btn bgreen" onclick="saveAISettings()">Lưu cài đặt AI</button><button class="btn bgray" onclick="testAIConnection()">🔌 Test kết nối</button></div></div>`;
+}
+function selectAIProvider(prov){
+  const s=getSiteSettings(); s.aiProvider=prov; saveSiteSettings(); renderAISettings();
+}
+function saveAISettings(){
+  const s=getSiteSettings();
+  s.aiApiKey=(byId('ai-api-key')||{}).value||s.aiApiKey;
+  s.aiModel=(byId('ai-model')||{}).value||'';
+  s.aiEndpoint=(byId('ai-endpoint')||{}).value||'';
+  saveSiteSettings(); showToast('Đã lưu cài đặt AI');
+}
+async function testAIConnection(){
+  saveAISettings();
+  const s=getSiteSettings();
+  if(!s.aiApiKey){ showToast('Chưa nhập API key',true); return; }
+  showToast('Đang kiểm tra kết nối...');
+  try{
+    const res=await aiRequest([{role:'user',content:'Say "OK" only.'}],'Reply with just OK.');
+    if(res) showToast('✅ Kết nối thành công! AI phản hồi: '+res.slice(0,40));
+    else showToast('Kết nối thất bại — kiểm tra API key',true);
+  }catch(e){ showToast('Lỗi: '+e.message,true); }
+}
+
+// ============================================================
+// AI REQUEST (core)
+// ============================================================
+async function aiRequest(messages, systemPrompt=''){
+  const s=getSiteSettings();
+  if(!s.aiApiKey){ showToast('Chưa cấu hình API key trong Cài đặt → AI Settings',true); return null; }
+  const body={
+    provider: s.aiProvider,
+    apiKey: s.aiApiKey,
+    model: s.aiModel||undefined,
+    endpoint: s.aiEndpoint||undefined,
+    messages,
+    systemPrompt
+  };
+  const resp=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!resp.ok){
+    const err=await resp.json().catch(()=>({}));
+    throw new Error(err.error||'API request failed ('+resp.status+')');
+  }
+  const data=await resp.json();
+  return data.content||'';
+}
+
+// ============================================================
+// SMART PASTE
+// ============================================================
+function openSmartPasteModal(){ saveEditorSelection(); byId('smart-paste-modal').style.display='flex'; setTimeout(()=>byId('smart-paste-input').focus(),50); }
+function closeSmartPasteModal(){ byId('smart-paste-modal').style.display='none'; }
+function doSmartPaste(){
+  const raw=byId('smart-paste-input').value;
+  if(!raw.trim()){ showToast('Chưa có nội dung để paste',true); return; }
+  const detectH=byId('sp-detect-headings').checked;
+  const embedImg=byId('sp-embed-images').checked;
+  const cleanH=byId('sp-clean-html').checked;
+  const html=smartFormatContent(raw,{detectH,embedImg,cleanH});
+  restoreEditorSelection();
+  insertHTMLAtCursor(html+'<p><br></p>');
+  closeSmartPasteModal();
+  byId('smart-paste-input').value='';
+  showToast('✨ Đã paste và format xong!');
+}
+function smartFormatContent(raw, opts={}){
+  const {detectH=true, embedImg=true, cleanH=true}=opts;
+  const isHTML=/^\s*<[a-zA-Z]/.test(raw.trim());
+  let out='';
+  if(isHTML){
+    out=cleanH?cleanForeignHTML(raw):raw;
+    if(embedImg) out=embedImageURLs(out);
+  } else {
+    out=markdownAndTextToHTML(raw, detectH);
+    if(embedImg) out=embedImageURLs(out);
+  }
+  return out;
+}
+function markdownAndTextToHTML(text, detectH){
+  // Markdown headings
+  text=text.replace(/^#{4}\s+(.+)$/gm,'<h3>$1</h3>');
+  text=text.replace(/^#{3}\s+(.+)$/gm,'<h3>$1</h3>');
+  text=text.replace(/^#{2}\s+(.+)$/gm,'<h2>$1</h2>');
+  text=text.replace(/^#{1}\s+(.+)$/gm,'<h1>$1</h1>');
+  // Bold / italic markdown
+  text=text.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+  text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  text=text.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  text=text.replace(/__(.+?)__/g,'<strong>$1</strong>');
+  text=text.replace(/_(.+?)_/g,'<em>$1</em>');
+  // Inline code
+  text=text.replace(/`([^`]+)`/g,'<code>$1</code>');
+  // Horizontal rule
+  text=text.replace(/^---+$/gm,'<hr>');
+  // Split into lines and process
+  const lines=text.split('\n');
+  const result=[];
+  let inList=false, listType='';
+  for(let i=0;i<lines.length;i++){
+    let line=lines[i];
+    const trimmed=line.trim();
+    // Already converted to block element
+    if(/^<(h[1-3]|hr|ul|ol|li|blockquote|pre)/.test(trimmed)){
+      if(inList){ result.push(listType==='ul'?'</ul>':'</ol>'); inList=false; }
+      result.push(line); continue;
+    }
+    // Bullet list
+    const bullet=trimmed.match(/^[-*+]\s+(.+)/);
+    if(bullet){
+      if(!inList||listType!=='ul'){ if(inList)result.push('</ol>'); result.push('<ul>'); inList=true; listType='ul'; }
+      result.push('<li>'+bullet[1]+'</li>'); continue;
+    }
+    // Numbered list
+    const num=trimmed.match(/^\d+\.\s+(.+)/);
+    if(num){
+      if(!inList||listType!=='ol'){ if(inList)result.push('</ul>'); result.push('<ol>'); inList=true; listType='ol'; }
+      result.push('<li>'+num[1]+'</li>'); continue;
+    }
+    if(inList){ result.push(listType==='ul'?'</ul>':'</ol>'); inList=false; }
+    // Empty line
+    if(!trimmed){ result.push('<p><br></p>'); continue; }
+    // Detect headings from plain text patterns (if not already HTML)
+    if(detectH && !/<[a-zA-Z]/.test(trimmed)){
+      const nextLine=lines[i+1]&&lines[i+1].trim();
+      const prevLine=i>0&&lines[i-1].trim();
+      // Roman numerals or "Chương/Phần" prefix → H2
+      if(/^(ch[ươ]ng|ph[aầ]n|part|section|m[uụ]c)\s+\w/i.test(trimmed)){ result.push('<h2>'+trimmed+'</h2>'); continue; }
+      // Short line (≤70 chars) followed by empty line AND preceded by empty → heading
+      if(trimmed.length<=70 && (!nextLine||nextLine==='') && (!prevLine||prevLine==='')){
+        // All-caps → H2, others → H3
+        if(trimmed===trimmed.toUpperCase()&&trimmed.length>3){ result.push('<h2>'+trimmed+'</h2>'); continue; }
+        if(!/</.test(trimmed)){ result.push('<h3>'+trimmed+'</h3>'); continue; }
+      }
+      // Numbered section headers like "1. Title" or "I. Title"
+      if(/^([IVXLCDM]+|[0-9]+)\.\s+[A-ZÀ-Ỹ]/.test(trimmed)&&trimmed.length<=80){ result.push('<h3>'+trimmed+'</h3>'); continue; }
+    }
+    result.push('<p>'+trimmed+'</p>');
+  }
+  if(inList) result.push(listType==='ul'?'</ul>':'</ol>');
+  return result.join('\n');
+}
+function cleanForeignHTML(html){
+  const div=document.createElement('div');
+  div.innerHTML=html;
+  // Remove script/style tags
+  div.querySelectorAll('script,style,meta,link').forEach(el=>el.remove());
+  // Remove class/id/style from all elements, keep semantic tags
+  div.querySelectorAll('*').forEach(el=>{
+    const keep=['src','href','alt','title','target','rel','type','value','colspan','rowspan','width','height'];
+    Array.from(el.attributes).forEach(attr=>{ if(!keep.includes(attr.name)) el.removeAttribute(attr.name); });
+  });
+  // Remove empty non-semantic wrappers (div/span with no attributes)
+  div.querySelectorAll('div:not([class]):not([style]),span:not([class]):not([style])').forEach(el=>{
+    if(!el.children.length) return; // keep if has children
+    const frag=document.createDocumentFragment();
+    while(el.firstChild) frag.appendChild(el.firstChild);
+    el.replaceWith(frag);
+  });
+  return div.innerHTML;
+}
+function embedImageURLs(html){
+  // Replace bare image URLs in text nodes with <img> tags
+  const imgExt=/https?:\/\/[^\s"'<>]+\.(jpg|jpeg|png|gif|webp|svg|avif)(\?[^\s"'<>]*)?/gi;
+  const imgHost=/(imgur\.com|cloudinary\.com|postimg\.cc|i\.ibb\.co|drive\.google\.com\/uc|googleusercontent\.com|res\.cloudinary\.com)/i;
+  // Only convert URLs that are NOT already inside src attributes
+  html=html.replace(/(?<!src=["'])(?<!['"(])(https?:\/\/[^\s"'<>]+\.(jpg|jpeg|png|gif|webp|svg|avif)(\?[^\s"'<>]*)?)/gi,(url)=>{
+    return `<img src="${url}" style="max-width:100%;border-radius:8px;margin:8px 0;" alt="">`;
+  });
+  return html;
+}
+function autoFormatContent(){
+  const editor=byId('edcontent'); if(!editor) return;
+  const html=editor.innerHTML;
+  if(!html.trim()){ showToast('Editor đang trống',true); return; }
+  editor.innerHTML=smartFormatContent(html,{detectH:true,embedImg:true,cleanH:true});
+  updateWordCount(); state.editorDirty=true;
+  showToast('✨ Đã auto-format nội dung!');
+}
+function fixImageLinks(){
+  const editor=byId('edcontent'); if(!editor) return;
+  editor.innerHTML=embedImageURLs(editor.innerHTML);
+  updateWordCount(); state.editorDirty=true;
+  showToast('🖼️ Đã embed ảnh từ URL!');
+}
+
+// ============================================================
+// AI MODAL
+// ============================================================
+function openAIModal(tab){
+  saveEditorSelection();
+  byId('ai-modal').style.display='flex';
+  switchAITab(tab||'write');
+  if(tab==='write') populateAIWriteRef();
+  if(tab==='seo') runSEOCheck();
+}
+function closeAIModal(){ byId('ai-modal').style.display='none'; }
+function switchAITab(tab){
+  ['write','seo'].forEach(t=>{
+    byId('aitab-'+t).classList.toggle('active',t===tab);
+    byId('aitabcontent-'+t).classList.toggle('active',t===tab);
+  });
+}
+function populateAIWriteRef(){
+  const sel=byId('ai-write-ref'); if(!sel) return;
+  const lessons=[];
+  (DATA.categories||[]).forEach(cat=>(cat.courses||[]).forEach(course=>(course.chapters||[]).forEach(ch=>(ch.lessons||[]).forEach(l=>{
+    if(l.content) lessons.push({id:l.id,title:l.title,content:l.content});
+  }))));
+  sel.innerHTML='<option value="">— Không tham khảo —</option>'+
+    lessons.slice(0,30).map(l=>`<option value="${esc(l.id)}">${esc(l.title)}</option>`).join('');
+}
+
+// ============================================================
+// AI WRITE
+// ============================================================
+async function doAIWrite(){
+  const topic=(byId('ai-write-topic')||{}).value?.trim();
+  if(!topic){ showToast('Nhập chủ đề bài viết trước',true); return; }
+  const type=(byId('ai-write-type')||{}).value||'tutorial';
+  const style=(byId('ai-write-style')||{}).value||'professional';
+  const keywords=(byId('ai-write-keywords')||{}).value?.trim()||'';
+  const refId=(byId('ai-write-ref')||{}).value;
+  const result=byId('ai-write-result'); if(!result) return;
+  result.innerHTML=`<div class="ai-generating"><div class="spinner"></div>Đang tạo nội dung, vui lòng chờ...</div>`;
+  const typeLabel={tutorial:'hướng dẫn từng bước',guide:'tổng quan và chiến lược',analysis:'phân tích chuyên sâu',casestudy:'case study thực tế',review:'review và đánh giá'}[type]||type;
+  const styleLabel={professional:'chuyên nghiệp, súc tích',friendly:'thân thiện, dễ hiểu',academic:'học thuật, có dẫn chứng',practical:'thực chiến, trực tiếp vào vấn đề'}[style]||style;
+  let refText='';
+  if(refId){
+    const allLessons=[];
+    (DATA.categories||[]).forEach(cat=>(cat.courses||[]).forEach(course=>(course.chapters||[]).forEach(ch=>(ch.lessons||[]).forEach(l=>{ if(l.id===refId) allLessons.push(l); }))));
+    if(allLessons[0]?.content){ const div=document.createElement('div'); div.innerHTML=allLessons[0].content; refText='\n\nPhong cách tham khảo (dựa trên bài sau):\n"""\n'+div.innerText.slice(0,800)+'\n"""'; }
+  }
+  const systemPrompt=`Bạn là chuyên gia tạo nội dung học thuật cho nền tảng membership tiếng Việt. Viết bài ${typeLabel}, phong cách ${styleLabel}. Trả về HTML sạch với thẻ h1, h2, h3, p, ul, ol, strong, em. KHÔNG dùng class, style inline, hay thẻ div bọc ngoài. Bắt đầu ngay với thẻ h1.`;
+  const userMsg=`Viết bài về chủ đề: "${topic}"${keywords?'\nTừ khoá SEO cần lồng ghép: '+keywords:''}${refText}`;
+  try{
+    const content=await aiRequest([{role:'user',content:userMsg}],systemPrompt);
+    if(!content){ result.innerHTML=''; return; }
+    result.innerHTML=`<div class="ai-result-box"><h4>✅ Nội dung đã tạo — Xem trước:</h4><div style="max-height:220px;overflow:auto;font-size:13px;color:#374151;line-height:1.6;border:1px solid #e9d5ff;border-radius:8px;padding:12px;background:white;">${content.slice(0,600)}${content.length>600?'...<span style="color:#94a3b8"> (còn nữa)</span>':''}</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;"><button class="btn bgray" onclick="byId('ai-write-result').innerHTML=''">Huỷ</button><button class="btn bgreen" onclick="insertAIContent(${JSON.stringify(content).replace(/</g,'\\u003c')})">📥 Chèn vào bài</button></div></div>`;
+  }catch(e){ result.innerHTML=`<div style="color:#ef4444;font-size:13px;padding:10px 0;">❌ Lỗi: ${esc(e.message)}</div>`; }
+}
+function insertAIContent(html){
+  restoreEditorSelection(); insertHTMLAtCursor(html+'<p><br></p>');
+  closeAIModal(); showToast('✅ Đã chèn nội dung AI vào bài!');
+}
+
+// ============================================================
+// SEO CHECK
+// ============================================================
+function runSEOCheck(){
+  const host=byId('seo-auto-results'); if(!host) return;
+  const editor=byId('edcontent');
+  const title=(byId('ed-title')||{}).value?.trim()||'';
+  const content=editor?editor.innerHTML:'';
+  const div=document.createElement('div'); div.innerHTML=content;
+  const text=div.innerText||'';
+  const words=text.split(/\s+/).filter(Boolean).length;
+  const hasH1=!!div.querySelector('h1');
+  const h2count=div.querySelectorAll('h2').length;
+  const hasImg=!!div.querySelector('img');
+  const titleLen=title.length;
+  const checks=[
+    {ok:hasH1,label:'Có thẻ H1 trong nội dung',tip:'Thêm ít nhất 1 tiêu đề H1'},
+    {ok:titleLen>=40&&titleLen<=65,label:`Tiêu đề bài ${titleLen} ký tự (lý tưởng 40-65)`,tip:'Chỉnh tiêu đề về 40-65 ký tự'},
+    {ok:words>=300,label:`Số từ: ${words} (tối thiểu 300)`,tip:'Thêm nội dung để đạt ít nhất 300 từ'},
+    {ok:hasImg,label:'Có ít nhất 1 ảnh trong bài',tip:'Thêm ảnh minh họa'},
+    {ok:h2count>=2,label:`Có ${h2count} thẻ H2 (nên có ≥2)`,tip:'Chia bài thành các section với H2'},
+  ];
+  const score=checks.filter(c=>c.ok).length;
+  const pct=Math.round(score/checks.length*100);
+  const barColor=pct>=80?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+  host.innerHTML=`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-size:13px;font-weight:700;color:#0f172a;">Điểm SEO</span><span style="font-size:20px;font-weight:900;color:${barColor};">${score}/${checks.length} ⭐</span></div><div class="seo-score-bar"><div class="seo-score-fill" style="width:${pct}%;background:${barColor};"></div></div><div style="font-size:11px;color:#94a3b8;text-align:right;">${pct}%</div></div>`+
+    checks.map(c=>`<div class="seo-check-item"><span class="seo-icon">${c.ok?'✅':'❌'}</span><span style="flex:1;color:${c.ok?'#374151':'#94a3b8'}">${c.label}</span>${!c.ok?`<span style="font-size:11px;color:#7c3aed;">${c.tip}</span>`:''}</div>`).join('');
+}
+async function doSEOAI(){
+  const editor=byId('edcontent');
+  const title=(byId('ed-title')||{}).value?.trim()||'';
+  const div=document.createElement('div'); div.innerHTML=editor?editor.innerHTML:'';
+  const text=div.innerText.slice(0,2000);
+  const host=byId('seo-ai-results'); if(!host) return;
+  host.innerHTML=`<div class="ai-generating" style="margin-top:14px;"><div class="spinner"></div>AI đang phân tích SEO...</div>`;
+  const systemPrompt='Bạn là chuyên gia SEO nội dung tiếng Việt. Phân tích bài viết và trả về JSON với các key: suggestedTitle (string), metaDescription (string ≤155 ký tự), keywords (array of 5 strings), improvements (array of 3 string gợi ý cải thiện). Chỉ trả về JSON thuần, không có text thêm.';
+  const userMsg=`Tiêu đề hiện tại: "${title}"\n\nNội dung (rút gọn):\n${text}`;
+  try{
+    const raw=await aiRequest([{role:'user',content:userMsg}],systemPrompt);
+    if(!raw){ host.innerHTML=''; return; }
+    let parsed; try{ parsed=JSON.parse(raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim()); }catch(e){ parsed=null; }
+    if(!parsed){ host.innerHTML=`<div class="ai-result-box"><h4>Gợi ý từ AI:</h4><p style="font-size:13px;color:#374151;white-space:pre-wrap;">${esc(raw.slice(0,800))}</p></div>`; return; }
+    host.innerHTML=`<div class="ai-result-box" style="margin-top:14px;"><h4>🤖 Gợi ý SEO từ AI</h4>
+<div class="ai-result-item"><div><div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;margin-bottom:4px;">Title tối ưu</div><div class="ai-result-text">${esc(parsed.suggestedTitle||'')}</div></div><button class="btn bgray" style="white-space:nowrap;font-size:12px;" onclick="applyAISEO('title',${JSON.stringify(parsed.suggestedTitle||'').replace(/</g,'\\u003c')})">Áp dụng</button></div>
+<div class="ai-result-item"><div><div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;margin-bottom:4px;">Meta Description</div><div class="ai-result-text">${esc(parsed.metaDescription||'')}</div></div></div>
+<div class="ai-result-item"><div><div style="font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;margin-bottom:4px;">Keywords</div><div class="ai-result-text">${esc((parsed.keywords||[]).join(', '))}</div></div></div>
+${(parsed.improvements||[]).map((imp,i)=>`<div class="seo-check-item"><span class="seo-icon">💡</span><span>${esc(imp)}</span></div>`).join('')}
+</div>`;
+  }catch(e){ host.innerHTML=`<div style="color:#ef4444;font-size:13px;padding:10px 0;">❌ Lỗi: ${esc(e.message)}</div>`; }
+}
+function applyAISEO(field, value){
+  if(field==='title'){ const inp=byId('ed-title'); if(inp){inp.value=value; state.editorDirty=true; showToast('Đã áp dụng title!');} }
+}
 
 </script>
 </body>
